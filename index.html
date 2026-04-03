@@ -54,7 +54,7 @@
 <div id="app"><div style="display:flex;align-items:center;justify-content:center;min-height:100vh;gap:8px"><div class="spinner"></div> กำลังโหลด...</div></div>
 <script>
 const SUPABASE_URL='https://qxokalkgvethzgehmdaz.supabase.co';
-const SUPABASE_KEY='sb_publishable_Wy6iTZnA7Y_8Q2oJvmW6nw_NouLMLqw';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF4b2thbGtndmV0aHpnZWhtZGF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxOTc2NDgsImV4cCI6MjA5MDc3MzY0OH0.0bcK4J0JgQufzp38kfyo3oGupQSfsYQ7tKfaCDMlUiU';
 if(SUPABASE_URL==='https://qxokalkgvethzgehmdaz.supabase.co'||SUPABASE_KEY==='sb_publishable_Wy6iTZnA7Y_8Q2oJvmW6nw_NouLMLqw'){document.getElementById('app').innerHTML=`<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px"><div style="background:#fff;border-radius:20px;padding:32px 24px;max-width:440px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.06)"><div style="font-size:48px;margin-bottom:12px">⚙️</div><h2 style="font-size:18px;font-weight:700;margin-bottom:8px">ตั้งค่า Supabase ก่อนใช้งาน</h2><p style="color:#64748b;font-size:13px;line-height:1.8">เปิด index.html ด้วย Notepad<br>หา <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:12px">YOUR_SUPABASE_URL</code> และ <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:12px">YOUR_ANON_KEY</code><br>แทนที่ด้วยค่าจาก Supabase Dashboard</p></div></div>`;throw new Error('Config')}
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
