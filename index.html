@@ -53,10 +53,9 @@
 <body>
 <div id="app"><div style="display:flex;align-items:center;justify-content:center;min-height:100vh;gap:8px"><div class="spinner"></div> กำลังโหลด...</div></div>
 <script>
+
 const SUPABASE_URL='https://qxokalkgvethzgehmdaz.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF4b2thbGtndmV0aHpnZWhtZGF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxOTc2NDgsImV4cCI6MjA5MDc3MzY0OH0.0bcK4J0JgQufzp38kfyo3oGupQSfsYQ7tKfaCDMlUiU';
-
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const CATS=[{id:"electrical",l:"ไฟฟ้า",i:"⚡",d:"หลอดไฟ สวิตช์ ปลั๊ก"},{id:"plumbing",l:"ประปา",i:"🚿",d:"ท่อน้ำ ก๊อก สุขภัณฑ์"},{id:"aircon",l:"แอร์",i:"❄️",d:"ปรับอากาศ พัดลม"},{id:"structure",l:"โครงสร้าง",i:"🧱",d:"ผนัง พื้น ประตู"},{id:"furniture",l:"เฟอร์นิเจอร์",i:"🪑",d:"โต๊ะ เก้าอี้ ตู้"},{id:"network",l:"IT",i:"🌐",d:"เน็ต คอม ปริ้นเตอร์"},{id:"elevator",l:"ลิฟต์",i:"🛗",d:"ลิฟต์โดยสาร"},{id:"cleaning",l:"ความสะอาด",i:"🧹",d:"ทำความสะอาด"},{id:"other",l:"อื่นๆ",i:"📋",d:"งานซ่อมอื่นๆ"}];
 const URG=[{id:"low",l:"ปกติ",c:"#16a34a",bg:"#f0fdf4",bd:"#bbf7d0"},{id:"medium",l:"เร่งด่วน",c:"#d97706",bg:"#fffbeb",bd:"#fde68a"},{id:"high",l:"ฉุกเฉิน",c:"#dc2626",bg:"#fef2f2",bd:"#fecaca"}];
