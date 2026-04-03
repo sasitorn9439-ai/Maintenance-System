@@ -2,163 +2,1015 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0c0f1a">
 <title>ระบบแจ้งซ่อมออนไลน์</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
-body { font-family: sans-serif; background:#f1f5f9; color:#334155; margin:0; padding:0;}
-#app { max-width:680px; margin:20px auto; }
-input, select, textarea, button { font-size:16px; padding:8px; margin:4px 0; width:100%; }
-button { cursor:pointer; background:#6366f1; color:#fff; border:none; border-radius:8px; }
-.toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:10px 20px; border-radius:8px; display:none;}
-.img-preview { display:inline-block; width:60px; height:60px; margin:4px; object-fit:cover; border:1px solid #ccc; border-radius:8px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+
+:root{
+  --bg:#0c0f1a;
+  --bg2:#141824;
+  --bg3:#1c2235;
+  --surface:#1e253a;
+  --surface2:#252d45;
+  --border:#2a3350;
+  --border2:#3a4560;
+  --text:#e8eaf2;
+  --text2:#8b93b0;
+  --text3:#5a6080;
+  --accent:#4f8ef7;
+  --accent2:#3a7aed;
+  --accent-bg:rgba(79,142,247,.12);
+  --accent-border:rgba(79,142,247,.3);
+  --green:#22c98e;
+  --green-bg:rgba(34,201,142,.1);
+  --amber:#f0a500;
+  --amber-bg:rgba(240,165,0,.1);
+  --red:#f05a5a;
+  --red-bg:rgba(240,90,90,.1);
+  --purple:#9b6fef;
+  --purple-bg:rgba(155,111,239,.1);
+  --radius:12px;
+  --radius-lg:16px;
+  --sidebar:220px;
+}
+
+body{font-family:'IBM Plex Sans Thai',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;font-size:15px;line-height:1.6}
+input,select,textarea,button{font-family:inherit;font-size:15px}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{0%{transform:scale(.9);opacity:0}65%{transform:scale(1.02)}100%{transform:scale(1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+.au{animation:fadeUp .3s ease-out both}
+.ap{animation:popIn .3s ease-out both}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;z-index:50;display:flex;flex-direction:column;overflow-y:auto}
+.sidebar-logo{padding:20px 16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-icon{width:34px;height:34px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.logo-text{font-size:13px;font-weight:700;color:var(--text);letter-spacing:.2px}
+.logo-sub{font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-top:1px}
+.nav-section{padding:10px 8px 4px}
+.nav-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;padding:0 10px 6px;font-family:'IBM Plex Mono',monospace}
+.nav-btn{display:flex;align-items:center;gap:9px;padding:9px 10px;border:none;background:transparent;color:var(--text2);border-radius:9px;cursor:pointer;font-size:13px;font-weight:500;text-align:left;width:100%;transition:all .15s;position:relative}
+.nav-btn:hover{background:var(--surface);color:var(--text)}
+.nav-btn.active{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-border)}
+.nav-btn .nav-icon{font-size:15px;width:20px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:1px 6px;font-family:'IBM Plex Mono',monospace}
+.sidebar-bottom{padding:12px;border-top:1px solid var(--border);margin-top:auto}
+.rt-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);padding:0 2px;margin-bottom:10px}
+.rt-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
+
+.main{margin-left:var(--sidebar);min-height:100vh}
+
+/* ── MOB HEADER ── */
+.mob-header{display:none;background:var(--bg2);border-bottom:1px solid var(--border);padding:13px 16px;position:sticky;top:0;z-index:90;display:none;align-items:center;justify-content:space-between}
+.mob-title{font-size:15px;font-weight:700;color:var(--text)}
+.mob-admin-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);width:34px;height:34px;border-radius:9px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center}
+
+/* ── MOB TABS ── */
+.mob-tabs{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);z-index:100;padding:6px 0 env(safe-area-inset-bottom,8px)}
+.mob-tabs-inner{display:flex;justify-content:space-around;max-width:500px;margin:0 auto}
+.tab-btn{display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:transparent;color:var(--text3);cursor:pointer;padding:4px 12px;font-size:10px;font-weight:600;min-width:56px;position:relative;transition:color .15s}
+.tab-btn.active{color:var(--accent)}
+.tab-icon{font-size:20px;line-height:1}
+.tab-dot{width:5px;height:5px;background:var(--red);border-radius:50%;position:absolute;top:2px;right:10px}
+
+/* ── PAGE ── */
+.page{padding:24px;max-width:700px;margin:0 auto}
+.page-header{margin-bottom:20px}
+.page-title{font-size:20px;font-weight:700;color:var(--text)}
+.page-sub{font-size:13px;color:var(--text3);margin-top:2px;font-family:'IBM Plex Mono',monospace}
+
+/* ── HERO ── */
+.hero{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:36px 28px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 0%,rgba(79,142,247,.08) 0%,transparent 60%);pointer-events:none}
+.hero-icon{font-size:40px;margin-bottom:10px}
+.hero h1{font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px}
+.hero p{font-size:13px;color:var(--text2)}
+
+/* ── STAT GRID ── */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 12px;text-align:center}
+.stat-num{font-size:26px;font-weight:700;font-family:'IBM Plex Mono',monospace;line-height:1}
+.stat-lbl{font-size:11px;color:var(--text3);margin-top:4px;font-weight:500}
+
+/* ── ACTION CARDS ── */
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.action-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;transition:all .15s;position:relative;overflow:hidden}
+.action-card:hover{background:var(--surface2);border-color:var(--border2);transform:translateY(-1px)}
+.action-card:active{transform:scale(.97)}
+.ac-icon{font-size:28px}
+.ac-title{font-size:14px;font-weight:700;color:var(--text)}
+.ac-sub{font-size:11px;color:var(--text3)}
+
+/* ── CARD ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 20px;margin-bottom:14px}
+
+/* ── FORM ── */
+.sec-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);font-family:'IBM Plex Mono',monospace}
+.f-label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;letter-spacing:.2px}
+.f-req{color:var(--red)}
+.f-input{width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius);font-size:14px;outline:none;color:var(--text);background:var(--bg2);transition:border .2s;-webkit-appearance:none;-moz-appearance:none}
+.f-input:focus{border-color:var(--accent);background:var(--bg3)}
+.f-input::placeholder{color:var(--text3)}
+select.f-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235a6080' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+textarea.f-input{resize:vertical;min-height:80px;line-height:1.6}
+.form-row{display:flex;gap:10px}
+.form-row>*{flex:1;min-width:0}
+
+/* ── CAT GRID ── */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));gap:7px}
+.cat-btn{border:1px solid var(--border2);background:var(--bg2);border-radius:var(--radius);padding:11px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;transition:all .15s;color:var(--text2);text-align:center}
+.cat-btn:hover{border-color:var(--border2);background:var(--surface)}
+.cat-btn.active{border-color:var(--accent);background:var(--accent-bg);color:var(--accent)}
+.cat-btn:active{transform:scale(.95)}
+.cat-icon{font-size:22px;line-height:1}
+.cat-name{font-weight:600;font-size:12px;margin-top:1px}
+.cat-desc{font-size:10px;color:var(--text3);line-height:1.2}
+
+/* ── URGENCY ── */
+.urg-row{display:flex;gap:8px}
+.urg-btn{flex:1;padding:11px 8px;border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:600;transition:all .15s;text-align:center;border:1px solid var(--border2);background:var(--bg2);color:var(--text2)}
+.urg-btn:active{transform:scale(.97)}
+
+/* ── SUBMIT BTN ── */
+.submit-btn{width:100%;padding:14px;border:none;border-radius:var(--radius);background:var(--accent);color:#fff;font-size:15px;font-weight:700;cursor:pointer;margin-top:20px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.submit-btn:hover:not(:disabled){background:var(--accent2)}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed}
+.submit-btn:active:not(:disabled){transform:scale(.98)}
+
+/* ── SPINNER ── */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+
+/* ── LIST ITEMS ── */
+.list-item{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);padding:13px 14px;border-radius:var(--radius);margin-bottom:7px;cursor:pointer;transition:all .15s}
+.list-item:hover{background:var(--surface2);border-color:var(--border2)}
+.list-item:active{transform:scale(.99)}
+.list-icon-box{font-size:18px;width:38px;height:38px;background:var(--bg2);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--border)}
+.list-info{flex:1;min-width:0}
+.list-title{font-weight:600;color:var(--text);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-meta{font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'IBM Plex Mono',monospace}
+.list-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+
+/* ── FILTER ── */
+.filter-bar{display:flex;gap:8px;margin-bottom:14px}
+.filter-bar .f-input{flex:1}
+.filter-bar select{width:auto;min-width:130px}
+
+/* ── PILLS ── */
+.pill{font-size:11px;padding:3px 9px;border-radius:8px;font-weight:600;white-space:nowrap;display:inline-block;font-family:'IBM Plex Mono',monospace}
+
+/* ── DETAIL ── */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px}
+.di-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;font-family:'IBM Plex Mono',monospace}
+.di-val{font-size:14px;font-weight:500;color:var(--text);margin-top:2px}
+
+/* ── SM BTN ── */
+.sm-btn{padding:9px 14px;border-radius:var(--radius);cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;white-space:nowrap;border:1px solid var(--border2);background:var(--surface);color:var(--text2);display:inline-flex;align-items:center;gap:5px}
+.sm-btn:hover{background:var(--surface2);color:var(--text)}
+.sm-btn:active{transform:scale(.96)}
+
+/* ── BACK BTN ── */
+.back-btn{background:none;border:none;color:var(--accent);cursor:pointer;font-size:13px;font-weight:600;margin-bottom:14px;padding:4px 0;display:flex;align-items:center;gap:4px}
+
+/* ── HISTORY ── */
+.hist-line{display:flex;gap:12px;padding-bottom:16px}
+.hist-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.hist-connector{width:1px;flex:1;background:var(--border);margin-top:4px}
+
+/* ── IMG UPLOAD ── */
+.img-upload-area{border:1.5px dashed var(--border2);border-radius:var(--radius);padding:18px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg2)}
+.img-upload-area:hover{border-color:var(--accent);background:var(--accent-bg)}
+.img-upload-area.has-imgs{border-style:solid;border-color:var(--accent)}
+.img-preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:7px;margin-top:10px}
+.img-preview{position:relative;border-radius:9px;overflow:hidden;aspect-ratio:1;background:var(--bg3)}
+.img-preview img{width:100%;height:100%;object-fit:cover}
+.img-del{position:absolute;top:3px;right:3px;width:22px;height:22px;background:rgba(0,0,0,.7);color:#fff;border:none;border-radius:50%;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center}
+.img-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:8px}
+.img-thumb{border-radius:9px;overflow:hidden;aspect-ratio:1;cursor:pointer;background:var(--bg3)}
+.img-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .2s}
+.img-thumb:hover img{transform:scale(1.04)}
+.upload-progress{height:3px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden}
+.upload-progress-bar{height:100%;background:var(--accent);border-radius:2px;transition:width .3s}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+.modal-sheet{background:var(--bg2);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:24px 20px env(safe-area-inset-bottom,20px);width:100%;max-width:500px;animation:fadeUp .22s ease-out}
+.modal-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:16px}
+
+/* ── LIGHTBOX ── */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeUp .18s}
+.lightbox img{max-width:100%;max-height:90vh;border-radius:10px;object-fit:contain}
+.lightbox-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.12);border:none;color:#fff;width:38px;height:38px;border-radius:50%;font-size:18px;cursor:pointer;transition:background .15s}
+.lightbox-close:hover{background:rgba(255,255,255,.2)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);padding:11px 20px;border-radius:var(--radius);font-size:13px;font-weight:600;z-index:400;animation:fadeUp .25s ease-out;border:1px solid;max-width:90vw;display:flex;align-items:center;gap:7px;white-space:nowrap}
+
+/* ── DASH ── */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:24px}
+.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 12px;text-align:center}
+.dash-num{font-size:28px;font-weight:700;font-family:'IBM Plex Mono',monospace;line-height:1}
+.dash-lbl{font-size:11px;color:var(--text3);margin-top:4px}
+.cat-sum-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));gap:8px}
+.cat-sum-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center}
+
+/* ── SUCCESS ── */
+.success-wrap{text-align:center;padding:32px 20px}
+.ticket-id-box{background:var(--bg2);border:1px dashed var(--border2);border-radius:var(--radius);padding:16px;margin:16px 0;font-family:'IBM Plex Mono',monospace}
+.ticket-id-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+.ticket-id{font-size:26px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-top:4px}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:48px 20px;color:var(--text3)}
+.empty-icon{font-size:36px;margin-bottom:10px}
+.empty-text{font-size:14px}
+
+/* ── ADMIN NOTE BOX ── */
+.note-box{background:var(--bg2);border:1px solid var(--accent-border);border-radius:var(--radius);padding:14px;line-height:1.7;color:var(--accent);font-size:14px;margin-top:4px;white-space:pre-wrap}
+.desc-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;line-height:1.7;color:var(--text2);font-size:14px;margin-top:4px;white-space:pre-wrap}
+
+/* ── STATUS BTNS ── */
+.status-btns{display:flex;gap:7px;flex-wrap:wrap}
+.status-btn{flex:1;padding:10px 6px;border-radius:var(--radius);cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;text-align:center;border:1px solid var(--border2);background:var(--surface);color:var(--text2);min-width:0;font-family:'IBM Plex Mono',monospace}
+.status-btn:hover:not(:disabled){background:var(--surface2)}
+.status-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ── RESPONSIVE ── */
+@media(max-width:767px){
+  .sidebar{display:none!important}
+  .main{margin-left:0!important}
+  .mob-header{display:flex!important}
+  .mob-tabs{display:block!important}
+  .page{padding:14px 13px 96px}
+  .hero{padding:28px 16px!important;border-radius:14px!important}
+  .hero h1{font-size:19px!important}
+  .stat-grid{gap:7px}
+  .action-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .action-card{padding:16px 10px}
+  .cat-grid{grid-template-columns:repeat(3,1fr)!important;gap:6px}
+  .cat-btn .cat-desc{display:none}
+  .form-row{flex-direction:column;gap:8px}
+  .detail-grid{grid-template-columns:1fr}
+  .status-btns{flex-direction:column}
+  .status-btn{text-align:center}
+  .img-grid{grid-template-columns:repeat(2,1fr)}
+  .filter-bar{flex-direction:column}
+  .dash-grid{grid-template-columns:repeat(2,1fr)}
+}
 </style>
 </head>
 <body>
-
 <div id="app">
-  <h2>แจ้งซ่อมออนไลน์</h2>
-
-  <label>หัวข้อ:</label>
-  <input id="title" placeholder="หัวข้อเรื่องซ่อม">
-
-  <label>หมวดหมู่:</label>
-  <select id="category">
-    <option value="electrical">ไฟฟ้า ⚡</option>
-    <option value="plumbing">ประปา 🚿</option>
-    <option value="aircon">แอร์ ❄️</option>
-    <option value="structure">โครงสร้าง 🧱</option>
-    <option value="furniture">เฟอร์นิเจอร์ 🪑</option>
-    <option value="other">อื่นๆ 📋</option>
-  </select>
-
-  <label>สถานที่:</label>
-  <input id="location" placeholder="อาคาร A, อาคาร B...">
-
-  <label>ผู้แจ้ง:</label>
-  <input id="reporter" placeholder="ชื่อผู้แจ้ง">
-
-  <label>รายละเอียด:</label>
-  <textarea id="description" placeholder="รายละเอียดเพิ่มเติม"></textarea>
-
-  <label>แนบรูป (สูงสุด 5 รูป):</label>
-  <input type="file" id="images" multiple accept="image/*">
-  <div id="imgPreview"></div>
-
-  <button id="submitBtn">ส่งเรื่องแจ้งซ่อม</button>
+  <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;gap:10px;color:var(--text2);font-size:14px">
+    <div class="spinner" style="border-top-color:var(--accent)"></div> กำลังโหลด...
+  </div>
 </div>
 
-<div class="toast" id="toast"></div>
-
 <script>
+// ── CONFIG ──
 const SUPABASE_URL = 'https://qxokalkgvethzgehmdaz.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF4b2thbGtndmV0aHpnZWhtZGF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxOTc2NDgsImV4cCI6MjA5MDc3MzY0OH0.0bcK4J0JgQufzp38kfyo3oGupQSfsYQ7tKfaCDMlUiU';
-
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const ADMIN_PASS = 'admin1234';
 
-let imgs = [];
+// ── DATA ──
+const CATS = [
+  {id:'electrical', l:'ไฟฟ้า',     i:'⚡', d:'หลอดไฟ สวิตช์ ปลั๊ก'},
+  {id:'plumbing',   l:'ประปา',     i:'🚿', d:'ท่อน้ำ ก๊อก สุขภัณฑ์'},
+  {id:'aircon',     l:'แอร์',      i:'❄️', d:'ปรับอากาศ พัดลม'},
+  {id:'structure',  l:'โครงสร้าง', i:'🧱', d:'ผนัง พื้น ประตู'},
+  {id:'furniture',  l:'เฟอร์นิเจอร์',i:'🪑', d:'โต๊ะ เก้าอี้ ตู้'},
+  {id:'network',    l:'IT',         i:'🌐', d:'เน็ต คอม ปริ้นเตอร์'},
+  {id:'elevator',   l:'ลิฟต์',     i:'🛗', d:'ลิฟต์โดยสาร'},
+  {id:'cleaning',   l:'ความสะอาด', i:'🧹', d:'ทำความสะอาด'},
+  {id:'other',      l:'อื่นๆ',     i:'📋', d:'งานซ่อมอื่นๆ'}
+];
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.innerText = msg;
-  t.style.display = 'block';
-  setTimeout(()=>t.style.display='none',3000);
+const URG = [
+  {id:'low',    l:'ปกติ',   c:'var(--green)',  bg:'var(--green-bg)',  bd:'rgba(34,201,142,.3)'},
+  {id:'medium', l:'เร่งด่วน', c:'var(--amber)', bg:'var(--amber-bg)', bd:'rgba(240,165,0,.3)'},
+  {id:'high',   l:'ฉุกเฉิน', c:'var(--red)',   bg:'var(--red-bg)',   bd:'rgba(240,90,90,.3)'}
+];
+
+const STS = [
+  {id:'pending',     l:'รอรับเรื่อง',  i:'⏳', c:'var(--amber)',  bg:'var(--amber-bg)'},
+  {id:'accepted',    l:'รับเรื่องแล้ว', i:'📋', c:'var(--purple)', bg:'var(--purple-bg)'},
+  {id:'in_progress', l:'กำลังซ่อม',   i:'🔧', c:'var(--accent)', bg:'var(--accent-bg)'},
+  {id:'completed',   l:'เสร็จสิ้น',   i:'✅', c:'var(--green)',  bg:'var(--green-bg)'},
+  {id:'cancelled',   l:'ยกเลิก',      i:'✖️', c:'var(--text3)',  bg:'var(--bg3)'}
+];
+const SM = {};
+STS.forEach(s => SM[s.id] = s);
+
+const LOCS = ['อาคาร A','อาคาร B','อาคาร C','อาคาร D','อาคารจอดรถ','ส่วนกลาง','โรงอาหาร','ห้องประชุมใหญ่'];
+
+// ── STATE ──
+const $ = {
+  view: 'home',
+  requests: [],
+  selected: null,
+  search: '',
+  filterStatus: 'all',
+  filterCat: 'all',
+  isAdmin: false,
+  showAdminModal: false,
+  adminPass: '',
+  loading: false,
+  lightbox: null,
+  toast: null,
+  imgs: [],
+  imgPreviews: [],
+  uploadProg: 0,
+  form: {title:'',category:'',urgency:'low',location:'',floor:'',room:'',description:'',reporter:'',department:'',phone:'',email:''}
+};
+
+// ── UTILS ──
+function genId() {
+  const d = new Date();
+  return `MR${String(d.getFullYear()).slice(-2)}${String(d.getMonth()+1).padStart(2,'0')}-${String(Math.floor(Math.random()*10000)).padStart(4,'0')}`;
+}
+function fmtDate(d) {
+  return new Date(d).toLocaleDateString('th-TH',{year:'numeric',month:'short',day:'numeric'});
+}
+function fmtDateTime(d) {
+  return new Date(d).toLocaleDateString('th-TH',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function getCat(id) { return CATS.find(c => c.id === id); }
+function getUrg(id) { return URG.find(u => u.id === id); }
+function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+function stats() {
+  const r = $.requests;
+  return {
+    total: r.length,
+    pending: r.filter(x => x.status === 'pending').length,
+    accepted: r.filter(x => x.status === 'accepted').length,
+    inProgress: r.filter(x => x.status === 'in_progress').length,
+    done: r.filter(x => x.status === 'completed').length
+  };
+}
+function filtered() {
+  return $.requests.filter(r => {
+    if ($.filterStatus !== 'all' && r.status !== $.filterStatus) return false;
+    if ($.filterCat !== 'all' && r.category !== $.filterCat) return false;
+    if ($.search) {
+      const s = $.search.toLowerCase();
+      return [r.title, r.reporter, r.id, r.department, r.location].some(v => (v||'').toLowerCase().includes(s));
+    }
+    return true;
+  });
 }
 
-// preview image
-document.getElementById('images').addEventListener('change', e=>{
-  const files = Array.from(e.target.files);
-  const preview = document.getElementById('imgPreview');
-  preview.innerHTML = '';
-  imgs = [];
-  files.slice(0,5).forEach(f=>{
-    const url = URL.createObjectURL(f);
-    imgs.push(f);
-    const imgEl = document.createElement('img');
-    imgEl.src = url;
-    imgEl.className = 'img-preview';
-    preview.appendChild(imgEl);
-  });
-});
+// ── TOAST ──
+function showToast(msg, type = 'ok') {
+  $.toast = {msg, type};
+  render();
+  setTimeout(() => { $.toast = null; render(); }, 3000);
+}
 
-// resize image
-function resizeImg(file, maxW=1200){
-  return new Promise(res=>{
+// ── NAVIGATION ──
+function nav(view) {
+  $.view = view;
+  $.selected = null;
+  $.lightbox = null;
+  window.scrollTo(0, 0);
+  render();
+}
+
+// ── IMAGE HANDLING ──
+function resizeImg(file, maxW = 1200) {
+  return new Promise(res => {
     const reader = new FileReader();
-    reader.onload = e=>{
+    reader.onload = e => {
       const img = new Image();
-      img.onload = ()=>{
-        const canvas = document.createElement('canvas');
-        let w=img.width, h=img.height;
-        if(w>maxW){ h=h*(maxW/w); w=maxW;}
-        canvas.width=w; canvas.height=h;
-        canvas.getContext('2d').drawImage(img,0,0,w,h);
-        canvas.toBlob(b=>res(b), 'image/jpeg', 0.8);
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        let w = img.width, h = img.height;
+        if (w > maxW) { h = h * (maxW / w); w = maxW; }
+        c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        c.toBlob(b => res(b), 'image/jpeg', 0.8);
       };
-      img.src=e.target.result;
+      img.src = e.target.result;
     };
     reader.readAsDataURL(file);
   });
 }
 
-// upload images to Supabase Storage
-async function uploadImages(ticketId){
+function handleFiles(files) {
+  Array.from(files).forEach(f => {
+    if (!f.type.startsWith('image/')) return;
+    if ($.imgs.length >= 5) { showToast('แนบได้สูงสุด 5 รูป', 'err'); return; }
+    $.imgs.push(f);
+    $.imgPreviews.push(URL.createObjectURL(f));
+  });
+  render();
+}
+
+function removeImg(i) {
+  URL.revokeObjectURL($.imgPreviews[i]);
+  $.imgs.splice(i, 1);
+  $.imgPreviews.splice(i, 1);
+  render();
+}
+
+async function uploadImages(ticketId) {
   const urls = [];
-  for(let i=0;i<imgs.length;i++){
-    const resized = await resizeImg(imgs[i]);
+  for (let i = 0; i < $.imgs.length; i++) {
+    $.uploadProg = Math.round((i / $.imgs.length) * 100);
+    render();
+    const resized = await resizeImg($.imgs[i]);
     const fname = `${ticketId}/${Date.now()}_${i}.jpg`;
-    const {error} = await sb.storage.from('maintenance-images').upload(fname, resized, {contentType:'image/jpeg'});
-    if(!error){
-      const {data} = sb.storage.from('maintenance-images').getPublicUrl(fname);
-      if(data?.publicUrl) urls.push(data.publicUrl);
+    const { error } = await sb.storage.from('maintenance-images').upload(fname, resized, {contentType: 'image/jpeg'});
+    if (!error) {
+      const { data } = sb.storage.from('maintenance-images').getPublicUrl(fname);
+      if (data?.publicUrl) urls.push(data.publicUrl);
     }
   }
+  $.uploadProg = 100;
+  render();
   return urls;
 }
 
-// submit form
-document.getElementById('submitBtn').addEventListener('click', async ()=>{
-  const f = {
-    title: document.getElementById('title').value,
-    category: document.getElementById('category').value,
-    location: document.getElementById('location').value,
-    reporter: document.getElementById('reporter').value,
-    description: document.getElementById('description').value
-  };
-  if(!f.title || !f.category || !f.location || !f.reporter){
-    showToast('กรุณากรอกข้อมูลให้ครบ');
+// ── SUPABASE OPS ──
+async function loadData() {
+  const { data } = await sb.from('maintenance_requests').select('*').order('created_at', {ascending: false});
+  if (data) $.requests = data.map(r => ({
+    ...r,
+    createdAt: r.created_at,
+    updatedAt: r.updated_at,
+    adminNote: r.admin_note || '',
+    history: r.history || [],
+    images: r.images || []
+  }));
+  render();
+}
+
+async function submitForm() {
+  const f = $.form;
+  if (!f.title || !f.category || !f.location || !f.reporter || !f.department) {
+    showToast('กรุณากรอกข้อมูลที่จำเป็นให้ครบ', 'err');
     return;
   }
-
-  const ticketId = 'MR' + Date.now();
+  $.loading = true;
+  render();
+  const id = genId();
+  const now = new Date().toISOString();
+  const hist = [{status: 'pending', at: now, note: 'แจ้งซ่อมใหม่'}];
   let imgUrls = [];
-  if(imgs.length>0){
-    imgUrls = await uploadImages(ticketId);
+  if ($.imgs.length > 0) imgUrls = await uploadImages(id);
+  const { error } = await sb.from('maintenance_requests').insert({
+    id, title: f.title, category: f.category, urgency: f.urgency,
+    status: 'pending', location: f.location, floor: f.floor,
+    room: f.room, description: f.description, reporter: f.reporter,
+    department: f.department, phone: f.phone, email: f.email,
+    admin_note: '', images: imgUrls, history: hist,
+    created_at: now, updated_at: now
+  });
+  $.loading = false;
+  $.uploadProg = 0;
+  if (error) { showToast('เกิดข้อผิดพลาด กรุณาลองใหม่', 'err'); return; }
+  $.requests.unshift({...f, id, status:'pending', createdAt:now, updatedAt:now, history:hist, adminNote:'', images:imgUrls});
+  $.form = {title:'',category:'',urgency:'low',location:'',floor:'',room:'',description:'',reporter:'',department:'',phone:'',email:''};
+  $.imgs = [];
+  $.imgPreviews.forEach(u => URL.revokeObjectURL(u));
+  $.imgPreviews = [];
+  $.selected = id;
+  $.view = 'success';
+  render();
+}
+
+async function updateStatus(id, newStatus) {
+  const now = new Date().toISOString();
+  const r = $.requests.find(x => x.id === id);
+  if (!r) return;
+  const newHist = [...(r.history || []), {status: newStatus, at: now, note: SM[newStatus]?.l}];
+  const { error } = await sb.from('maintenance_requests').update({status: newStatus, history: newHist, updated_at: now}).eq('id', id);
+  if (!error) {
+    $.requests = $.requests.map(x => x.id === id ? {...x, status: newStatus, updatedAt: now, history: newHist} : x);
+    showToast('อัปเดตสถานะเรียบร้อย');
+  } else showToast('เกิดข้อผิดพลาด', 'err');
+}
+
+async function saveNote(id, note) {
+  const { error } = await sb.from('maintenance_requests').update({admin_note: note, updated_at: new Date().toISOString()}).eq('id', id);
+  if (!error) {
+    $.requests = $.requests.map(x => x.id === id ? {...x, adminNote: note} : x);
+    showToast('บันทึกหมายเหตุเรียบร้อย');
+  } else showToast('เกิดข้อผิดพลาด', 'err');
+}
+
+// ── REALTIME ──
+sb.channel('maintenance_realtime')
+  .on('postgres_changes', {event: '*', schema: 'public', table: 'maintenance_requests'}, payload => {
+    const r = payload.new;
+    const mapped = {...r, createdAt: r.created_at, updatedAt: r.updated_at, adminNote: r.admin_note || '', history: r.history || [], images: r.images || []};
+    if (payload.eventType === 'INSERT' && !$.requests.find(x => x.id === r.id)) {
+      $.requests.unshift(mapped);
+      render();
+    } else if (payload.eventType === 'UPDATE') {
+      $.requests = $.requests.map(x => x.id === r.id ? {...x, ...mapped} : x);
+      render();
+    }
+  }).subscribe();
+
+// ── RENDER HELPERS ──
+function renderSidebar(s) {
+  const menuItems = [
+    {id:'home',    icon:'🏠', label:'หน้าหลัก'},
+    {id:'form',    icon:'📝', label:'แจ้งซ่อมใหม่'},
+    {id:'track',   icon:'🔍', label:'ติดตามสถานะ'}
+  ];
+  const adminItems = [
+    {id:'admin_dash', icon:'📊', label:'แดชบอร์ด'},
+    {id:'admin_list', icon:'🛠️', label:`จัดการ`, badge: s.pending}
+  ];
+  const isDetailView = $.view === 'detail';
+  const activeView = $.view;
+
+  return `
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🔧</div>
+      <div>
+        <div class="logo-text">ระบบแจ้งซ่อม</div>
+        <div class="logo-sub">Maintenance v2</div>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">พนักงาน</div>
+      ${menuItems.map(m => `
+        <button class="nav-btn ${(activeView === m.id || (isDetailView && !$.isAdmin && m.id === 'track')) ? 'active' : ''}" onclick="nav('${m.id}')">
+          <span class="nav-icon">${m.icon}</span>${m.label}
+        </button>`).join('')}
+    </div>
+    ${$.isAdmin ? `
+    <div class="nav-section">
+      <div class="nav-label">ผู้ดูแล</div>
+      ${adminItems.map(m => `
+        <button class="nav-btn ${(activeView === m.id || (isDetailView && $.isAdmin && m.id === 'admin_list')) ? 'active' : ''}" onclick="nav('${m.id}')">
+          <span class="nav-icon">${m.icon}</span>${m.label}
+          ${m.badge > 0 ? `<span class="nav-badge">${m.badge}</span>` : ''}
+        </button>`).join('')}
+    </div>` : ''}
+    <div class="sidebar-bottom">
+      <div class="rt-status"><span class="rt-dot"></span>Realtime connected</div>
+      ${!$.isAdmin
+        ? `<button class="nav-btn" style="color:var(--text3);font-size:12px" onclick="$.showAdminModal=true;render()">🔐 เข้าระบบผู้ดูแล</button>`
+        : `<button class="nav-btn" style="color:var(--text3);font-size:12px" onclick="$.isAdmin=false;$.adminPass='';nav('home')">🚪 ออกจากระบบ</button>`}
+    </div>
+  </div>`;
+}
+
+function renderMobHeader() {
+  const titles = {home:'ระบบแจ้งซ่อม',form:'แจ้งซ่อมใหม่',track:'ติดตามสถานะ',admin_dash:'แดชบอร์ด',admin_list:'จัดการรายการ',detail:'รายละเอียด',success:'แจ้งซ่อมสำเร็จ'};
+  return `
+  <div class="mob-header">
+    <span class="mob-title">🔧 ${titles[$.view] || 'ระบบแจ้งซ่อม'}</span>
+    <button class="mob-admin-btn" onclick="$.showAdminModal=true;render()">${$.isAdmin ? '👤' : '🔐'}</button>
+  </div>`;
+}
+
+function renderMobTabs(s) {
+  const tabs = [
+    {id:'home',  icon:'🏠', label:'หน้าหลัก'},
+    {id:'form',  icon:'📝', label:'แจ้งซ่อม'},
+    {id:'track', icon:'🔍', label:'ติดตาม'}
+  ];
+  if ($.isAdmin) {
+    tabs.push({id:'admin_dash', icon:'📊', label:'สรุป'});
+    tabs.push({id:'admin_list', icon:'🛠️', label:'จัดการ', badge: s.pending});
   }
+  const activeView = $.view;
+  return `
+  <div class="mob-tabs">
+    <div class="mob-tabs-inner">
+      ${tabs.map(t => {
+        const isActive = activeView === t.id
+          || (activeView === 'detail' && !$.isAdmin && t.id === 'track')
+          || (activeView === 'detail' && $.isAdmin && t.id === 'admin_list')
+          || (activeView === 'success' && t.id === 'form');
+        return `<button class="tab-btn ${isActive ? 'active' : ''}" onclick="nav('${t.id}')">
+          <span class="tab-icon">${t.icon}</span>
+          <span>${t.label}</span>
+          ${t.badge > 0 ? `<span class="tab-dot"></span>` : ''}
+        </button>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
 
-  const {error} = await sb.from('maintenance_requests').insert([{
-    id: ticketId,
-    title: f.title,
-    category: f.category,
-    location: f.location,
-    reporter: f.reporter,
-    description: f.description,
-    status: 'pending',
-    images: imgUrls,
-    created_at: new Date()
-  }]);
+function renderHome(s) {
+  return `<div class="page au">
+    <div class="hero">
+      <div class="hero-icon">🔧</div>
+      <h1>ระบบแจ้งซ่อมออนไลน์</h1>
+      <p>แจ้งปัญหา ติดตามสถานะ ได้ทุกที่ทุกเวลา</p>
+    </div>
+    <div class="action-grid">
+      <button class="action-card" onclick="nav('form')">
+        <span class="ac-icon">📝</span>
+        <span class="ac-title">แจ้งซ่อมใหม่</span>
+        <span class="ac-sub">กรอกข้อมูลแจ้งปัญหา</span>
+      </button>
+      <button class="action-card" onclick="nav('track')">
+        <span class="ac-icon">🔍</span>
+        <span class="ac-title">ติดตามสถานะ</span>
+        <span class="ac-sub">ค้นหา / ดูรายการ</span>
+      </button>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-num" style="color:var(--amber)">${s.pending}</div><div class="stat-lbl">รอรับเรื่อง</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--accent)">${s.inProgress + s.accepted}</div><div class="stat-lbl">กำลังดำเนินการ</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--green)">${s.done}</div><div class="stat-lbl">เสร็จสิ้น</div></div>
+    </div>
+  </div>`;
+}
 
-  if(error){
-    console.error(error);
-    showToast('เกิดข้อผิดพลาด');
+function renderForm() {
+  const f = $.form;
+  const canSubmit = f.title && f.category && f.location && f.reporter && f.department && !$.loading;
+  return `<div class="page au">
+    <div class="card">
+      <div class="page-header">
+        <div class="page-title">📝 แจ้งซ่อมใหม่</div>
+        <div class="page-sub">กรอกรายละเอียดเพื่อให้ช่างดำเนินการ</div>
+      </div>
+
+      <div class="sec-title">ประเภทงาน <span class="f-req">*</span></div>
+      <div class="cat-grid">
+        ${CATS.map(c => `
+          <button class="cat-btn ${f.category === c.id ? 'active' : ''}" onclick="$.form.category='${c.id}';render()">
+            <span class="cat-icon">${c.i}</span>
+            <span class="cat-name">${c.l}</span>
+            <span class="cat-desc">${c.d}</span>
+          </button>`).join('')}
+      </div>
+
+      <div class="sec-title">ข้อมูลปัญหา <span class="f-req">*</span></div>
+      <div style="margin-bottom:10px">
+        <label class="f-label">หัวข้อ <span class="f-req">*</span></label>
+        <input class="f-input" value="${esc(f.title)}" oninput="$.form.title=this.value" placeholder="เช่น หลอดไฟเสีย, แอร์ไม่เย็น">
+      </div>
+      <div class="form-row">
+        <div style="flex:2">
+          <label class="f-label">สถานที่ <span class="f-req">*</span></label>
+          <select class="f-input" onchange="$.form.location=this.value;render()">
+            <option value="" ${!f.location?'selected':''}>-- เลือกสถานที่ --</option>
+            ${LOCS.map(l => `<option ${f.location===l?'selected':''}>${l}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label class="f-label">ชั้น</label>
+          <input class="f-input" value="${esc(f.floor)}" oninput="$.form.floor=this.value" placeholder="3">
+        </div>
+        <div>
+          <label class="f-label">ห้อง</label>
+          <input class="f-input" value="${esc(f.room)}" oninput="$.form.room=this.value" placeholder="301">
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <label class="f-label">รายละเอียด</label>
+        <textarea class="f-input" oninput="$.form.description=this.value" placeholder="อธิบายอาการ สิ่งที่สังเกตเห็น...">${esc(f.description)}</textarea>
+      </div>
+
+      <div style="margin-top:14px">
+        <label class="f-label">📷 แนบรูปภาพ (ไม่เกิน 5 รูป)</label>
+        <input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files);this.value=''">
+        <div class="img-upload-area ${$.imgPreviews.length ? 'has-imgs' : ''}" onclick="document.getElementById('fileInput').click()">
+          <div style="font-size:28px;margin-bottom:6px">📸</div>
+          <div style="font-size:13px;color:var(--text2);font-weight:500">กดเพื่อถ่ายรูป หรือเลือกจากอัลบั้ม</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">${$.imgPreviews.length}/5 รูป</div>
+        </div>
+        ${$.imgPreviews.length ? `
+          <div class="img-preview-grid">
+            ${$.imgPreviews.map((url, i) => `
+              <div class="img-preview">
+                <img src="${url}" alt="">
+                <button class="img-del" onclick="event.stopPropagation();removeImg(${i})">✕</button>
+              </div>`).join('')}
+          </div>` : ''}
+        ${$.uploadProg > 0 && $.uploadProg < 100 ? `
+          <div class="upload-progress"><div class="upload-progress-bar" style="width:${$.uploadProg}%"></div></div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px;text-align:center">อัปโหลด ${$.uploadProg}%</div>` : ''}
+      </div>
+
+      <div style="margin-top:14px">
+        <label class="f-label">ความเร่งด่วน</label>
+        <div class="urg-row">
+          ${URG.map(u => `
+            <button class="urg-btn" style="${f.urgency===u.id ? `background:${u.bg};color:${u.c};border-color:${u.bd};font-weight:700` : ''}" onclick="$.form.urgency='${u.id}';render()">
+              ${u.l}
+            </button>`).join('')}
+        </div>
+      </div>
+
+      <div class="sec-title">ข้อมูลผู้แจ้ง <span class="f-req">*</span></div>
+      <div class="form-row">
+        <div>
+          <label class="f-label">ชื่อ-นามสกุล <span class="f-req">*</span></label>
+          <input class="f-input" value="${esc(f.reporter)}" oninput="$.form.reporter=this.value" placeholder="ชื่อจริง นามสกุล">
+        </div>
+        <div>
+          <label class="f-label">แผนก <span class="f-req">*</span></label>
+          <input class="f-input" value="${esc(f.department)}" oninput="$.form.department=this.value" placeholder="เช่น ฝ่ายบัญชี">
+        </div>
+      </div>
+      <div class="form-row" style="margin-top:8px">
+        <div>
+          <label class="f-label">เบอร์โทร</label>
+          <input class="f-input" value="${esc(f.phone)}" oninput="$.form.phone=this.value" placeholder="08X-XXX-XXXX" type="tel">
+        </div>
+        <div>
+          <label class="f-label">อีเมล</label>
+          <input class="f-input" value="${esc(f.email)}" oninput="$.form.email=this.value" placeholder="email@company.com" type="email">
+        </div>
+      </div>
+
+      <button class="submit-btn" onclick="submitForm()" ${canSubmit ? '' : 'disabled'}>
+        ${$.loading ? '<span class="spinner"></span>กำลังส่ง...' : '📤 ส่งแจ้งซ่อม'}
+      </button>
+    </div>
+  </div>`;
+}
+
+function renderSuccess() {
+  return `<div class="page ap">
+    <div class="card success-wrap">
+      <div style="font-size:52px">✅</div>
+      <h2 style="font-size:20px;color:var(--green);margin:10px 0 6px">แจ้งซ่อมสำเร็จ!</h2>
+      <p style="color:var(--text2);font-size:13px">บันทึกเรียบร้อยแล้ว ทีมช่างจะดำเนินการโดยเร็ว</p>
+      <div class="ticket-id-box">
+        <div class="ticket-id-label">เลขที่แจ้งซ่อม</div>
+        <div class="ticket-id">${$.selected || ''}</div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:8px">
+        <button class="sm-btn" onclick="nav('form')">+ แจ้งเพิ่มเติม</button>
+        <button class="sm-btn" style="background:var(--accent);color:#fff;border-color:var(--accent)" onclick="$.view='detail';render()">ดูรายละเอียด →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderList(isAdmin) {
+  const items = filtered();
+  const s = stats();
+  return `<div class="page au">
+    <div class="page-header">
+      <div class="page-title">${isAdmin ? '🛠️ จัดการรายการ' : '🔍 ติดตามสถานะ'}</div>
+      <div class="page-sub">${isAdmin ? `ทั้งหมด ${$.requests.length} รายการ · รอรับเรื่อง ${s.pending}` : 'ค้นจากเลขที่ ชื่อ หรือสถานที่'}</div>
+    </div>
+    <div class="filter-bar">
+      <input class="f-input" value="${esc($.search)}" oninput="$.search=this.value;render()" placeholder="🔍 ค้นหา...">
+      <select class="f-input" onchange="$.filterStatus=this.value;render()">
+        <option value="all">ทุกสถานะ</option>
+        ${STS.map(s => `<option value="${s.id}" ${$.filterStatus===s.id?'selected':''}>${s.i} ${s.l}</option>`).join('')}
+      </select>
+    </div>
+    ${!items.length ? `
+      <div class="empty">
+        <div class="empty-icon">📭</div>
+        <div class="empty-text">ไม่พบรายการ</div>
+      </div>` :
+      items.map((r, i) => {
+        const c = getCat(r.category);
+        const ss = SM[r.status];
+        const u = getUrg(r.urgency);
+        const hasImg = (r.images || []).length > 0;
+        return `<div class="list-item au" style="animation-delay:${i*.03}s" onclick="$.selected='${r.id}';$.view='detail';render()">
+          <div class="list-icon-box">${c?.i || '📋'}</div>
+          <div class="list-info">
+            <div class="list-title">${hasImg ? '📷 ' : ''}${esc(r.title)}</div>
+            <div class="list-meta">${esc(r.id)} · ${esc(r.location)}${isAdmin ? ' · ' + esc(r.department) : ''}</div>
+          </div>
+          <div class="list-right">
+            ${u?.id !== 'low' ? `<span class="pill" style="color:${u.c};background:${u.bg}">${u.l}</span>` : ''}
+            <span class="pill" style="color:${ss?.c};background:${ss?.bg}">${ss?.i} ${ss?.l}</span>
+          </div>
+        </div>`;
+      }).join('')}
+  </div>`;
+}
+
+function renderDetail() {
+  const r = $.requests.find(x => x.id === $.selected);
+  if (!r) return `<div class="page"><p style="color:var(--text3)">ไม่พบรายการ</p></div>`;
+  const c = getCat(r.category);
+  const ss = SM[r.status];
+  const u = getUrg(r.urgency);
+  const imgs = r.images || [];
+  const backView = $.isAdmin ? 'admin_list' : 'track';
+  return `<div class="page au">
+    <button class="back-btn" onclick="nav('${backView}')">← ย้อนกลับ</button>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">
+        <span style="font-size:26px">${c?.i || '📋'}</span>
+        <h2 style="font-size:17px;font-weight:700;color:var(--text)">${esc(r.title)}</h2>
+      </div>
+      <div style="color:var(--text3);font-size:11px;font-family:'IBM Plex Mono',monospace;margin-bottom:14px">
+        #${r.id} · ${fmtDateTime(r.createdAt)}
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px">
+        <span class="pill" style="color:${u?.c};background:${u?.bg};border:1px solid ${u?.bd}">${u?.l}</span>
+        <span class="pill" style="color:${ss?.c};background:${ss?.bg}">${ss?.i} ${ss?.l}</span>
+      </div>
+
+      <div class="detail-grid">
+        ${[
+          ['สถานที่', `${esc(r.location)}${r.floor ? ' ชั้น '+esc(r.floor) : ''}${r.room ? ' ห้อง '+esc(r.room) : ''}`],
+          ['ประเภท', `${c?.i} ${c?.l}`],
+          ['ผู้แจ้ง', esc(r.reporter)],
+          ['แผนก', esc(r.department)],
+          ['โทร', esc(r.phone) || '-'],
+          ['อีเมล', esc(r.email) || '-']
+        ].map(([l,v]) => `<div><div class="di-label">${l}</div><div class="di-val">${v}</div></div>`).join('')}
+      </div>
+
+      ${r.description ? `
+        <div style="margin-top:18px">
+          <div class="di-label">รายละเอียด</div>
+          <div class="desc-box">${esc(r.description)}</div>
+        </div>` : ''}
+
+      ${imgs.length ? `
+        <div style="margin-top:18px">
+          <div class="di-label">📷 รูปภาพ (${imgs.length})</div>
+          <div class="img-grid">
+            ${imgs.map(url => `
+              <div class="img-thumb" onclick="$.lightbox='${url}';render()">
+                <img src="${url}" alt="รูปภาพ" loading="lazy">
+              </div>`).join('')}
+          </div>
+        </div>` : ''}
+
+      ${r.adminNote && !$.isAdmin ? `
+        <div style="margin-top:18px">
+          <div class="di-label">หมายเหตุจากช่าง</div>
+          <div class="note-box">${esc(r.adminNote)}</div>
+        </div>` : ''}
+
+      <div style="margin-top:22px;border-top:1px solid var(--border);padding-top:16px">
+        <div class="di-label" style="margin-bottom:12px">ประวัติสถานะ</div>
+        ${(r.history || []).map((hh, i) => {
+          const hs = SM[hh.status];
+          const isLast = i === r.history.length - 1;
+          return `<div class="hist-line">
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div class="hist-dot" style="background:${hs?.c || 'var(--text3)'}"></div>
+              ${!isLast ? '<div class="hist-connector"></div>' : ''}
+            </div>
+            <div style="padding-bottom:${!isLast ? '4px' : '0'}">
+              <div style="font-weight:600;font-size:13px;color:${hs?.c}">${hs?.i} ${hs?.l}</div>
+              <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace">${fmtDateTime(hh.at)}</div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      ${$.isAdmin ? `
+        <div style="margin-top:22px;border-top:1px solid var(--border);padding-top:16px">
+          <div class="di-label" style="margin-bottom:10px">อัปเดตสถานะ</div>
+          <div class="status-btns">
+            ${STS.map(st => `
+              <button class="status-btn" style="${r.status===st.id ? `background:${st.bg};color:${st.c};border-color:${st.c};opacity:.6` : ''}"
+                ${r.status===st.id ? 'disabled' : ''} onclick="updateStatus('${r.id}','${st.id}')">
+                ${st.i} ${st.l}
+              </button>`).join('')}
+          </div>
+          <div class="di-label" style="margin:16px 0 6px">หมายเหตุช่าง</div>
+          <textarea class="f-input" id="adminNoteInput" style="min-height:70px" placeholder="บันทึกเพิ่มเติม...">${esc(r.adminNote || '')}</textarea>
+          <button class="sm-btn" style="background:var(--accent);color:#fff;border-color:var(--accent);margin-top:8px;width:100%;justify-content:center" onclick="saveNote('${r.id}',document.getElementById('adminNoteInput').value)">
+            💾 บันทึกหมายเหตุ
+          </button>
+        </div>` : ''}
+    </div>
+  </div>`;
+}
+
+function renderDash(s) {
+  return `<div class="page au">
+    <div class="page-header">
+      <div class="page-title">📊 แดชบอร์ด</div>
+      <div class="page-sub">ภาพรวมงานซ่อมทั้งหมด</div>
+    </div>
+    <div class="dash-grid">
+      ${[
+        {l:'ทั้งหมด',     v:s.total,              c:'var(--text)',   i:'📊'},
+        {l:'รอรับเรื่อง', v:s.pending,            c:'var(--amber)', i:'⏳'},
+        {l:'รับเรื่องแล้ว',v:s.accepted,          c:'var(--purple)',i:'📋'},
+        {l:'กำลังซ่อม',   v:s.inProgress,         c:'var(--accent)',i:'🔧'},
+        {l:'เสร็จสิ้น',   v:s.done,               c:'var(--green)', i:'✅'}
+      ].map((d, i) => `
+        <div class="dash-card au" style="animation-delay:${i*.06}s">
+          <span style="font-size:22px">${d.i}</span>
+          <div class="dash-num" style="color:${d.c}">${d.v}</div>
+          <div class="dash-lbl">${d.l}</div>
+        </div>`).join('')}
+    </div>
+    <div class="di-label" style="margin-bottom:12px">รายการตามประเภท</div>
+    <div class="cat-sum-grid">
+      ${CATS.map(cat => {
+        const total = $.requests.filter(r => r.category === cat.id).length;
+        const pending = $.requests.filter(r => r.category === cat.id && ['pending','accepted'].includes(r.status)).length;
+        return `<div class="cat-sum-item">
+          <span style="font-size:20px">${cat.i}</span>
+          <span style="font-weight:600;font-size:12px;color:var(--text2)">${cat.l}</span>
+          <span style="font-size:20px;font-weight:700;font-family:'IBM Plex Mono',monospace">${total}</span>
+          ${pending > 0 ? `<span style="font-size:10px;color:var(--amber);font-weight:600">รอ ${pending}</span>` : ''}
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function renderAdminModal() {
+  return `
+  <div class="modal-overlay" onclick="if(event.target===this){$.showAdminModal=false;render()}">
+    <div class="modal-sheet">
+      <div class="modal-title">${$.isAdmin ? '👤 ผู้ดูแลระบบ' : '🔐 เข้าระบบผู้ดูแล'}</div>
+      ${!$.isAdmin ? `
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <input type="password" class="f-input" placeholder="รหัสผ่านผู้ดูแล" value="${esc($.adminPass)}"
+            oninput="$.adminPass=this.value"
+            onkeydown="if(event.key==='Enter')tryAdminLogin()">
+          <button class="submit-btn" style="margin-top:0" onclick="tryAdminLogin()">เข้าสู่ระบบ</button>
+          <div style="font-size:11px;color:var(--text3);text-align:center;font-family:'IBM Plex Mono',monospace">รหัสเริ่มต้น: admin1234</div>
+        </div>` : `
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="font-size:13px;color:var(--text2);display:flex;align-items:center;gap:8px">
+            <span class="rt-dot"></span>เชื่อมต่อ Realtime แล้ว
+          </div>
+          <button class="submit-btn" style="margin-top:0;background:var(--red)" onclick="$.isAdmin=false;$.adminPass='';$.showAdminModal=false;nav('home')">
+            🚪 ออกจากระบบ
+          </button>
+        </div>`}
+      <button style="margin-top:12px;width:100%;padding:11px;border:1px solid var(--border);border-radius:var(--radius);background:transparent;color:var(--text2);font-size:13px;cursor:pointer" onclick="$.showAdminModal=false;render()">ปิด</button>
+    </div>
+  </div>`;
+}
+
+function tryAdminLogin() {
+  if ($.adminPass === ADMIN_PASS) {
+    $.isAdmin = true;
+    $.showAdminModal = false;
+    render();
   } else {
-    showToast('ส่งเรื่องเรียบร้อยแล้ว');
-    document.getElementById('app').reset && document.getElementById('app').reset();
-    document.getElementById('imgPreview').innerHTML='';
-    imgs = [];
+    showToast('รหัสไม่ถูกต้อง', 'err');
   }
-});
-</script>
+}
 
+// ── MAIN RENDER ──
+function render() {
+  const s = stats();
+  let html = '';
+
+  html += renderSidebar(s);
+  html += `<div class="main">`;
+  html += renderMobHeader();
+
+  if ($.view === 'home')       html += renderHome(s);
+  else if ($.view === 'form')  html += renderForm();
+  else if ($.view === 'success') html += renderSuccess();
+  else if ($.view === 'track') html += renderList(false);
+  else if ($.view === 'admin_list' && $.isAdmin) html += renderList(true);
+  else if ($.view === 'admin_dash' && $.isAdmin) html += renderDash(s);
+  else if ($.view === 'detail') html += renderDetail();
+
+  html += `</div>`;
+  html += renderMobTabs(s);
+  if ($.showAdminModal) html += renderAdminModal();
+
+  if ($.lightbox) html += `
+    <div class="lightbox" onclick="$.lightbox=null;render()">
+      <button class="lightbox-close" onclick="$.lightbox=null;render()">✕</button>
+      <img src="${$.lightbox}" alt="รูปเต็ม">
+    </div>`;
+
+  if ($.toast) {
+    const isErr = $.toast.type === 'err';
+    html += `<div class="toast" style="background:${isErr ? 'var(--red-bg)' : 'var(--green-bg)'};color:${isErr ? 'var(--red)' : 'var(--green)'};border-color:${isErr ? 'rgba(240,90,90,.3)' : 'rgba(34,201,142,.3)'}">
+      ${isErr ? '⚠️' : '✅'} ${esc($.toast.msg)}
+    </div>`;
+  }
+
+  document.getElementById('app').innerHTML = html;
+}
+
+// ── INIT ──
+loadData();
+window.addEventListener('resize', render);
+</script>
 </body>
 </html>
