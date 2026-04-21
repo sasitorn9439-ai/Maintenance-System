@@ -37,6 +37,9 @@
   --red-bg:rgba(240,90,90,.1);
   --purple:#9b6fef;
   --purple-bg:rgba(155,111,239,.1);
+  --cyan:#00c8d4;
+  --cyan-bg:rgba(0,200,212,.08);
+  --cyan-border:rgba(0,200,212,.25);
   --radius:12px;
   --radius-lg:16px;
   --sidebar:220px;
@@ -50,7 +53,7 @@ input,select,textarea,button{font-family:inherit;font-size:15px}
 @keyframes popIn{0%{transform:scale(.9);opacity:0}65%{transform:scale(1.02)}100%{transform:scale(1);opacity:1}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes noticeIn{0%{opacity:0;transform:translateY(6px) scale(.99)}100%{opacity:1;transform:translateY(0) scale(1)}}
 
 .au{animation:fadeUp .3s ease-out both}
 .ap{animation:popIn .3s ease-out both}
@@ -75,7 +78,7 @@ input,select,textarea,button{font-family:inherit;font-size:15px}
 .main{margin-left:var(--sidebar);min-height:100vh}
 
 /* ── MOB HEADER ── */
-.mob-header{display:none;background:var(--bg2);border-bottom:1px solid var(--border);padding:13px 16px;position:sticky;top:0;z-index:90;display:none;align-items:center;justify-content:space-between}
+.mob-header{display:none;background:var(--bg2);border-bottom:1px solid var(--border);padding:13px 16px;position:sticky;top:0;z-index:90;align-items:center;justify-content:space-between}
 .mob-title{font-size:15px;font-weight:700;color:var(--text)}
 .mob-admin-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);width:34px;height:34px;border-radius:9px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center}
 
@@ -117,6 +120,67 @@ input,select,textarea,button{font-family:inherit;font-size:15px}
 
 /* ── CARD ── */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 20px;margin-bottom:14px}
+
+/* ── SCHEDULE NOTICE ── */
+.schedule-notice{
+  position:relative;
+  background:linear-gradient(135deg,rgba(0,200,212,.07) 0%,rgba(79,142,247,.06) 100%);
+  border:1px solid var(--cyan-border);
+  border-radius:var(--radius-lg);
+  padding:16px 18px 16px 52px;
+  margin-bottom:20px;
+  overflow:hidden;
+  animation:noticeIn .35s ease-out .18s both;
+}
+.schedule-notice::before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:3px;
+  background:linear-gradient(180deg,var(--cyan) 0%,var(--accent) 100%);
+  border-radius:3px 0 0 3px;
+}
+.schedule-notice-icon{
+  position:absolute;
+  left:15px;top:50%;transform:translateY(-50%);
+  font-size:19px;line-height:1;
+}
+.schedule-notice-title{
+  font-size:11px;font-weight:700;
+  color:var(--cyan);
+  text-transform:uppercase;letter-spacing:.9px;
+  font-family:'IBM Plex Mono',monospace;
+  margin-bottom:6px;
+}
+.schedule-notice-body{
+  font-size:13px;color:var(--text2);line-height:1.7;
+}
+.schedule-notice-body strong{color:var(--text);font-weight:600;}
+.sn-tag{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:11px;font-weight:700;
+  border-radius:6px;padding:1px 8px;
+  font-family:'IBM Plex Mono',monospace;
+  vertical-align:middle;margin:0 2px;white-space:nowrap;
+}
+.sn-tag-sat{background:rgba(0,200,212,.13);color:var(--cyan);border:1px solid rgba(0,200,212,.22);}
+.sn-tag-urg{background:var(--red-bg);color:var(--red);border:1px solid rgba(240,90,90,.22);}
+
+/* ── FORM SCHEDULE NOTE ── */
+.form-schedule-note{
+  display:flex;gap:9px;align-items:flex-start;
+  background:rgba(0,200,212,.055);
+  border:1px solid rgba(0,200,212,.18);
+  border-radius:var(--radius);
+  padding:11px 13px;
+  margin-top:11px;
+  font-size:12.5px;
+  color:var(--text2);
+  line-height:1.65;
+}
+.form-schedule-note-icon{font-size:15px;flex-shrink:0;margin-top:2px;}
+.form-schedule-note strong{color:var(--cyan);font-weight:600;}
+.fsn-urg{color:var(--red);font-weight:700;background:var(--red-bg);padding:0 5px;border-radius:4px;font-size:11px;}
 
 /* ── FORM ── */
 .sec-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);font-family:'IBM Plex Mono',monospace}
@@ -269,6 +333,7 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.6}
   .img-grid{grid-template-columns:repeat(2,1fr)}
   .filter-bar{flex-direction:column}
   .dash-grid{grid-template-columns:repeat(2,1fr)}
+  .schedule-notice{padding:14px 14px 14px 46px}
 }
 </style>
 </head>
@@ -280,13 +345,11 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.6}
 </div>
 
 <script>
-// ── CONFIG ──
 const SUPABASE_URL = 'https://qxokalkgvethzgehmdaz.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF4b2thbGtndmV0aHpnZWhtZGF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxOTc2NDgsImV4cCI6MjA5MDc3MzY0OH0.0bcK4J0JgQufzp38kfyo3oGupQSfsYQ7tKfaCDMlUiU';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const ADMIN_PASS = 'admin1234';
 
-// ── DATA ──
 const CATS = [
   {id:'electrical', l:'ไฟฟ้า',     i:'⚡', d:'หลอดไฟ สวิตช์ ปลั๊ก'},
   {id:'plumbing',   l:'ประปา',     i:'🚿', d:'ท่อน้ำ ก๊อก สุขภัณฑ์'},
@@ -300,319 +363,183 @@ const CATS = [
 ];
 
 const URG = [
-  {id:'low',    l:'ปกติ',   c:'var(--green)',  bg:'var(--green-bg)',  bd:'rgba(34,201,142,.3)'},
+  {id:'low',    l:'ปกติ',    c:'var(--green)',  bg:'var(--green-bg)',  bd:'rgba(34,201,142,.3)'},
   {id:'medium', l:'เร่งด่วน', c:'var(--amber)', bg:'var(--amber-bg)', bd:'rgba(240,165,0,.3)'},
   {id:'high',   l:'ฉุกเฉิน', c:'var(--red)',   bg:'var(--red-bg)',   bd:'rgba(240,90,90,.3)'}
 ];
 
 const STS = [
-  {id:'pending',     l:'รอรับเรื่อง',  i:'⏳', c:'var(--amber)',  bg:'var(--amber-bg)'},
+  {id:'pending',     l:'รอรับเรื่อง',   i:'⏳', c:'var(--amber)',  bg:'var(--amber-bg)'},
   {id:'accepted',    l:'รับเรื่องแล้ว', i:'📋', c:'var(--purple)', bg:'var(--purple-bg)'},
-  {id:'in_progress', l:'กำลังซ่อม',   i:'🔧', c:'var(--accent)', bg:'var(--accent-bg)'},
-  {id:'completed',   l:'เสร็จสิ้น',   i:'✅', c:'var(--green)',  bg:'var(--green-bg)'},
-  {id:'cancelled',   l:'ยกเลิก',      i:'✖️', c:'var(--text3)',  bg:'var(--bg3)'}
+  {id:'in_progress', l:'กำลังซ่อม',    i:'🔧', c:'var(--accent)', bg:'var(--accent-bg)'},
+  {id:'completed',   l:'เสร็จสิ้น',    i:'✅', c:'var(--green)',  bg:'var(--green-bg)'},
+  {id:'cancelled',   l:'ยกเลิก',       i:'✖️', c:'var(--text3)',  bg:'var(--bg3)'}
 ];
 const SM = {};
 STS.forEach(s => SM[s.id] = s);
 
 const LOCS = ['อาคาร 1','อาคาร 2','อาคาร 3','อาคาร 4','จุดจอดรถ','ส่วนกลาง','โรงอาหาร','ห้องประชุม'];
 
-// ── STATE ──
 const $ = {
-  view: 'home',
-  requests: [],
-  selected: null,
-  search: '',
-  filterStatus: 'all',
-  filterCat: 'all',
-  isAdmin: false,
-  showAdminModal: false,
-  adminPass: '',
-  loading: false,
-  lightbox: null,
-  toast: null,
-  imgs: [],
-  imgPreviews: [],
-  uploadProg: 0,
-  form: {title:'',category:'',urgency:'low',location:'',floor:'',room:'',description:'',reporter:'',department:'',phone:'',email:''}
+  view:'home', requests:[], selected:null, search:'', filterStatus:'all', filterCat:'all',
+  isAdmin:false, showAdminModal:false, adminPass:'', loading:false,
+  lightbox:null, toast:null, imgs:[], imgPreviews:[], uploadProg:0,
+  form:{title:'',category:'',urgency:'low',location:'',floor:'',room:'',description:'',reporter:'',department:'',phone:'',email:''}
 };
 
-// ── UTILS ──
-function genId() {
-  const d = new Date();
-  return `MR${String(d.getFullYear()).slice(-2)}${String(d.getMonth()+1).padStart(2,'0')}-${String(Math.floor(Math.random()*10000)).padStart(4,'0')}`;
+function genId(){const d=new Date();return `MR${String(d.getFullYear()).slice(-2)}${String(d.getMonth()+1).padStart(2,'0')}-${String(Math.floor(Math.random()*10000)).padStart(4,'0')}`;}
+function fmtDate(d){return new Date(d).toLocaleDateString('th-TH',{year:'numeric',month:'short',day:'numeric'});}
+function fmtDateTime(d){return new Date(d).toLocaleDateString('th-TH',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});}
+function getCat(id){return CATS.find(c=>c.id===id);}
+function getUrg(id){return URG.find(u=>u.id===id);}
+function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+function stats(){
+  const r=$.requests;
+  return{total:r.length,pending:r.filter(x=>x.status==='pending').length,accepted:r.filter(x=>x.status==='accepted').length,inProgress:r.filter(x=>x.status==='in_progress').length,done:r.filter(x=>x.status==='completed').length};
 }
-function fmtDate(d) {
-  return new Date(d).toLocaleDateString('th-TH',{year:'numeric',month:'short',day:'numeric'});
-}
-function fmtDateTime(d) {
-  return new Date(d).toLocaleDateString('th-TH',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-}
-function getCat(id) { return CATS.find(c => c.id === id); }
-function getUrg(id) { return URG.find(u => u.id === id); }
-function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
-function stats() {
-  const r = $.requests;
-  return {
-    total: r.length,
-    pending: r.filter(x => x.status === 'pending').length,
-    accepted: r.filter(x => x.status === 'accepted').length,
-    inProgress: r.filter(x => x.status === 'in_progress').length,
-    done: r.filter(x => x.status === 'completed').length
-  };
-}
-function filtered() {
-  return $.requests.filter(r => {
-    if ($.filterStatus !== 'all' && r.status !== $.filterStatus) return false;
-    if ($.filterCat !== 'all' && r.category !== $.filterCat) return false;
-    if ($.search) {
-      const s = $.search.toLowerCase();
-      return [r.title, r.reporter, r.id, r.department, r.location].some(v => (v||'').toLowerCase().includes(s));
-    }
+function filtered(){
+  return $.requests.filter(r=>{
+    if($.filterStatus!=='all'&&r.status!==$.filterStatus)return false;
+    if($.filterCat!=='all'&&r.category!==$.filterCat)return false;
+    if($.search){const s=$.search.toLowerCase();return[r.title,r.reporter,r.id,r.department,r.location].some(v=>(v||'').toLowerCase().includes(s));}
     return true;
   });
 }
 
-// ── TOAST ──
-function showToast(msg, type = 'ok') {
-  $.toast = {msg, type};
-  render();
-  setTimeout(() => { $.toast = null; render(); }, 3000);
-}
+function showToast(msg,type='ok'){$.toast={msg,type};render();setTimeout(()=>{$.toast=null;render();},3000);}
+function nav(view){$.view=view;$.selected=null;$.lightbox=null;window.scrollTo(0,0);render();}
 
-// ── NAVIGATION ──
-function nav(view) {
-  $.view = view;
-  $.selected = null;
-  $.lightbox = null;
-  window.scrollTo(0, 0);
-  render();
-}
-
-// ── IMAGE HANDLING ──
-function resizeImg(file, maxW = 1200) {
-  return new Promise(res => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = new Image();
-      img.onload = () => {
-        const c = document.createElement('canvas');
-        let w = img.width, h = img.height;
-        if (w > maxW) { h = h * (maxW / w); w = maxW; }
-        c.width = w; c.height = h;
-        c.getContext('2d').drawImage(img, 0, 0, w, h);
-        c.toBlob(b => res(b), 'image/jpeg', 0.8);
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+function resizeImg(file,maxW=1200){
+  return new Promise(res=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const c=document.createElement('canvas');let w=img.width,h=img.height;
+        if(w>maxW){h=h*(maxW/w);w=maxW;}
+        c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+        c.toBlob(b=>res(b),'image/jpeg',.8);
+      };img.src=e.target.result;
+    };reader.readAsDataURL(file);
   });
 }
-
-function handleFiles(files) {
-  Array.from(files).forEach(f => {
-    if (!f.type.startsWith('image/')) return;
-    if ($.imgs.length >= 5) { showToast('แนบได้สูงสุด 5 รูป', 'err'); return; }
-    $.imgs.push(f);
-    $.imgPreviews.push(URL.createObjectURL(f));
-  });
-  render();
+function handleFiles(files){
+  Array.from(files).forEach(f=>{
+    if(!f.type.startsWith('image/'))return;
+    if($.imgs.length>=5){showToast('แนบได้สูงสุด 5 รูป','err');return;}
+    $.imgs.push(f);$.imgPreviews.push(URL.createObjectURL(f));
+  });render();
 }
+function removeImg(i){URL.revokeObjectURL($.imgPreviews[i]);$.imgs.splice(i,1);$.imgPreviews.splice(i,1);render();}
 
-function removeImg(i) {
-  URL.revokeObjectURL($.imgPreviews[i]);
-  $.imgs.splice(i, 1);
-  $.imgPreviews.splice(i, 1);
-  render();
-}
-
-async function uploadImages(ticketId) {
-  const urls = [];
-  for (let i = 0; i < $.imgs.length; i++) {
-    $.uploadProg = Math.round((i / $.imgs.length) * 100);
-    render();
-    const resized = await resizeImg($.imgs[i]);
-    const fname = `${ticketId}/${Date.now()}_${i}.jpg`;
-    const { error } = await sb.storage.from('maintenance-images').upload(fname, resized, {contentType: 'image/jpeg'});
-    if (!error) {
-      const { data } = sb.storage.from('maintenance-images').getPublicUrl(fname);
-      if (data?.publicUrl) urls.push(data.publicUrl);
-    }
+async function uploadImages(ticketId){
+  const urls=[];
+  for(let i=0;i<$.imgs.length;i++){
+    $.uploadProg=Math.round((i/$.imgs.length)*100);render();
+    const resized=await resizeImg($.imgs[i]);
+    const fname=`${ticketId}/${Date.now()}_${i}.jpg`;
+    const{error}=await sb.storage.from('maintenance-images').upload(fname,resized,{contentType:'image/jpeg'});
+    if(!error){const{data}=sb.storage.from('maintenance-images').getPublicUrl(fname);if(data?.publicUrl)urls.push(data.publicUrl);}
   }
-  $.uploadProg = 100;
-  render();
-  return urls;
+  $.uploadProg=100;render();return urls;
 }
 
-// ── SUPABASE OPS ──
-async function loadData() {
-  const { data } = await sb.from('maintenance_requests').select('*').order('created_at', {ascending: false});
-  if (data) $.requests = data.map(r => ({
-    ...r,
-    createdAt: r.created_at,
-    updatedAt: r.updated_at,
-    adminNote: r.admin_note || '',
-    history: r.history || [],
-    images: r.images || []
-  }));
+async function loadData(){
+  const{data}=await sb.from('maintenance_requests').select('*').order('created_at',{ascending:false});
+  if(data)$.requests=data.map(r=>({...r,createdAt:r.created_at,updatedAt:r.updated_at,adminNote:r.admin_note||'',history:r.history||[],images:r.images||[]}));
   render();
 }
 
-async function submitForm() {
-  const f = $.form;
-  if (!f.title || !f.category || !f.location || !f.reporter || !f.department) {
-    showToast('กรุณากรอกข้อมูลที่จำเป็นให้ครบ', 'err');
-    return;
-  }
-  $.loading = true;
-  render();
-  const id = genId();
-  const now = new Date().toISOString();
-  const hist = [{status: 'pending', at: now, note: 'แจ้งซ่อมใหม่'}];
-  let imgUrls = [];
-  if ($.imgs.length > 0) imgUrls = await uploadImages(id);
-  const { error } = await sb.from('maintenance_requests').insert({
-    id, title: f.title, category: f.category, urgency: f.urgency,
-    status: 'pending', location: f.location, floor: f.floor,
-    room: f.room, description: f.description, reporter: f.reporter,
-    department: f.department, phone: f.phone, email: f.email,
-    admin_note: '', images: imgUrls, history: hist,
-    created_at: now, updated_at: now
-  });
-  $.loading = false;
-  $.uploadProg = 0;
-  if (error) { showToast('เกิดข้อผิดพลาด กรุณาลองใหม่', 'err'); return; }
-  $.requests.unshift({...f, id, status:'pending', createdAt:now, updatedAt:now, history:hist, adminNote:'', images:imgUrls});
-  $.form = {title:'',category:'',urgency:'low',location:'',floor:'',room:'',description:'',reporter:'',department:'',phone:'',email:''};
-  $.imgs = [];
-  $.imgPreviews.forEach(u => URL.revokeObjectURL(u));
-  $.imgPreviews = [];
-  $.selected = id;
-  $.view = 'success';
-  render();
+async function submitForm(){
+  const f=$.form;
+  if(!f.title||!f.category||!f.location||!f.reporter||!f.department){showToast('กรุณากรอกข้อมูลที่จำเป็นให้ครบ','err');return;}
+  $.loading=true;render();
+  const id=genId();const now=new Date().toISOString();
+  const hist=[{status:'pending',at:now,note:'แจ้งซ่อมใหม่'}];
+  let imgUrls=[];if($.imgs.length>0)imgUrls=await uploadImages(id);
+  const{error}=await sb.from('maintenance_requests').insert({id,title:f.title,category:f.category,urgency:f.urgency,status:'pending',location:f.location,floor:f.floor,room:f.room,description:f.description,reporter:f.reporter,department:f.department,phone:f.phone,email:f.email,admin_note:'',images:imgUrls,history:hist,created_at:now,updated_at:now});
+  $.loading=false;$.uploadProg=0;
+  if(error){showToast('เกิดข้อผิดพลาด กรุณาลองใหม่','err');return;}
+  $.requests.unshift({...f,id,status:'pending',createdAt:now,updatedAt:now,history:hist,adminNote:'',images:imgUrls});
+  $.form={title:'',category:'',urgency:'low',location:'',floor:'',room:'',description:'',reporter:'',department:'',phone:'',email:''};
+  $.imgs=[];$.imgPreviews.forEach(u=>URL.revokeObjectURL(u));$.imgPreviews=[];
+  $.selected=id;$.view='success';render();
 }
 
-async function updateStatus(id, newStatus) {
-  const now = new Date().toISOString();
-  const r = $.requests.find(x => x.id === id);
-  if (!r) return;
-  const newHist = [...(r.history || []), {status: newStatus, at: now, note: SM[newStatus]?.l}];
-  const { error } = await sb.from('maintenance_requests').update({status: newStatus, history: newHist, updated_at: now}).eq('id', id);
-  if (!error) {
-    $.requests = $.requests.map(x => x.id === id ? {...x, status: newStatus, updatedAt: now, history: newHist} : x);
-    showToast('อัปเดตสถานะเรียบร้อย');
-  } else showToast('เกิดข้อผิดพลาด', 'err');
+async function updateStatus(id,newStatus){
+  const now=new Date().toISOString();const r=$.requests.find(x=>x.id===id);if(!r)return;
+  const newHist=[...(r.history||[]),{status:newStatus,at:now,note:SM[newStatus]?.l}];
+  const{error}=await sb.from('maintenance_requests').update({status:newStatus,history:newHist,updated_at:now}).eq('id',id);
+  if(!error){$.requests=$.requests.map(x=>x.id===id?{...x,status:newStatus,updatedAt:now,history:newHist}:x);showToast('อัปเดตสถานะเรียบร้อย');}
+  else showToast('เกิดข้อผิดพลาด','err');
 }
 
-async function saveNote(id, note) {
-  const { error } = await sb.from('maintenance_requests').update({admin_note: note, updated_at: new Date().toISOString()}).eq('id', id);
-  if (!error) {
-    $.requests = $.requests.map(x => x.id === id ? {...x, adminNote: note} : x);
-    showToast('บันทึกหมายเหตุเรียบร้อย');
-  } else showToast('เกิดข้อผิดพลาด', 'err');
+async function saveNote(id,note){
+  const{error}=await sb.from('maintenance_requests').update({admin_note:note,updated_at:new Date().toISOString()}).eq('id',id);
+  if(!error){$.requests=$.requests.map(x=>x.id===id?{...x,adminNote:note}:x);showToast('บันทึกหมายเหตุเรียบร้อย');}
+  else showToast('เกิดข้อผิดพลาด','err');
 }
 
-// ── REALTIME ──
 sb.channel('maintenance_realtime')
-  .on('postgres_changes', {event: '*', schema: 'public', table: 'maintenance_requests'}, payload => {
-    const r = payload.new;
-    const mapped = {...r, createdAt: r.created_at, updatedAt: r.updated_at, adminNote: r.admin_note || '', history: r.history || [], images: r.images || []};
-    if (payload.eventType === 'INSERT' && !$.requests.find(x => x.id === r.id)) {
-      $.requests.unshift(mapped);
-      render();
-    } else if (payload.eventType === 'UPDATE') {
-      $.requests = $.requests.map(x => x.id === r.id ? {...x, ...mapped} : x);
-      render();
-    }
+  .on('postgres_changes',{event:'*',schema:'public',table:'maintenance_requests'},payload=>{
+    const r=payload.new;
+    const mapped={...r,createdAt:r.created_at,updatedAt:r.updated_at,adminNote:r.admin_note||'',history:r.history||[],images:r.images||[]};
+    if(payload.eventType==='INSERT'&&!$.requests.find(x=>x.id===r.id)){$.requests.unshift(mapped);render();}
+    else if(payload.eventType==='UPDATE'){$.requests=$.requests.map(x=>x.id===r.id?{...x,...mapped}:x);render();}
   }).subscribe();
 
-// ── RENDER HELPERS ──
-function renderSidebar(s) {
-  const menuItems = [
-    {id:'home',    icon:'🏠', label:'หน้าหลัก'},
-    {id:'form',    icon:'📝', label:'แจ้งซ่อมใหม่'},
-    {id:'track',   icon:'🔍', label:'ติดตามสถานะ'}
-  ];
-  const adminItems = [
-    {id:'admin_dash', icon:'📊', label:'แดชบอร์ด'},
-    {id:'admin_list', icon:'🛠️', label:`จัดการ`, badge: s.pending}
-  ];
-  const isDetailView = $.view === 'detail';
-  const activeView = $.view;
+// ── SCHEDULE NOTICE COMPONENT ──
+function scheduleNoticeHTML(){
+  return `<div class="schedule-notice">
+    <span class="schedule-notice-icon">📅</span>
+    <div class="schedule-notice-title">การจัดสรรลำดับงานซ่อม</div>
+    <div class="schedule-notice-body">
+      ลำดับการแก้ไขงานจะถูก<strong>จัดสรรให้เหมาะสมในช่วงวัน</strong>
+      <span class="sn-tag sn-tag-sat">🗓 วันเสาร์</span>
+      อย่างไรก็ตาม หากเป็นงานที่มี<strong>ความเสี่ยงสูงและต้องแก้ไขเร่งด่วน</strong>
+      <span class="sn-tag sn-tag-urg">⚡ ฉุกเฉิน</span>
+      อาจดำเนินการได้ใน<strong>วันปกติ</strong>ตามความจำเป็น
+    </div>
+  </div>`;
+}
 
-  return `
-  <div class="sidebar">
+function renderSidebar(s){
+  const menuItems=[{id:'home',icon:'🏠',label:'หน้าหลัก'},{id:'form',icon:'📝',label:'แจ้งซ่อมใหม่'},{id:'track',icon:'🔍',label:'ติดตามสถานะ'}];
+  const adminItems=[{id:'admin_dash',icon:'📊',label:'แดชบอร์ด'},{id:'admin_list',icon:'🛠️',label:'จัดการ',badge:s.pending}];
+  const isDetailView=$.view==='detail';const activeView=$.view;
+  return `<div class="sidebar">
     <div class="sidebar-logo">
       <div class="logo-icon">🔧</div>
-      <div>
-        <div class="logo-text">ระบบแจ้งซ่อม</div>
-        <div class="logo-sub">Maintenance v2</div>
-      </div>
+      <div><div class="logo-text">ระบบแจ้งซ่อม</div><div class="logo-sub">Maintenance v2</div></div>
     </div>
     <div class="nav-section">
       <div class="nav-label">พนักงาน</div>
-      ${menuItems.map(m => `
-        <button class="nav-btn ${(activeView === m.id || (isDetailView && !$.isAdmin && m.id === 'track')) ? 'active' : ''}" onclick="nav('${m.id}')">
-          <span class="nav-icon">${m.icon}</span>${m.label}
-        </button>`).join('')}
+      ${menuItems.map(m=>`<button class="nav-btn ${(activeView===m.id||(isDetailView&&!$.isAdmin&&m.id==='track'))?'active':''}" onclick="nav('${m.id}')"><span class="nav-icon">${m.icon}</span>${m.label}</button>`).join('')}
     </div>
-    ${$.isAdmin ? `
-    <div class="nav-section">
-      <div class="nav-label">ผู้ดูแล</div>
-      ${adminItems.map(m => `
-        <button class="nav-btn ${(activeView === m.id || (isDetailView && $.isAdmin && m.id === 'admin_list')) ? 'active' : ''}" onclick="nav('${m.id}')">
-          <span class="nav-icon">${m.icon}</span>${m.label}
-          ${m.badge > 0 ? `<span class="nav-badge">${m.badge}</span>` : ''}
-        </button>`).join('')}
-    </div>` : ''}
+    ${$.isAdmin?`<div class="nav-section"><div class="nav-label">ผู้ดูแล</div>${adminItems.map(m=>`<button class="nav-btn ${(activeView===m.id||(isDetailView&&$.isAdmin&&m.id==='admin_list'))?'active':''}" onclick="nav('${m.id}')"><span class="nav-icon">${m.icon}</span>${m.label}${m.badge>0?`<span class="nav-badge">${m.badge}</span>`:''}</button>`).join('')}</div>`:''}
     <div class="sidebar-bottom">
       <div class="rt-status"><span class="rt-dot"></span>Realtime connected</div>
-      ${!$.isAdmin
-        ? `<button class="nav-btn" style="color:var(--text3);font-size:12px" onclick="$.showAdminModal=true;render()">🔐 เข้าระบบผู้ดูแล</button>`
-        : `<button class="nav-btn" style="color:var(--text3);font-size:12px" onclick="$.isAdmin=false;$.adminPass='';nav('home')">🚪 ออกจากระบบ</button>`}
+      ${!$.isAdmin?`<button class="nav-btn" style="color:var(--text3);font-size:12px" onclick="$.showAdminModal=true;render()">🔐 เข้าระบบผู้ดูแล</button>`:`<button class="nav-btn" style="color:var(--text3);font-size:12px" onclick="$.isAdmin=false;$.adminPass='';nav('home')">🚪 ออกจากระบบ</button>`}
     </div>
   </div>`;
 }
 
-function renderMobHeader() {
-  const titles = {home:'ระบบแจ้งซ่อม',form:'แจ้งซ่อมใหม่',track:'ติดตามสถานะ',admin_dash:'แดชบอร์ด',admin_list:'จัดการรายการ',detail:'รายละเอียด',success:'แจ้งซ่อมสำเร็จ'};
-  return `
-  <div class="mob-header">
-    <span class="mob-title">🔧 ${titles[$.view] || 'ระบบแจ้งซ่อม'}</span>
-    <button class="mob-admin-btn" onclick="$.showAdminModal=true;render()">${$.isAdmin ? '👤' : '🔐'}</button>
-  </div>`;
+function renderMobHeader(){
+  const titles={home:'ระบบแจ้งซ่อม',form:'แจ้งซ่อมใหม่',track:'ติดตามสถานะ',admin_dash:'แดชบอร์ด',admin_list:'จัดการรายการ',detail:'รายละเอียด',success:'แจ้งซ่อมสำเร็จ'};
+  return `<div class="mob-header"><span class="mob-title">🔧 ${titles[$.view]||'ระบบแจ้งซ่อม'}</span><button class="mob-admin-btn" onclick="$.showAdminModal=true;render()">${$.isAdmin?'👤':'🔐'}</button></div>`;
 }
 
-function renderMobTabs(s) {
-  const tabs = [
-    {id:'home',  icon:'🏠', label:'หน้าหลัก'},
-    {id:'form',  icon:'📝', label:'แจ้งซ่อม'},
-    {id:'track', icon:'🔍', label:'ติดตาม'}
-  ];
-  if ($.isAdmin) {
-    tabs.push({id:'admin_dash', icon:'📊', label:'สรุป'});
-    tabs.push({id:'admin_list', icon:'🛠️', label:'จัดการ', badge: s.pending});
-  }
-  const activeView = $.view;
-  return `
-  <div class="mob-tabs">
-    <div class="mob-tabs-inner">
-      ${tabs.map(t => {
-        const isActive = activeView === t.id
-          || (activeView === 'detail' && !$.isAdmin && t.id === 'track')
-          || (activeView === 'detail' && $.isAdmin && t.id === 'admin_list')
-          || (activeView === 'success' && t.id === 'form');
-        return `<button class="tab-btn ${isActive ? 'active' : ''}" onclick="nav('${t.id}')">
-          <span class="tab-icon">${t.icon}</span>
-          <span>${t.label}</span>
-          ${t.badge > 0 ? `<span class="tab-dot"></span>` : ''}
-        </button>`;
-      }).join('')}
-    </div>
-  </div>`;
+function renderMobTabs(s){
+  const tabs=[{id:'home',icon:'🏠',label:'หน้าหลัก'},{id:'form',icon:'📝',label:'แจ้งซ่อม'},{id:'track',icon:'🔍',label:'ติดตาม'}];
+  if($.isAdmin){tabs.push({id:'admin_dash',icon:'📊',label:'สรุป'});tabs.push({id:'admin_list',icon:'🛠️',label:'จัดการ',badge:s.pending});}
+  const activeView=$.view;
+  return `<div class="mob-tabs"><div class="mob-tabs-inner">${tabs.map(t=>{
+    const isActive=activeView===t.id||(activeView==='detail'&&!$.isAdmin&&t.id==='track')||(activeView==='detail'&&$.isAdmin&&t.id==='admin_list')||(activeView==='success'&&t.id==='form');
+    return `<button class="tab-btn ${isActive?'active':''}" onclick="nav('${t.id}')"><span class="tab-icon">${t.icon}</span><span>${t.label}</span>${t.badge>0?`<span class="tab-dot"></span>`:''}</button>`;
+  }).join('')}</div></div>`;
 }
 
-function renderHome(s) {
+function renderHome(s){
   return `<div class="page au">
     <div class="hero">
       <div class="hero-icon">🔧</div>
@@ -620,45 +547,31 @@ function renderHome(s) {
       <p>แจ้งปัญหา ติดตามสถานะ ได้ทุกที่ทุกเวลา</p>
     </div>
     <div class="action-grid">
-      <button class="action-card" onclick="nav('form')">
-        <span class="ac-icon">📝</span>
-        <span class="ac-title">แจ้งซ่อมใหม่</span>
-        <span class="ac-sub">กรอกข้อมูลแจ้งปัญหา</span>
-      </button>
-      <button class="action-card" onclick="nav('track')">
-        <span class="ac-icon">🔍</span>
-        <span class="ac-title">ติดตามสถานะ</span>
-        <span class="ac-sub">ค้นหา / ดูรายการ</span>
-      </button>
+      <button class="action-card" onclick="nav('form')"><span class="ac-icon">📝</span><span class="ac-title">แจ้งซ่อมใหม่</span><span class="ac-sub">กรอกข้อมูลแจ้งปัญหา</span></button>
+      <button class="action-card" onclick="nav('track')"><span class="ac-icon">🔍</span><span class="ac-title">ติดตามสถานะ</span><span class="ac-sub">ค้นหา / ดูรายการ</span></button>
     </div>
     <div class="stat-grid">
       <div class="stat-card"><div class="stat-num" style="color:var(--amber)">${s.pending}</div><div class="stat-lbl">รอรับเรื่อง</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:var(--accent)">${s.inProgress + s.accepted}</div><div class="stat-lbl">กำลังดำเนินการ</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--accent)">${s.inProgress+s.accepted}</div><div class="stat-lbl">กำลังดำเนินการ</div></div>
       <div class="stat-card"><div class="stat-num" style="color:var(--green)">${s.done}</div><div class="stat-lbl">เสร็จสิ้น</div></div>
     </div>
+    ${scheduleNoticeHTML()}
   </div>`;
 }
 
-function renderForm() {
-  const f = $.form;
-  const canSubmit = f.title && f.category && f.location && f.reporter && f.department && !$.loading;
+function renderForm(){
+  const f=$.form;
+  const canSubmit=f.title&&f.category&&f.location&&f.reporter&&f.department&&!$.loading;
   return `<div class="page au">
     <div class="card">
       <div class="page-header">
         <div class="page-title">📝 แจ้งซ่อมใหม่</div>
         <div class="page-sub">กรอกรายละเอียดเพื่อให้ช่างดำเนินการ</div>
       </div>
-
       <div class="sec-title">ประเภทงาน <span class="f-req">*</span></div>
       <div class="cat-grid">
-        ${CATS.map(c => `
-          <button class="cat-btn ${f.category === c.id ? 'active' : ''}" onclick="$.form.category='${c.id}';render()">
-            <span class="cat-icon">${c.i}</span>
-            <span class="cat-name">${c.l}</span>
-            <span class="cat-desc">${c.d}</span>
-          </button>`).join('')}
+        ${CATS.map(c=>`<button class="cat-btn ${f.category===c.id?'active':''}" onclick="$.form.category='${c.id}';render()"><span class="cat-icon">${c.i}</span><span class="cat-name">${c.l}</span><span class="cat-desc">${c.d}</span></button>`).join('')}
       </div>
-
       <div class="sec-title">ข้อมูลปัญหา <span class="f-req">*</span></div>
       <div style="margin-bottom:10px">
         <label class="f-label">หัวข้อ <span class="f-req">*</span></label>
@@ -669,7 +582,7 @@ function renderForm() {
           <label class="f-label">สถานที่ <span class="f-req">*</span></label>
           <select class="f-input" onchange="$.form.location=this.value;render()">
             <option value="" ${!f.location?'selected':''}>-- เลือกสถานที่ --</option>
-            ${LOCS.map(l => `<option ${f.location===l?'selected':''}>${l}</option>`).join('')}
+            ${LOCS.map(l=>`<option ${f.location===l?'selected':''}>${l}</option>`).join('')}
           </select>
         </div>
         <div>
@@ -685,38 +598,27 @@ function renderForm() {
         <label class="f-label">รายละเอียด</label>
         <textarea class="f-input" oninput="$.form.description=this.value" placeholder="อธิบายอาการ สิ่งที่สังเกตเห็น...">${esc(f.description)}</textarea>
       </div>
-
       <div style="margin-top:14px">
         <label class="f-label">📷 แนบรูปภาพ (ไม่เกิน 5 รูป)</label>
         <input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files);this.value=''">
-        <div class="img-upload-area ${$.imgPreviews.length ? 'has-imgs' : ''}" onclick="document.getElementById('fileInput').click()">
+        <div class="img-upload-area ${$.imgPreviews.length?'has-imgs':''}" onclick="document.getElementById('fileInput').click()">
           <div style="font-size:28px;margin-bottom:6px">📸</div>
           <div style="font-size:13px;color:var(--text2);font-weight:500">กดเพื่อถ่ายรูป หรือเลือกจากอัลบั้ม</div>
           <div style="font-size:11px;color:var(--text3);margin-top:3px">${$.imgPreviews.length}/5 รูป</div>
         </div>
-        ${$.imgPreviews.length ? `
-          <div class="img-preview-grid">
-            ${$.imgPreviews.map((url, i) => `
-              <div class="img-preview">
-                <img src="${url}" alt="">
-                <button class="img-del" onclick="event.stopPropagation();removeImg(${i})">✕</button>
-              </div>`).join('')}
-          </div>` : ''}
-        ${$.uploadProg > 0 && $.uploadProg < 100 ? `
-          <div class="upload-progress"><div class="upload-progress-bar" style="width:${$.uploadProg}%"></div></div>
-          <div style="font-size:11px;color:var(--text3);margin-top:4px;text-align:center">อัปโหลด ${$.uploadProg}%</div>` : ''}
+        ${$.imgPreviews.length?`<div class="img-preview-grid">${$.imgPreviews.map((url,i)=>`<div class="img-preview"><img src="${url}" alt=""><button class="img-del" onclick="event.stopPropagation();removeImg(${i})">✕</button></div>`).join('')}</div>`:''}
+        ${$.uploadProg>0&&$.uploadProg<100?`<div class="upload-progress"><div class="upload-progress-bar" style="width:${$.uploadProg}%"></div></div><div style="font-size:11px;color:var(--text3);margin-top:4px;text-align:center">อัปโหลด ${$.uploadProg}%</div>`:''}
       </div>
-
       <div style="margin-top:14px">
         <label class="f-label">ความเร่งด่วน</label>
         <div class="urg-row">
-          ${URG.map(u => `
-            <button class="urg-btn" style="${f.urgency===u.id ? `background:${u.bg};color:${u.c};border-color:${u.bd};font-weight:700` : ''}" onclick="$.form.urgency='${u.id}';render()">
-              ${u.l}
-            </button>`).join('')}
+          ${URG.map(u=>`<button class="urg-btn" style="${f.urgency===u.id?`background:${u.bg};color:${u.c};border-color:${u.bd};font-weight:700`:''}" onclick="$.form.urgency='${u.id}';render()">${u.l}</button>`).join('')}
+        </div>
+        <div class="form-schedule-note">
+          <span class="form-schedule-note-icon">📅</span>
+          <span>งานทั่วไปจะถูกจัดคิวดำเนินการใน<strong>วันเสาร์</strong> · งานที่เลือก <span class="fsn-urg">ฉุกเฉิน</span> ซึ่งมีความเสี่ยงสูงอาจได้รับการแก้ไขใน<strong>วันปกติ</strong>ตามความเหมาะสม</span>
         </div>
       </div>
-
       <div class="sec-title">ข้อมูลผู้แจ้ง <span class="f-req">*</span></div>
       <div class="form-row">
         <div>
@@ -738,15 +640,14 @@ function renderForm() {
           <input class="f-input" value="${esc(f.email)}" oninput="$.form.email=this.value" placeholder="email@company.com" type="email">
         </div>
       </div>
-
-      <button class="submit-btn" onclick="submitForm()" ${canSubmit ? '' : 'disabled'}>
-        ${$.loading ? '<span class="spinner"></span>กำลังส่ง...' : '📤 ส่งแจ้งซ่อม'}
+      <button class="submit-btn" onclick="submitForm()" ${canSubmit?'':'disabled'}>
+        ${$.loading?'<span class="spinner"></span>กำลังส่ง...':'📤 ส่งแจ้งซ่อม'}
       </button>
     </div>
   </div>`;
 }
 
-function renderSuccess() {
+function renderSuccess(){
   return `<div class="page ap">
     <div class="card success-wrap">
       <div style="font-size:52px">✅</div>
@@ -754,7 +655,7 @@ function renderSuccess() {
       <p style="color:var(--text2);font-size:13px">บันทึกเรียบร้อยแล้ว ทีมช่างจะดำเนินการโดยเร็ว</p>
       <div class="ticket-id-box">
         <div class="ticket-id-label">เลขที่แจ้งซ่อม</div>
-        <div class="ticket-id">${$.selected || ''}</div>
+        <div class="ticket-id">${$.selected||''}</div>
       </div>
       <div style="display:flex;gap:10px;justify-content:center;margin-top:8px">
         <button class="sm-btn" onclick="nav('form')">+ แจ้งเพิ่มเติม</button>
@@ -764,39 +665,31 @@ function renderSuccess() {
   </div>`;
 }
 
-function renderList(isAdmin) {
-  const items = filtered();
-  const s = stats();
+function renderList(isAdmin){
+  const items=filtered();const s=stats();
   return `<div class="page au">
     <div class="page-header">
-      <div class="page-title">${isAdmin ? '🛠️ จัดการรายการ' : '🔍 ติดตามสถานะ'}</div>
-      <div class="page-sub">${isAdmin ? `ทั้งหมด ${$.requests.length} รายการ · รอรับเรื่อง ${s.pending}` : 'ค้นจากเลขที่ ชื่อ หรือสถานที่'}</div>
+      <div class="page-title">${isAdmin?'🛠️ จัดการรายการ':'🔍 ติดตามสถานะ'}</div>
+      <div class="page-sub">${isAdmin?`ทั้งหมด ${$.requests.length} รายการ · รอรับเรื่อง ${s.pending}`:'ค้นจากเลขที่ ชื่อ หรือสถานที่'}</div>
     </div>
     <div class="filter-bar">
       <input class="f-input" value="${esc($.search)}" oninput="$.search=this.value;render()" placeholder="🔍 ค้นหา...">
       <select class="f-input" onchange="$.filterStatus=this.value;render()">
         <option value="all">ทุกสถานะ</option>
-        ${STS.map(s => `<option value="${s.id}" ${$.filterStatus===s.id?'selected':''}>${s.i} ${s.l}</option>`).join('')}
+        ${STS.map(s=>`<option value="${s.id}" ${$.filterStatus===s.id?'selected':''}>${s.i} ${s.l}</option>`).join('')}
       </select>
     </div>
-    ${!items.length ? `
-      <div class="empty">
-        <div class="empty-icon">📭</div>
-        <div class="empty-text">ไม่พบรายการ</div>
-      </div>` :
-      items.map((r, i) => {
-        const c = getCat(r.category);
-        const ss = SM[r.status];
-        const u = getUrg(r.urgency);
-        const hasImg = (r.images || []).length > 0;
+    ${!items.length?`<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">ไม่พบรายการ</div></div>`:
+      items.map((r,i)=>{
+        const c=getCat(r.category);const ss=SM[r.status];const u=getUrg(r.urgency);const hasImg=(r.images||[]).length>0;
         return `<div class="list-item au" style="animation-delay:${i*.03}s" onclick="$.selected='${r.id}';$.view='detail';render()">
-          <div class="list-icon-box">${c?.i || '📋'}</div>
+          <div class="list-icon-box">${c?.i||'📋'}</div>
           <div class="list-info">
-            <div class="list-title">${hasImg ? '📷 ' : ''}${esc(r.title)}</div>
-            <div class="list-meta">${esc(r.id)} · ${esc(r.location)}${isAdmin ? ' · ' + esc(r.department) : ''}</div>
+            <div class="list-title">${hasImg?'📷 ':''}${esc(r.title)}</div>
+            <div class="list-meta">${esc(r.id)} · ${esc(r.location)}${isAdmin?' · '+esc(r.department):''}</div>
           </div>
           <div class="list-right">
-            ${u?.id !== 'low' ? `<span class="pill" style="color:${u.c};background:${u.bg}">${u.l}</span>` : ''}
+            ${u?.id!=='low'?`<span class="pill" style="color:${u.c};background:${u.bg}">${u.l}</span>`:''}
             <span class="pill" style="color:${ss?.c};background:${ss?.bg}">${ss?.i} ${ss?.l}</span>
           </div>
         </div>`;
@@ -804,213 +697,121 @@ function renderList(isAdmin) {
   </div>`;
 }
 
-function renderDetail() {
-  const r = $.requests.find(x => x.id === $.selected);
-  if (!r) return `<div class="page"><p style="color:var(--text3)">ไม่พบรายการ</p></div>`;
-  const c = getCat(r.category);
-  const ss = SM[r.status];
-  const u = getUrg(r.urgency);
-  const imgs = r.images || [];
-  const backView = $.isAdmin ? 'admin_list' : 'track';
+function renderDetail(){
+  const r=$.requests.find(x=>x.id===$.selected);
+  if(!r)return `<div class="page"><p style="color:var(--text3)">ไม่พบรายการ</p></div>`;
+  const c=getCat(r.category);const ss=SM[r.status];const u=getUrg(r.urgency);const imgs=r.images||[];
+  const backView=$.isAdmin?'admin_list':'track';
   return `<div class="page au">
     <button class="back-btn" onclick="nav('${backView}')">← ย้อนกลับ</button>
     <div class="card">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">
-        <span style="font-size:26px">${c?.i || '📋'}</span>
+        <span style="font-size:26px">${c?.i||'📋'}</span>
         <h2 style="font-size:17px;font-weight:700;color:var(--text)">${esc(r.title)}</h2>
       </div>
-      <div style="color:var(--text3);font-size:11px;font-family:'IBM Plex Mono',monospace;margin-bottom:14px">
-        #${r.id} · ${fmtDateTime(r.createdAt)}
-      </div>
+      <div style="color:var(--text3);font-size:11px;font-family:'IBM Plex Mono',monospace;margin-bottom:14px">#${r.id} · ${fmtDateTime(r.createdAt)}</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px">
         <span class="pill" style="color:${u?.c};background:${u?.bg};border:1px solid ${u?.bd}">${u?.l}</span>
         <span class="pill" style="color:${ss?.c};background:${ss?.bg}">${ss?.i} ${ss?.l}</span>
       </div>
-
       <div class="detail-grid">
-        ${[
-          ['สถานที่', `${esc(r.location)}${r.floor ? ' ชั้น '+esc(r.floor) : ''}${r.room ? ' ห้อง '+esc(r.room) : ''}`],
-          ['ประเภท', `${c?.i} ${c?.l}`],
-          ['ผู้แจ้ง', esc(r.reporter)],
-          ['แผนก', esc(r.department)],
-          ['โทร', esc(r.phone) || '-'],
-          ['อีเมล', esc(r.email) || '-']
-        ].map(([l,v]) => `<div><div class="di-label">${l}</div><div class="di-val">${v}</div></div>`).join('')}
+        ${[['สถานที่',`${esc(r.location)}${r.floor?' ชั้น '+esc(r.floor):''}${r.room?' ห้อง '+esc(r.room):''}`],['ประเภท',`${c?.i} ${c?.l}`],['ผู้แจ้ง',esc(r.reporter)],['แผนก',esc(r.department)],['โทร',esc(r.phone)||'-'],['อีเมล',esc(r.email)||'-']].map(([l,v])=>`<div><div class="di-label">${l}</div><div class="di-val">${v}</div></div>`).join('')}
       </div>
-
-      ${r.description ? `
-        <div style="margin-top:18px">
-          <div class="di-label">รายละเอียด</div>
-          <div class="desc-box">${esc(r.description)}</div>
-        </div>` : ''}
-
-      ${imgs.length ? `
-        <div style="margin-top:18px">
-          <div class="di-label">📷 รูปภาพ (${imgs.length})</div>
-          <div class="img-grid">
-            ${imgs.map(url => `
-              <div class="img-thumb" onclick="$.lightbox='${url}';render()">
-                <img src="${url}" alt="รูปภาพ" loading="lazy">
-              </div>`).join('')}
-          </div>
-        </div>` : ''}
-
-      ${r.adminNote && !$.isAdmin ? `
-        <div style="margin-top:18px">
-          <div class="di-label">หมายเหตุจากช่าง</div>
-          <div class="note-box">${esc(r.adminNote)}</div>
-        </div>` : ''}
-
+      ${r.description?`<div style="margin-top:18px"><div class="di-label">รายละเอียด</div><div class="desc-box">${esc(r.description)}</div></div>`:''}
+      ${imgs.length?`<div style="margin-top:18px"><div class="di-label">📷 รูปภาพ (${imgs.length})</div><div class="img-grid">${imgs.map(url=>`<div class="img-thumb" onclick="$.lightbox='${url}';render()"><img src="${url}" alt="รูปภาพ" loading="lazy"></div>`).join('')}</div></div>`:''}
+      ${r.adminNote&&!$.isAdmin?`<div style="margin-top:18px"><div class="di-label">หมายเหตุจากช่าง</div><div class="note-box">${esc(r.adminNote)}</div></div>`:''}
       <div style="margin-top:22px;border-top:1px solid var(--border);padding-top:16px">
         <div class="di-label" style="margin-bottom:12px">ประวัติสถานะ</div>
-        ${(r.history || []).map((hh, i) => {
-          const hs = SM[hh.status];
-          const isLast = i === r.history.length - 1;
+        ${(r.history||[]).map((hh,i)=>{
+          const hs=SM[hh.status];const isLast=i===r.history.length-1;
           return `<div class="hist-line">
             <div style="display:flex;flex-direction:column;align-items:center">
-              <div class="hist-dot" style="background:${hs?.c || 'var(--text3)'}"></div>
-              ${!isLast ? '<div class="hist-connector"></div>' : ''}
+              <div class="hist-dot" style="background:${hs?.c||'var(--text3)'}"></div>
+              ${!isLast?'<div class="hist-connector"></div>':''}
             </div>
-            <div style="padding-bottom:${!isLast ? '4px' : '0'}">
+            <div style="padding-bottom:${!isLast?'4px':'0'}">
               <div style="font-weight:600;font-size:13px;color:${hs?.c}">${hs?.i} ${hs?.l}</div>
               <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace">${fmtDateTime(hh.at)}</div>
             </div>
           </div>`;
         }).join('')}
       </div>
-
-      ${$.isAdmin ? `
+      ${$.isAdmin?`
         <div style="margin-top:22px;border-top:1px solid var(--border);padding-top:16px">
           <div class="di-label" style="margin-bottom:10px">อัปเดตสถานะ</div>
           <div class="status-btns">
-            ${STS.map(st => `
-              <button class="status-btn" style="${r.status===st.id ? `background:${st.bg};color:${st.c};border-color:${st.c};opacity:.6` : ''}"
-                ${r.status===st.id ? 'disabled' : ''} onclick="updateStatus('${r.id}','${st.id}')">
-                ${st.i} ${st.l}
-              </button>`).join('')}
+            ${STS.map(st=>`<button class="status-btn" style="${r.status===st.id?`background:${st.bg};color:${st.c};border-color:${st.c};opacity:.6`:''}" ${r.status===st.id?'disabled':''} onclick="updateStatus('${r.id}','${st.id}')">${st.i} ${st.l}</button>`).join('')}
           </div>
           <div class="di-label" style="margin:16px 0 6px">หมายเหตุช่าง</div>
-          <textarea class="f-input" id="adminNoteInput" style="min-height:70px" placeholder="บันทึกเพิ่มเติม...">${esc(r.adminNote || '')}</textarea>
-          <button class="sm-btn" style="background:var(--accent);color:#fff;border-color:var(--accent);margin-top:8px;width:100%;justify-content:center" onclick="saveNote('${r.id}',document.getElementById('adminNoteInput').value)">
-            💾 บันทึกหมายเหตุ
-          </button>
-        </div>` : ''}
+          <textarea class="f-input" id="adminNoteInput" style="min-height:70px" placeholder="บันทึกเพิ่มเติม...">${esc(r.adminNote||'')}</textarea>
+          <button class="sm-btn" style="background:var(--accent);color:#fff;border-color:var(--accent);margin-top:8px;width:100%;justify-content:center" onclick="saveNote('${r.id}',document.getElementById('adminNoteInput').value)">💾 บันทึกหมายเหตุ</button>
+        </div>`:''}
     </div>
   </div>`;
 }
 
-function renderDash(s) {
+function renderDash(s){
   return `<div class="page au">
-    <div class="page-header">
-      <div class="page-title">📊 แดชบอร์ด</div>
-      <div class="page-sub">ภาพรวมงานซ่อมทั้งหมด</div>
-    </div>
+    <div class="page-header"><div class="page-title">📊 แดชบอร์ด</div><div class="page-sub">ภาพรวมงานซ่อมทั้งหมด</div></div>
     <div class="dash-grid">
-      ${[
-        {l:'ทั้งหมด',     v:s.total,              c:'var(--text)',   i:'📊'},
-        {l:'รอรับเรื่อง', v:s.pending,            c:'var(--amber)', i:'⏳'},
-        {l:'รับเรื่องแล้ว',v:s.accepted,          c:'var(--purple)',i:'📋'},
-        {l:'กำลังซ่อม',   v:s.inProgress,         c:'var(--accent)',i:'🔧'},
-        {l:'เสร็จสิ้น',   v:s.done,               c:'var(--green)', i:'✅'}
-      ].map((d, i) => `
-        <div class="dash-card au" style="animation-delay:${i*.06}s">
-          <span style="font-size:22px">${d.i}</span>
-          <div class="dash-num" style="color:${d.c}">${d.v}</div>
-          <div class="dash-lbl">${d.l}</div>
-        </div>`).join('')}
+      ${[{l:'ทั้งหมด',v:s.total,c:'var(--text)',i:'📊'},{l:'รอรับเรื่อง',v:s.pending,c:'var(--amber)',i:'⏳'},{l:'รับเรื่องแล้ว',v:s.accepted,c:'var(--purple)',i:'📋'},{l:'กำลังซ่อม',v:s.inProgress,c:'var(--accent)',i:'🔧'},{l:'เสร็จสิ้น',v:s.done,c:'var(--green)',i:'✅'}].map((d,i)=>`<div class="dash-card au" style="animation-delay:${i*.06}s"><span style="font-size:22px">${d.i}</span><div class="dash-num" style="color:${d.c}">${d.v}</div><div class="dash-lbl">${d.l}</div></div>`).join('')}
     </div>
     <div class="di-label" style="margin-bottom:12px">รายการตามประเภท</div>
     <div class="cat-sum-grid">
-      ${CATS.map(cat => {
-        const total = $.requests.filter(r => r.category === cat.id).length;
-        const pending = $.requests.filter(r => r.category === cat.id && ['pending','accepted'].includes(r.status)).length;
-        return `<div class="cat-sum-item">
-          <span style="font-size:20px">${cat.i}</span>
-          <span style="font-weight:600;font-size:12px;color:var(--text2)">${cat.l}</span>
-          <span style="font-size:20px;font-weight:700;font-family:'IBM Plex Mono',monospace">${total}</span>
-          ${pending > 0 ? `<span style="font-size:10px;color:var(--amber);font-weight:600">รอ ${pending}</span>` : ''}
-        </div>`;
+      ${CATS.map(cat=>{
+        const total=$.requests.filter(r=>r.category===cat.id).length;
+        const pending=$.requests.filter(r=>r.category===cat.id&&['pending','accepted'].includes(r.status)).length;
+        return `<div class="cat-sum-item"><span style="font-size:20px">${cat.i}</span><span style="font-weight:600;font-size:12px;color:var(--text2)">${cat.l}</span><span style="font-size:20px;font-weight:700;font-family:'IBM Plex Mono',monospace">${total}</span>${pending>0?`<span style="font-size:10px;color:var(--amber);font-weight:600">รอ ${pending}</span>`:''}</div>`;
       }).join('')}
     </div>
   </div>`;
 }
 
-function renderAdminModal() {
-  return `
-  <div class="modal-overlay" onclick="if(event.target===this){$.showAdminModal=false;render()}">
+function renderAdminModal(){
+  return `<div class="modal-overlay" onclick="if(event.target===this){$.showAdminModal=false;render()}">
     <div class="modal-sheet">
-      <div class="modal-title">${$.isAdmin ? '👤 ผู้ดูแลระบบ' : '🔐 เข้าระบบผู้ดูแล'}</div>
-      ${!$.isAdmin ? `
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <input type="password" class="f-input" placeholder="รหัสผ่านผู้ดูแล" value="${esc($.adminPass)}"
-            oninput="$.adminPass=this.value"
-            onkeydown="if(event.key==='Enter')tryAdminLogin()">
-          <button class="submit-btn" style="margin-top:0" onclick="tryAdminLogin()">เข้าสู่ระบบ</button>
-          <div style="font-size:11px;color:var(--text3);text-align:center;font-family:'IBM Plex Mono',monospace">รหัสเริ่มต้น: admin1234</div>
-        </div>` : `
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div style="font-size:13px;color:var(--text2);display:flex;align-items:center;gap:8px">
-            <span class="rt-dot"></span>เชื่อมต่อ Realtime แล้ว
-          </div>
-          <button class="submit-btn" style="margin-top:0;background:var(--red)" onclick="$.isAdmin=false;$.adminPass='';$.showAdminModal=false;nav('home')">
-            🚪 ออกจากระบบ
-          </button>
-        </div>`}
+      <div class="modal-title">${$.isAdmin?'👤 ผู้ดูแลระบบ':'🔐 เข้าระบบผู้ดูแล'}</div>
+      ${!$.isAdmin?`<div style="display:flex;flex-direction:column;gap:10px">
+        <input type="password" class="f-input" placeholder="รหัสผ่านผู้ดูแล" value="${esc($.adminPass)}" oninput="$.adminPass=this.value" onkeydown="if(event.key==='Enter')tryAdminLogin()">
+        <button class="submit-btn" style="margin-top:0" onclick="tryAdminLogin()">เข้าสู่ระบบ</button>
+        <div style="font-size:11px;color:var(--text3);text-align:center;font-family:'IBM Plex Mono',monospace">รหัสเริ่มต้น: admin1234</div>
+      </div>`:`<div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:13px;color:var(--text2);display:flex;align-items:center;gap:8px"><span class="rt-dot"></span>เชื่อมต่อ Realtime แล้ว</div>
+        <button class="submit-btn" style="margin-top:0;background:var(--red)" onclick="$.isAdmin=false;$.adminPass='';$.showAdminModal=false;nav('home')">🚪 ออกจากระบบ</button>
+      </div>`}
       <button style="margin-top:12px;width:100%;padding:11px;border:1px solid var(--border);border-radius:var(--radius);background:transparent;color:var(--text2);font-size:13px;cursor:pointer" onclick="$.showAdminModal=false;render()">ปิด</button>
     </div>
   </div>`;
 }
 
-function tryAdminLogin() {
-  if ($.adminPass === ADMIN_PASS) {
-    $.isAdmin = true;
-    $.showAdminModal = false;
-    render();
-  } else {
-    showToast('รหัสไม่ถูกต้อง', 'err');
-  }
+function tryAdminLogin(){
+  if($.adminPass===ADMIN_PASS){$.isAdmin=true;$.showAdminModal=false;render();}
+  else showToast('รหัสไม่ถูกต้อง','err');
 }
 
-// ── MAIN RENDER ──
-function render() {
-  const s = stats();
-  let html = '';
-
-  html += renderSidebar(s);
-  html += `<div class="main">`;
-  html += renderMobHeader();
-
-  if ($.view === 'home')       html += renderHome(s);
-  else if ($.view === 'form')  html += renderForm();
-  else if ($.view === 'success') html += renderSuccess();
-  else if ($.view === 'track') html += renderList(false);
-  else if ($.view === 'admin_list' && $.isAdmin) html += renderList(true);
-  else if ($.view === 'admin_dash' && $.isAdmin) html += renderDash(s);
-  else if ($.view === 'detail') html += renderDetail();
-
-  html += `</div>`;
-  html += renderMobTabs(s);
-  if ($.showAdminModal) html += renderAdminModal();
-
-  if ($.lightbox) html += `
-    <div class="lightbox" onclick="$.lightbox=null;render()">
-      <button class="lightbox-close" onclick="$.lightbox=null;render()">✕</button>
-      <img src="${$.lightbox}" alt="รูปเต็ม">
-    </div>`;
-
-  if ($.toast) {
-    const isErr = $.toast.type === 'err';
-    html += `<div class="toast" style="background:${isErr ? 'var(--red-bg)' : 'var(--green-bg)'};color:${isErr ? 'var(--red)' : 'var(--green)'};border-color:${isErr ? 'rgba(240,90,90,.3)' : 'rgba(34,201,142,.3)'}">
-      ${isErr ? '⚠️' : '✅'} ${esc($.toast.msg)}
-    </div>`;
-  }
-
-  document.getElementById('app').innerHTML = html;
+function render(){
+  const s=stats();
+  let html='';
+  html+=renderSidebar(s);
+  html+=`<div class="main">`;
+  html+=renderMobHeader();
+  if($.view==='home')        html+=renderHome(s);
+  else if($.view==='form')   html+=renderForm();
+  else if($.view==='success')html+=renderSuccess();
+  else if($.view==='track')  html+=renderList(false);
+  else if($.view==='admin_list'&&$.isAdmin)html+=renderList(true);
+  else if($.view==='admin_dash'&&$.isAdmin)html+=renderDash(s);
+  else if($.view==='detail') html+=renderDetail();
+  html+=`</div>`;
+  html+=renderMobTabs(s);
+  if($.showAdminModal)html+=renderAdminModal();
+  if($.lightbox)html+=`<div class="lightbox" onclick="$.lightbox=null;render()"><button class="lightbox-close" onclick="$.lightbox=null;render()">✕</button><img src="${$.lightbox}" alt="รูปเต็ม"></div>`;
+  if($.toast){const isErr=$.toast.type==='err';html+=`<div class="toast" style="background:${isErr?'var(--red-bg)':'var(--green-bg)'};color:${isErr?'var(--red)':'var(--green)'};border-color:${isErr?'rgba(240,90,90,.3)':'rgba(34,201,142,.3)'}"> ${isErr?'⚠️':'✅'} ${esc($.toast.msg)}</div>`;}
+  document.getElementById('app').innerHTML=html;
 }
 
-// ── INIT ──
 loadData();
-window.addEventListener('resize', render);
+window.addEventListener('resize',render);
 </script>
 </body>
 </html>
