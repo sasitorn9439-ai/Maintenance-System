@@ -576,8 +576,15 @@ fetch('/api/send-line', {
 }).catch(e => {
   console.log('LINE error:', e);
 });
+  }catch(e){
+    const emsg=e.message||String(e);
+    console.error('submitForm error:',emsg);
+    showToast('Error: '+emsg,'err');
+  }
+  $.loading=false;$.uploadProg=0;render();
+}
 
-async function updateStatus(id,newStatus){
+async function updateStatus
   const now=new Date().toISOString();const r=$.requests.find(x=>x.id===id);if(!r)return;
   const newHist=[...(r.history||[]),{status:newStatus,at:now,note:SM[newStatus]?.l}];
   const{error}=await sb.from('maintenance_requests').update({status:newStatus,history:newHist,updated_at:now}).eq('id',id);
