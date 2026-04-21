@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 
@@ -347,7 +347,10 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.6}
 <script>
 const SUPABASE_URL = 'https://qxokalkgvethzgehmdaz.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF4b2thbGtndmV0aHpnZWhtZGF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxOTc2NDgsImV4cCI6MjA5MDc3MzY0OH0.0bcK4J0JgQufzp38kfyo3oGupQSfsYQ7tKfaCDMlUiU';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+  global: { fetch: (url, opts) => fetch(url, opts) }
+});
 const ADMIN_PASS = 'admin1234';
 
 const CATS = [
@@ -444,16 +447,23 @@ async function uploadImages(ticketId){
   $.uploadProg=100;render();return urls;
 }
 
-async function loadData(){
+async function loadData(retry){
+  if(retry===undefined)retry=3;
   try{
-    const{data,error}=await sb.from('maintenance_requests').select('*').order('created_at',{ascending:false});
-    if(error)throw error;
-    if(data)$.requests=data.map(r=>({...r,createdAt:r.created_at,updatedAt:r.updated_at,adminNote:r.admin_note||'',history:r.history||[],images:r.images||[]}));
+    const res=await sb.from("maintenance_requests").select("*").order("created_at",{ascending:false});
+    if(res.error){
+      const msg=res.error.message||res.error.hint||JSON.stringify(res.error);
+      throw new Error(msg);
+    }
+    if(res.data)$.requests=res.data.map(r=>({...r,createdAt:r.created_at,updatedAt:r.updated_at,adminNote:r.admin_note||"",history:r.history||[],images:r.images||[]}));
+    render();
   }catch(e){
-    console.error('loadData error:',e);
-    showToast('ไม่สามารถโหลดข้อมูลได้ กรุณารีเฟรช','err');
+    var msg=e.message||String(e);
+    console.error("loadData error:",msg);
+    if(retry>0){console.log("Retrying... ("+retry+" left)");setTimeout(function(){loadData(retry-1);},2000);return;}
+    showToast("โหลดข้อมูลไม่ได้: "+msg,"err");
+    render();
   }
-  render();
 }
 
 async function submitForm(){
@@ -466,14 +476,14 @@ async function submitForm(){
     let imgUrls=[];
     if($.imgs.length>0)imgUrls=await uploadImages(id);
     const{error}=await sb.from('maintenance_requests').insert({id,title:f.title,category:f.category,urgency:f.urgency,status:'pending',location:f.location,floor:f.floor,room:f.room,description:f.description,reporter:f.reporter,department:f.department,phone:f.phone,email:f.email,admin_note:'',images:imgUrls,history:hist,created_at:now,updated_at:now});
-    if(error)throw error;
+    if(error){var emsg=error.message||error.hint||JSON.stringify(error);console.error("insert error:",emsg);throw new Error(emsg);}
     $.requests.unshift({...f,id,status:'pending',createdAt:now,updatedAt:now,history:hist,adminNote:'',images:imgUrls});
     $.form={title:'',category:'',urgency:'low',location:'',floor:'',room:'',description:'',reporter:'',department:'',phone:'',email:''};
     $.imgs=[];$.imgPreviews.forEach(u=>URL.revokeObjectURL(u));$.imgPreviews=[];
     $.selected=id;$.view='success';
   }catch(e){
-    console.error('submitForm error:',e);
-    showToast('เกิดข้อผิดพลาด กรุณาลองใหม่','err');
+    var emsg=e.message||e.hint||JSON.stringify(e)||String(e);console.error("submitForm error:",emsg);
+    showToast("Error: "+emsg,"err");
   }
   $.loading=false;$.uploadProg=0;render();
 }
