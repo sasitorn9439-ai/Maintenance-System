@@ -554,8 +554,21 @@ async function submitForm(){
     $.requests.unshift({...f,id,status:'pending',createdAt:now,updatedAt:now,history:hist,adminNote:'',images:imgUrls});
     $.form={title:'',category:'',urgency:'low',location:'',floor:'',room:'',description:'',reporter:'',department:'',phone:'',email:''};
     $.imgs=[];$.imgPreviews.forEach(u=>URL.revokeObjectURL(u));$.imgPreviews=[];
-    $.selected=id;$.view='success';
-  }catch(e){
+$.selected=id;$.view='success';
+
+// LINE Notification
+fetch('/api/send-line', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    id,
+    title: f.title,
+    location: f.location,
+    reporter: f.reporter,
+    department: f.department,
+    urgency: f.urgency
+  }),
+}).catch(() => {});  }catch(e){
     const emsg=e.message||String(e);
     console.error('submitForm error:',emsg);
     showToast('Error: '+emsg,'err');
