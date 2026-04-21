@@ -895,7 +895,7 @@ function renderAdminModal(){
       ${!$.isAdmin?`<div style="display:flex;flex-direction:column;gap:10px">
         <input type="password" class="f-input" placeholder="รหัสผ่านผู้ดูแล" value="${esc($.adminPass)}" oninput="$.adminPass=this.value" onkeydown="if(event.key==='Enter')tryAdminLogin()">
         <button class="submit-btn" style="margin-top:0" onclick="tryAdminLogin()">เข้าสู่ระบบ</button>
-        <div style="font-size:11px;color:var(--text3);text-align:center;font-family:'IBM Plex Mono',monospace">รหัสเริ่มต้น: admin1234</div>
+        <div style="font-size:11px;color:var(--text3);text-align:center;font-family:'IBM Plex Mono',monospace"></div>
       </div>`:`<div style="display:flex;flex-direction:column;gap:10px">
         <div style="font-size:13px;color:var(--text2);display:flex;align-items:center;gap:8px"><span class="rt-dot"></span>เชื่อมต่อ Realtime แล้ว</div>
         <button class="submit-btn" style="margin-top:0;background:var(--red)" onclick="$.isAdmin=false;$.adminPass='';$.showAdminModal=false;nav('home')">🚪 ออกจากระบบ</button>
