@@ -445,8 +445,14 @@ async function uploadImages(ticketId){
 }
 
 async function loadData(){
-  const{data}=await sb.from('maintenance_requests').select('*').order('created_at',{ascending:false});
-  if(data)$.requests=data.map(r=>({...r,createdAt:r.created_at,updatedAt:r.updated_at,adminNote:r.admin_note||'',history:r.history||[],images:r.images||[]}));
+  try{
+    const{data,error}=await sb.from('maintenance_requests').select('*').order('created_at',{ascending:false});
+    if(error)throw error;
+    if(data)$.requests=data.map(r=>({...r,createdAt:r.created_at,updatedAt:r.updated_at,adminNote:r.admin_note||'',history:r.history||[],images:r.images||[]}));
+  }catch(e){
+    console.error('loadData error:',e);
+    showToast('ไม่สามารถโหลดข้อมูลได้ กรุณารีเฟรช','err');
+  }
   render();
 }
 
@@ -454,16 +460,22 @@ async function submitForm(){
   const f=$.form;
   if(!f.title||!f.category||!f.location||!f.reporter||!f.department){showToast('กรุณากรอกข้อมูลที่จำเป็นให้ครบ','err');return;}
   $.loading=true;render();
-  const id=genId();const now=new Date().toISOString();
-  const hist=[{status:'pending',at:now,note:'แจ้งซ่อมใหม่'}];
-  let imgUrls=[];if($.imgs.length>0)imgUrls=await uploadImages(id);
-  const{error}=await sb.from('maintenance_requests').insert({id,title:f.title,category:f.category,urgency:f.urgency,status:'pending',location:f.location,floor:f.floor,room:f.room,description:f.description,reporter:f.reporter,department:f.department,phone:f.phone,email:f.email,admin_note:'',images:imgUrls,history:hist,created_at:now,updated_at:now});
-  $.loading=false;$.uploadProg=0;
-  if(error){showToast('เกิดข้อผิดพลาด กรุณาลองใหม่','err');return;}
-  $.requests.unshift({...f,id,status:'pending',createdAt:now,updatedAt:now,history:hist,adminNote:'',images:imgUrls});
-  $.form={title:'',category:'',urgency:'low',location:'',floor:'',room:'',description:'',reporter:'',department:'',phone:'',email:''};
-  $.imgs=[];$.imgPreviews.forEach(u=>URL.revokeObjectURL(u));$.imgPreviews=[];
-  $.selected=id;$.view='success';render();
+  try{
+    const id=genId();const now=new Date().toISOString();
+    const hist=[{status:'pending',at:now,note:'แจ้งซ่อมใหม่'}];
+    let imgUrls=[];
+    if($.imgs.length>0)imgUrls=await uploadImages(id);
+    const{error}=await sb.from('maintenance_requests').insert({id,title:f.title,category:f.category,urgency:f.urgency,status:'pending',location:f.location,floor:f.floor,room:f.room,description:f.description,reporter:f.reporter,department:f.department,phone:f.phone,email:f.email,admin_note:'',images:imgUrls,history:hist,created_at:now,updated_at:now});
+    if(error)throw error;
+    $.requests.unshift({...f,id,status:'pending',createdAt:now,updatedAt:now,history:hist,adminNote:'',images:imgUrls});
+    $.form={title:'',category:'',urgency:'low',location:'',floor:'',room:'',description:'',reporter:'',department:'',phone:'',email:''};
+    $.imgs=[];$.imgPreviews.forEach(u=>URL.revokeObjectURL(u));$.imgPreviews=[];
+    $.selected=id;$.view='success';
+  }catch(e){
+    console.error('submitForm error:',e);
+    showToast('เกิดข้อผิดพลาด กรุณาลองใหม่','err');
+  }
+  $.loading=false;$.uploadProg=0;render();
 }
 
 async function updateStatus(id,newStatus){
