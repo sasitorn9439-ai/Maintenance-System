@@ -475,15 +475,45 @@ async function submitForm(){
     const hist=[{status:'pending',at:now,note:'แจ้งซ่อมใหม่'}];
     let imgUrls=[];
     if($.imgs.length>0)imgUrls=await uploadImages(id);
-    const{error}=await sb.from('maintenance_requests').insert({id,title:f.title,category:f.category,urgency:f.urgency,status:'pending',location:f.location,floor:f.floor,room:f.room,description:f.description,reporter:f.reporter,department:f.department,phone:f.phone,email:f.email,admin_note:'',images:imgUrls,history:hist,created_at:now,updated_at:now});
-    if(error){var emsg=error.message||error.hint||JSON.stringify(error);console.error("insert error:",emsg);throw new Error(emsg);}
+
+    // Smart insert: auto-remove columns that are missing from schema cache
+    const optionalCols=['images','history','admin_note','floor','room','phone','email','urgency','department','updated_at'];
+    let payload={id,title:f.title,category:f.category,urgency:f.urgency||'low',
+      status:'pending',location:f.location,floor:f.floor||'',room:f.room||'',
+      description:f.description||'',reporter:f.reporter,department:f.department,
+      phone:f.phone||'',email:f.email||'',admin_note:'',
+      images:imgUrls,history:hist,created_at:now,updated_at:now};
+
+    let res=null;let attempts=0;
+    while(attempts<15){
+      res=await sb.from('maintenance_requests').insert(payload);
+      if(!res.error)break;
+      const msg=res.error.message||'';
+      if(!msg.includes('schema cache')&&!msg.includes('column')){break;}
+      // Extract column name from error message
+      const cm=msg.match(/['"` ](\w+)['"` ] column/)||msg.match(/column ['"` ]?(\w+)/);
+      const badCol=cm?cm[1]:null;
+      if(badCol&&payload.hasOwnProperty(badCol)){delete payload[badCol];}
+      else{
+        const toRemove=optionalCols.find(c=>payload.hasOwnProperty(c));
+        if(!toRemove)break;
+        delete payload[toRemove];
+      }
+      attempts++;
+    }
+
+    if(res&&res.error){
+      const emsg=res.error.message||res.error.hint||JSON.stringify(res.error);
+      console.error('insert error:',emsg);throw new Error(emsg);
+    }
     $.requests.unshift({...f,id,status:'pending',createdAt:now,updatedAt:now,history:hist,adminNote:'',images:imgUrls});
     $.form={title:'',category:'',urgency:'low',location:'',floor:'',room:'',description:'',reporter:'',department:'',phone:'',email:''};
     $.imgs=[];$.imgPreviews.forEach(u=>URL.revokeObjectURL(u));$.imgPreviews=[];
     $.selected=id;$.view='success';
   }catch(e){
-    var emsg=e.message||e.hint||JSON.stringify(e)||String(e);console.error("submitForm error:",emsg);
-    showToast("Error: "+emsg,"err");
+    const emsg=e.message||String(e);
+    console.error('submitForm error:',emsg);
+    showToast('Error: '+emsg,'err');
   }
   $.loading=false;$.uploadProg=0;render();
 }
