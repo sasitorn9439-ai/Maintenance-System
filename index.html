@@ -568,13 +568,14 @@ fetch('/api/send-line', {
     department: f.department,
     urgency: f.urgency
   }),
-}).catch(() => {});  }catch(e){
-    const emsg=e.message||String(e);
-    console.error('submitForm error:',emsg);
-    showToast('Error: '+emsg,'err');
-  }
-  $.loading=false;$.uploadProg=0;render();
-}
+}).then(r => {
+  console.log('LINE status:', r.status);
+  return r.text();
+}).then(t => {
+  console.log('LINE response:', t);
+}).catch(e => {
+  console.log('LINE error:', e);
+});
 
 async function updateStatus(id,newStatus){
   const now=new Date().toISOString();const r=$.requests.find(x=>x.id===id);if(!r)return;
