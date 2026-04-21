@@ -312,6 +312,11 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.6}
 .status-btn:hover:not(:disabled){background:var(--surface2)}
 .status-btn:disabled{opacity:.5;cursor:not-allowed}
 
+/* ── LIST IMG STRIP ── */
+.list-imgs{display:flex;gap:5px;margin-top:6px;flex-wrap:nowrap;overflow:hidden}
+.list-img-thumb{width:44px;height:44px;border-radius:7px;object-fit:cover;border:1px solid var(--border);flex-shrink:0;background:var(--bg3)}
+.list-img-more{width:44px;height:44px;border-radius:7px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text3);flex-shrink:0}
+
 /* ── RESPONSIVE ── */
 @media(max-width:767px){
   .sidebar{display:none!important}
@@ -383,11 +388,15 @@ STS.forEach(s => SM[s.id] = s);
 
 const LOCS = ['อาคาร 1','อาคาร 2','อาคาร 3','อาคาร 4','จุดจอดรถ','ส่วนกลาง','โรงอาหาร','ห้องประชุม'];
 
+// ── ADMIN IMG STATE ──
+// adminImgs, adminImgPreviews, adminUploadProg, adminUploading stored in $
+
 const $ = {
   view:'home', requests:[], selected:null, search:'', filterStatus:'all', filterCat:'all',
   isAdmin:false, showAdminModal:false, adminPass:'', loading:false,
   lightbox:null, toast:null, imgs:[], imgPreviews:[], uploadProg:0,
-  form:{title:'',category:'',urgency:'low',location:'',floor:'',room:'',description:'',reporter:'',department:'',phone:'',email:''}
+  form:{title:'',category:'',urgency:'low',location:'',floor:'',room:'',description:'',reporter:'',department:'',phone:'',email:''},
+  adminImgs:[],adminImgPreviews:[],adminUploadProg:0,adminUploading:false
 };
 
 function genId(){const d=new Date();return `MR${String(d.getFullYear()).slice(-2)}${String(d.getMonth()+1).padStart(2,'0')}-${String(Math.floor(Math.random()*10000)).padStart(4,'0')}`;}
@@ -434,6 +443,42 @@ function handleFiles(files){
   });render();
 }
 function removeImg(i){URL.revokeObjectURL($.imgPreviews[i]);$.imgs.splice(i,1);$.imgPreviews.splice(i,1);render();}
+
+function handleAdminFiles(files,id){
+  Array.from(files).forEach(f=>{
+    if(!f.type.startsWith('image/'))return;
+    if(($.adminImgs||[]).length>=5){showToast('แนบได้สูงสุด 5 รูป','err');return;}
+    $.adminImgs.push(f);
+    $.adminImgPreviews.push(URL.createObjectURL(f));
+  });
+  $.selected=id;render();
+}
+function removeAdminImg(i){
+  URL.revokeObjectURL($.adminImgPreviews[i]);
+  $.adminImgs.splice(i,1);$.adminImgPreviews.splice(i,1);render();
+}
+async function uploadAdminImages(id){
+  if(!$.adminImgs.length)return;
+  $.adminUploading=true;$.adminUploadProg=0;render();
+  const r=$.requests.find(x=>x.id===id);
+  const existingImgs=r?[...(r.images||[])]:[];
+  const newUrls=[];
+  for(let i=0;i<$.adminImgs.length;i++){
+    $.adminUploadProg=Math.round((i/$.adminImgs.length)*100);render();
+    const resized=await resizeImg($.adminImgs[i]);
+    const fname=`${id}/after_${Date.now()}_${i}.jpg`;
+    const{error}=await sb.storage.from('maintenance-images').upload(fname,resized,{contentType:'image/jpeg'});
+    if(!error){const{data}=sb.storage.from('maintenance-images').getPublicUrl(fname);if(data?.publicUrl)newUrls.push(data.publicUrl);}
+  }
+  const allImgs=[...existingImgs,...newUrls];
+  const{error}=await sb.from('maintenance_requests').update({images:allImgs,updated_at:new Date().toISOString()}).eq('id',id);
+  if(!error){
+    $.requests=$.requests.map(x=>x.id===id?{...x,images:allImgs}:x);
+    $.adminImgs=[];$.adminImgPreviews.forEach(u=>URL.revokeObjectURL(u));$.adminImgPreviews=[];
+    showToast('อัปโหลดรูปหลังซ่อมเรียบร้อย ✅');
+  }else{showToast('อัปโหลดไม่สำเร็จ','err');}
+  $.adminUploading=false;$.adminUploadProg=0;render();
+}
 
 async function uploadImages(ticketId){
   const urls=[];
@@ -733,17 +778,24 @@ function renderList(isAdmin){
     </div>
     ${!items.length?`<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">ไม่พบรายการ</div></div>`:
       items.map((r,i)=>{
-        const c=getCat(r.category);const ss=SM[r.status];const u=getUrg(r.urgency);const hasImg=(r.images||[]).length>0;
-        return `<div class="list-item au" style="animation-delay:${i*.03}s" onclick="$.selected='${r.id}';$.view='detail';render()">
-          <div class="list-icon-box">${c?.i||'📋'}</div>
-          <div class="list-info">
-            <div class="list-title">${hasImg?'📷 ':''}${esc(r.title)}</div>
-            <div class="list-meta">${esc(r.id)} · ${esc(r.location)}${isAdmin?' · '+esc(r.department):''}</div>
+        const c=getCat(r.category);const ss=SM[r.status];const u=getUrg(r.urgency);
+        const imgs=r.images||[];const showImgs=imgs.slice(0,4);const extra=imgs.length-4;
+        return `<div class="list-item au" style="animation-delay:${i*.03}s;flex-direction:column;align-items:stretch;gap:8px" onclick="$.selected='${r.id}';$.view='detail';render()">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="list-icon-box">${c?.i||'📋'}</div>
+            <div class="list-info">
+              <div class="list-title">${esc(r.title)}</div>
+              <div class="list-meta">${esc(r.id)} · ${esc(r.location)}${isAdmin?' · '+esc(r.department):''}</div>
+            </div>
+            <div class="list-right">
+              ${u?.id!=='low'?`<span class="pill" style="color:${u.c};background:${u.bg}">${u.l}</span>`:''}
+              <span class="pill" style="color:${ss?.c};background:${ss?.bg}">${ss?.i} ${ss?.l}</span>
+            </div>
           </div>
-          <div class="list-right">
-            ${u?.id!=='low'?`<span class="pill" style="color:${u.c};background:${u.bg}">${u.l}</span>`:''}
-            <span class="pill" style="color:${ss?.c};background:${ss?.bg}">${ss?.i} ${ss?.l}</span>
-          </div>
+          ${imgs.length?`<div class="list-imgs">
+            ${showImgs.map(url=>`<img class="list-img-thumb" src="${url}" loading="lazy" alt="">`).join('')}
+            ${extra>0?`<div class="list-img-more">+${extra}</div>`:''}
+          </div>`:''}
         </div>`;
       }).join('')}
   </div>`;
@@ -794,6 +846,23 @@ function renderDetail(){
           <div class="status-btns">
             ${STS.map(st=>`<button class="status-btn" style="${r.status===st.id?`background:${st.bg};color:${st.c};border-color:${st.c};opacity:.6`:''}" ${r.status===st.id?'disabled':''} onclick="updateStatus('${r.id}','${st.id}')">${st.i} ${st.l}</button>`).join('')}
           </div>
+
+          <div class="di-label" style="margin:16px 0 6px">📷 แนบรูปหลังซ่อม</div>
+          <input type="file" id="adminFileInput" accept="image/*" multiple style="display:none" onchange="handleAdminFiles(this.files,'${r.id}');this.value=''">
+          <div class="img-upload-area ${($.adminImgPreviews||[]).length?'has-imgs':''}" onclick="document.getElementById('adminFileInput').click()">
+            <div style="font-size:24px;margin-bottom:4px">📸</div>
+            <div style="font-size:13px;color:var(--text2);font-weight:500">กดเพื่อเพิ่มรูปหลังซ่อม</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">${($.adminImgPreviews||[]).length}/5 รูป</div>
+          </div>
+          ${($.adminImgPreviews||[]).length?`
+            <div class="img-preview-grid">
+              ${($.adminImgPreviews||[]).map((url,i)=>`<div class="img-preview"><img src="${url}" alt=""><button class="img-del" onclick="event.stopPropagation();removeAdminImg(${i})">✕</button></div>`).join('')}
+            </div>` : ''}
+          ${($.adminUploadProg||0)>0&&($.adminUploadProg||0)<100?`<div class="upload-progress"><div class="upload-progress-bar" style="width:${$.adminUploadProg}%"></div></div><div style="font-size:11px;color:var(--text3);margin-top:4px;text-align:center">อัปโหลด ${$.adminUploadProg}%</div>`:''}
+          <button class="sm-btn" style="background:var(--green);color:#fff;border-color:var(--green);margin-top:8px;width:100%;justify-content:center;${!($.adminImgs||[]).length?'opacity:.4;cursor:not-allowed':''}" ${!($.adminImgs||[]).length?'disabled':''} onclick="uploadAdminImages('${r.id}')">
+            ${$.adminUploading?'<span class="spinner" style="border-top-color:#fff"></span> กำลังอัปโหลด...':'📤 อัปโหลดรูปหลังซ่อม'}
+          </button>
+
           <div class="di-label" style="margin:16px 0 6px">หมายเหตุช่าง</div>
           <textarea class="f-input" id="adminNoteInput" style="min-height:70px" placeholder="บันทึกเพิ่มเติม...">${esc(r.adminNote||'')}</textarea>
           <button class="sm-btn" style="background:var(--accent);color:#fff;border-color:var(--accent);margin-top:8px;width:100%;justify-content:center" onclick="saveNote('${r.id}',document.getElementById('adminNoteInput').value)">💾 บันทึกหมายเหตุ</button>
@@ -826,7 +895,7 @@ function renderAdminModal(){
       ${!$.isAdmin?`<div style="display:flex;flex-direction:column;gap:10px">
         <input type="password" class="f-input" placeholder="รหัสผ่านผู้ดูแล" value="${esc($.adminPass)}" oninput="$.adminPass=this.value" onkeydown="if(event.key==='Enter')tryAdminLogin()">
         <button class="submit-btn" style="margin-top:0" onclick="tryAdminLogin()">เข้าสู่ระบบ</button>
-        <div style="font-size:11px;color:var(--text3);text-align:center;font-family:'IBM Plex Mono',monospace"></div>
+        <div style="font-size:11px;color:var(--text3);text-align:center;font-family:'IBM Plex Mono',monospace">รหัสเริ่มต้น: admin1234</div>
       </div>`:`<div style="display:flex;flex-direction:column;gap:10px">
         <div style="font-size:13px;color:var(--text2);display:flex;align-items:center;gap:8px"><span class="rt-dot"></span>เชื่อมต่อ Realtime แล้ว</div>
         <button class="submit-btn" style="margin-top:0;background:var(--red)" onclick="$.isAdmin=false;$.adminPass='';$.showAdminModal=false;nav('home')">🚪 ออกจากระบบ</button>
