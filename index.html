@@ -584,12 +584,18 @@ fetch('/api/send-line', {
   $.loading=false;$.uploadProg=0;render();
 }
 
-async function updateStatus(id, newStatus){
+async function updateStatus(id, newStatus, note){
   const now=new Date().toISOString();const r=$.requests.find(x=>x.id===id);if(!r)return;
-  const newHist=[...(r.history||[]),{status:newStatus,at:now,note:SM[newStatus]?.l}];
+  const noteText=(note&&note.trim())?note.trim():'';
+  const newHist=[...(r.history||[]),{status:newStatus,at:now,note:noteText||SM[newStatus]?.l}];
   const{error}=await sb.from('maintenance_requests').update({status:newStatus,history:newHist,updated_at:now}).eq('id',id);
-  if(!error){$.requests=$.requests.map(x=>x.id===id?{...x,status:newStatus,updatedAt:now,history:newHist}:x);showToast('อัปเดตสถานะเรียบร้อย');}
+  if(!error){
+    $.requests=$.requests.map(x=>x.id===id?{...x,status:newStatus,updatedAt:now,history:newHist}:x);
+    const inp=document.getElementById('statusNoteInput');if(inp)inp.value='';
+    showToast('อัปเดตสถานะเรียบร้อย');
+  }
   else showToast('เกิดข้อผิดพลาด','err');
+}
 }
 
 async function saveNote(id,note){
