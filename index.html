@@ -596,7 +596,6 @@ async function updateStatus(id, newStatus, note){
   }
   else showToast('เกิดข้อผิดพลาด','err');
 }
-}
 
 async function saveNote(id,note){
   const{error}=await sb.from('maintenance_requests').update({admin_note:note,updated_at:new Date().toISOString()}).eq('id',id);
@@ -860,10 +859,11 @@ function renderDetail(){
               <div class="hist-dot" style="background:${hs?.c||'var(--text3)'}"></div>
               ${!isLast?'<div class="hist-connector"></div>':''}
             </div>
-            <div style="padding-bottom:${!isLast?'4px':'0'}">
-              <div style="font-weight:600;font-size:13px;color:${hs?.c}">${hs?.i} ${hs?.l}</div>
-              <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace">${fmtDateTime(hh.at)}</div>
-            </div>
+            <div style="padding-bottom:${!isLast?'12px':'0'};flex:1">
+  <div style="font-weight:600;font-size:13px;color:${hs?.c}">${hs?.i} ${hs?.l}</div>
+  <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace">${fmtDateTime(hh.at)}</div>
+  ${hh.note&&hh.note!==hs?.l?`<div style="font-size:12.5px;color:var(--text2);margin-top:6px;background:var(--bg2);border-left:2px solid ${hs?.c};border-radius:6px;padding:6px 10px;line-height:1.55;white-space:pre-wrap">📝 ${esc(hh.note)}</div>`:''}
+</div>
           </div>`;
         }).join('')}
       </div>
