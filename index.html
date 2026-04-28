@@ -869,10 +869,11 @@ function renderDetail(){
       </div>
       ${$.isAdmin?`
         <div style="margin-top:22px;border-top:1px solid var(--border);padding-top:16px">
-          <div class="di-label" style="margin-bottom:10px">อัปเดตสถานะ</div>
-          <div class="status-btns">
-            ${STS.map(st=>`<button class="status-btn" style="${r.status===st.id?`background:${st.bg};color:${st.c};border-color:${st.c};opacity:.6`:''}" ${r.status===st.id?'disabled':''} onclick="updateStatus('${r.id}','${st.id}')">${st.i} ${st.l}</button>`).join('')}
-          </div>
+         <div class="di-label" style="margin-bottom:10px">อัปเดตสถานะ</div>
+<input class="f-input" id="statusNoteInput" placeholder="หมายเหตุ (ถ้ามี เช่น สั่งอะไหล่, รอช่างเข้าไซต์)" style="margin-bottom:10px;font-size:13px">
+<div class="status-btns">
+  ${STS.map(st=>`<button class="status-btn" style="${r.status===st.id?`background:${st.bg};color:${st.c};border-color:${st.c};opacity:.6`:''}" ${r.status===st.id?'disabled':''} onclick="updateStatus('${r.id}','${st.id}',document.getElementById('statusNoteInput').value)">${st.i} ${st.l}</button>`).join('')}
+</div>
 
           <div class="di-label" style="margin:16px 0 6px">📷 แนบรูปหลังซ่อม</div>
           <input type="file" id="adminFileInput" accept="image/*" multiple style="display:none" onchange="handleAdminFiles(this.files,'${r.id}');this.value=''">
