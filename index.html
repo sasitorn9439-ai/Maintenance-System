@@ -584,7 +584,7 @@ fetch('/api/send-line', {
   $.loading=false;$.uploadProg=0;render();
 }
 
-async function updateStatus
+async function updateStatus(id, newStatus){
   const now=new Date().toISOString();const r=$.requests.find(x=>x.id===id);if(!r)return;
   const newHist=[...(r.history||[]),{status:newStatus,at:now,note:SM[newStatus]?.l}];
   const{error}=await sb.from('maintenance_requests').update({status:newStatus,history:newHist,updated_at:now}).eq('id',id);
