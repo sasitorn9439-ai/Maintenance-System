@@ -566,7 +566,8 @@ fetch('/api/send-line', {
     location: f.location,
     reporter: f.reporter,
     department: f.department,
-    urgency: f.urgency
+    urgency: f.urgency,
+    imageUrl: imgUrls[0] || null,   // ← รูปแรกที่อัปโหลด
   }),
 }).then(r => {
   console.log('LINE status:', r.status);
