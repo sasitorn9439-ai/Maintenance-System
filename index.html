@@ -608,8 +608,8 @@ sb.channel('maintenance_realtime')
   .on('postgres_changes',{event:'*',schema:'public',table:'maintenance_requests'},payload=>{
     const r=payload.new;
     const mapped={...r,createdAt:r.created_at,updatedAt:r.updated_at,adminNote:r.admin_note||'',history:r.history||[],images:r.images||[]};
-    if(payload.eventType==='INSERT'&&!$.requests.find(x=>x.id===r.id)){$.requests.unshift(mapped);render();}
-    else if(payload.eventType==='UPDATE'){$.requests=$.requests.map(x=>x.id===r.id?{...x,...mapped}:x);render();}
+  if(payload.eventType==='INSERT'&&!$.requests.find(x=>x.id===r.id)){$.requests.unshift(mapped);if($.view!=='form')render();}
+else if(payload.eventType==='UPDATE'){$.requests=$.requests.map(x=>x.id===r.id?{...x,...mapped}:x);if($.view!=='form')render();}
   }).subscribe();
 
 // ── SCHEDULE NOTICE COMPONENT ──
