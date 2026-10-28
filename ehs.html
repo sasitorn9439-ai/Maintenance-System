@@ -79,7 +79,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--steel);outline-o
 @media (max-width:480px){.doc{grid-template-columns:auto minmax(0,1fr)}.open{grid-column:1/-1;text-align:center}}
 .posters{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,180px),1fr));gap:12px}
 .poster{background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden;cursor:pointer;padding:0;font:inherit;color:var(--ink);text-align:left;display:grid}
-.poster img,.poster .ph{width:100%;aspect-ratio:3/4;object-fit:cover;background:var(--field);display:grid;place-items:center;font-family:var(--mono);color:var(--muted)}
+.poster img,.poster .ph{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:top;background:var(--field);display:grid;place-items:center;font-family:var(--mono);color:var(--muted)}
 .poster div.t{padding:8px 10px;font-size:.85rem;font-weight:600}
 .empty{text-align:center;color:var(--muted);padding:28px 12px;border:2px dashed var(--line);border-radius:6px}
 .lb{position:fixed;inset:0;background:rgb(0 0 0/.85);display:grid;place-items:center;z-index:20;padding:16px}
@@ -191,6 +191,7 @@ td.m{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowra
       </form>
       <div class="panel">
         <h3>เอกสารทั้งหมด · All documents</h3>
+        <div class="bar"><p class="note" style="text-align:left;flex:1 1 240px" id="thumbNote">PDF ที่อัปโหลดก่อนหน้านี้ยังไม่มีภาพตัวอย่าง กดปุ่มเพื่อสร้างให้ครบ</p><button class="btn sec" type="button" id="thumbAll">สร้างภาพตัวอย่าง PDF</button></div>
         <div class="tbl"><table><thead><tr><th>หมวด</th><th>ชื่อ</th><th>วันที่</th><th>เปิดดู</th><th></th></tr></thead><tbody id="aDocs"></tbody></table></div>
       </div>
     </section>
@@ -258,6 +259,38 @@ const fmt=t=>new Date(t).toLocaleString("th-TH",{dateStyle:"short",timeStyle:"sh
 const dayKey=t=>{const d=new Date(t);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");};
 const msg=(id,t,ok)=>{const m=$(id);m.textContent=t||"";m.className="msg "+(ok?"ok":"err");m.hidden=!t;};
 const errText=e=>(e&&(e.message||e.error_description))||"error";
+
+/* PDF first-page preview (pdf.js loaded only when needed) */
+let pdfjsP=null;
+function loadPdfjs(){
+  if(!pdfjsP) pdfjsP=new Promise((res,rej)=>{const sc=document.createElement("script");
+    sc.src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+    sc.onload=()=>{pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";res(pdfjsLib);};
+    sc.onerror=()=>{pdfjsP=null;rej(new Error("pdf.js load failed"));}; document.head.append(sc);});
+  return pdfjsP;
+}
+async function pdfFirstPage(src,maxW){
+  const lib=await loadPdfjs(); const pdf=await lib.getDocument(src).promise;
+  try{ const page=await pdf.getPage(1); const v1=page.getViewport({scale:1}); const vp=page.getViewport({scale:(maxW||900)/v1.width});
+    const c=document.createElement("canvas"); c.width=Math.round(vp.width); c.height=Math.round(vp.height);
+    const ctx=c.getContext("2d"); ctx.fillStyle="#fff"; ctx.fillRect(0,0,c.width,c.height);
+    await page.render({canvasContext:ctx,viewport:vp}).promise;
+    return await new Promise(r=>c.toBlob(r,"image/jpeg",.82));
+  } finally { pdf.destroy(); }
+}
+const isPdf=d=>/pdf/i.test(d.file_type||"")||/\.pdf$/i.test(d.file_path||"");
+const thumbOf=d=>isImg(d)?docUrl(d):(d.thumb_url||"");
+/* for PDFs without a stored preview: render page 1 in the browser when the card scrolls into view */
+const lazyQ=new IntersectionObserver(es=>es.forEach(en=>{ if(!en.isIntersecting) return; lazyQ.unobserve(en.target);
+  const t=en.target, src=t.dataset.pdf;
+  pdfFirstPage(src,500).then(b=>{ if(!b) return; const i=el("img"); i.alt=""; i.src=URL.createObjectURL(b); t.textContent=""; t.append(i); }).catch(()=>{});
+}),{rootMargin:"200px"});
+function previewInto(box,d,ph){
+  const u=thumbOf(d);
+  if(u){ const i=el("img"); i.src=u; i.alt=""; i.loading="lazy"; box.append(i); return; }
+  box.textContent=ph;
+  if(isPdf(d)&&d.file_url){ box.dataset.pdf=d.file_url; lazyQ.observe(box); }
+}
 
 function log(act,target,title){ if(!emp) return; sb.from("ehs_access_logs").insert({emp,act,target:target||"",title:title||""}).then(()=>{},()=>{}); }
 
@@ -331,7 +364,7 @@ function renderDocs(){
   if(cat==="poster"){
     box.className="posters";
     list.forEach(d=>{const b=el("button","poster");b.type="button";
-      if(isImg(d)){const i=el("img");i.src=docUrl(d);i.alt="";i.loading="lazy";b.append(i);} else b.append(el("div","ph",d.link?"LINK":"PDF"));
+      if(thumbOf(d)){const i=el("img");i.src=thumbOf(d);i.alt="";i.loading="lazy";b.append(i);} else {const ph=el("div","ph");previewInto(ph,d,d.link?"LINK":"PDF");b.append(ph);}
       b.append(el("div","t",d.title||""));
       b.addEventListener("click",()=>{log("view",d.id,d.title); if(isImg(d)){$("#lbImg").src=docUrl(d);$("#lb").hidden=false;} else window.open(docUrl(d),"_blank","noopener");});
       box.append(b);});
@@ -339,7 +372,7 @@ function renderDocs(){
   }
   box.className="docs";
   list.forEach(d=>{const r=el("article","doc"),th=el("div","thumb");
-    if(isImg(d)){const i=el("img");i.src=docUrl(d);i.alt="";i.loading="lazy";th.append(i);} else th.textContent=d.link?"LINK":"PDF";
+    previewInto(th,d,d.link?"LINK":"PDF");
     const mid=el("div"); mid.append(el("h4",null,d.title||""));
     const sub=[d.tag,d.doc_date].filter(Boolean).join(" · "); if(sub) mid.append(el("p",null,sub));
     if(d.description) mid.append(el("p",null,d.description));
@@ -376,8 +409,14 @@ $("#docForm").addEventListener("submit",async e=>{
       const path=row.cat+"/"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+"."+ext;
       const up=await sb.storage.from(BUCKET).upload(path,file,{contentType:file.type||undefined});
       if(up.error) throw up.error;
-      Object.assign(row,{file_path:path,file_url:sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl,file_type:file.type||"",link:null});
-    } else if(link){ Object.assign(row,{link,file_url:null,file_path:null,file_type:null}); }
+      Object.assign(row,{file_path:path,file_url:sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl,file_type:file.type||"",link:null,thumb_url:null});
+      if(/pdf/i.test(file.type)||ext==="pdf"){
+        btn.textContent="กำลังสร้างภาพตัวอย่าง…";
+        try{ const tb=await pdfFirstPage({data:new Uint8Array(await file.arrayBuffer())},900);
+          if(tb){ const tp=path+".thumb.jpg"; const tu=await sb.storage.from(BUCKET).upload(tp,tb,{contentType:"image/jpeg"});
+            if(!tu.error) row.thumb_url=sb.storage.from(BUCKET).getPublicUrl(tp).data.publicUrl; } }catch(e){}
+      }
+    } else if(link){ Object.assign(row,{link,file_url:null,file_path:null,file_type:null,thumb_url:null}); }
     const res=editing?await sb.from("ehs_docs").update(row).eq("id",editing):await sb.from("ehs_docs").insert(row);
     if(res.error) throw res.error;
     msg("#docMsg",(editing?"แก้ไขแล้ว: ":"เพิ่มแล้ว: ")+title,true); resetDocForm(); loadDocs();
@@ -398,10 +437,24 @@ function renderAdminDocs(){
     del.addEventListener("click",async()=>{
       if(!delArm[d.id]){delArm[d.id]=true;renderAdminDocs();setTimeout(()=>{delArm[d.id]=false;renderAdminDocs();},4000);return;}
       const r=await sb.from("ehs_docs").delete().eq("id",d.id);
-      if(!r.error&&d.file_path) sb.storage.from(BUCKET).remove([d.file_path]).then(()=>{},()=>{});
+      if(!r.error&&d.file_path) sb.storage.from(BUCKET).remove([d.file_path,d.file_path+".thumb.jpg"]).then(()=>{},()=>{});
       loadDocs();});
     act.append(ed,del);tdA.append(act);tr.append(tdO,tdA);tb.append(tr);});
 }
+
+$("#thumbAll").addEventListener("click",async()=>{
+  const todo=docs.filter(d=>isPdf(d)&&d.file_url&&!d.thumb_url), btn=$("#thumbAll");
+  if(!todo.length){$("#thumbNote").textContent="PDF ทุกไฟล์มีภาพตัวอย่างแล้ว · All PDFs have previews.";return;}
+  btn.disabled=true; let ok=0;
+  for(const d of todo){
+    $("#thumbNote").textContent="กำลังสร้าง "+(ok+1)+"/"+todo.length+": "+d.title;
+    try{ const tb=await pdfFirstPage(d.file_url,900); const tp=d.file_path+".thumb.jpg";
+      const up=await sb.storage.from(BUCKET).upload(tp,tb,{contentType:"image/jpeg",upsert:true}); if(up.error) throw up.error;
+      const r=await sb.from("ehs_docs").update({thumb_url:sb.storage.from(BUCKET).getPublicUrl(tp).data.publicUrl}).eq("id",d.id); if(r.error) throw r.error; ok++;
+    }catch(e){ $("#thumbNote").textContent="สร้างไม่สำเร็จ: "+d.title+" ("+errText(e)+")"; }
+  }
+  btn.disabled=false; if(ok===todo.length) $("#thumbNote").textContent="สร้างภาพตัวอย่างแล้ว "+ok+" ไฟล์"; loadDocs();
+});
 
 /* admin logs */
 const ACT={login:"เข้าสู่ระบบ",view:"เปิดเอกสาร",open:"เปิดเมนู"};
