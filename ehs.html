@@ -29,14 +29,88 @@ img{max-width:100%}
 .wrap{max-width:1000px;margin:0 auto;display:grid;gap:24px}
 h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.2}
 .en{color:var(--muted);font-size:.82em;font-weight:500}
-header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:8px 20px;border-bottom:3px solid var(--ink);padding-bottom:12px}
-header h1{font-size:clamp(1.5rem,4vw,2.1rem);font-weight:700}
+header.topbar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px 20px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#1e7a4c,#1f5f8b);color:#fff;display:grid;place-items:center;flex:none;box-shadow:0 6px 16px -8px #1f5f8b}
+.mark svg{width:26px;height:26px}
+header h1{font-size:clamp(1.35rem,3.4vw,1.75rem);font-weight:700;letter-spacing:-.01em}
+.idchip{font-family:var(--mono);font-size:.8rem;font-weight:500;background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:5px 12px}
 .tag{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .who{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:flex-end}
 .link{font:inherit;font-size:.85rem;background:none;border:0;color:var(--steel);cursor:pointer;text-decoration:underline;padding:0}
 .view{display:grid;gap:20px}
 .prompt{text-align:center;font-family:var(--display);font-size:1.15rem;font-weight:600;margin:8px 0 0}
 .note{text-align:center;color:var(--muted);font-size:.85rem;margin:0}
+/* ---------- home ---------- */
+.home{gap:26px}
+.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;align-items:stretch}
+@media (max-width:760px){.hero{display:contents}.hero-main{order:1}.launch{order:2}.rule{order:3}.home-grid{order:4}}
+.hero-main{display:grid;align-content:center;gap:8px;padding:6px 0}
+.hello{margin:0;color:var(--green);font-weight:600;font-size:.95rem}
+.hero h2{font-size:clamp(1.7rem,4.6vw,2.5rem);font-weight:700;line-height:1.15;letter-spacing:-.01em}
+.hero h2 .en{display:block;font-size:.46em;font-weight:500;margin-top:6px;letter-spacing:0}
+.today{margin:0;font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+.rule{position:relative;overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px 16px 24px;display:grid;gap:10px;align-content:center}
+.rule::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:repeating-linear-gradient(-45deg,#f2b705 0 8px,#1b1f22 8px 16px)}
+.rule-row{display:flex;gap:12px;align-items:center}
+.rule-ico{width:46px;height:46px;border-radius:50%;background:#c62f2f;color:#fff;display:grid;place-items:center;flex:none;box-shadow:0 0 0 4px rgb(198 47 47/.18)}
+.rule-ico svg{width:24px;height:24px}
+.rule b{display:block;font-family:var(--display);font-size:1.2rem;line-height:1.25}
+.rule .rule-en{color:var(--muted);font-size:.84rem}
+.rule p{margin:0;font-size:.93rem;line-height:1.5}
+.launch{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:900px){.launch{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.act{--fg:#fff;--soft:rgb(255 255 255/.18);--line2:rgb(255 255 255/.24);position:relative;overflow:hidden;isolation:isolate;display:grid;grid-template-rows:auto 1fr auto;gap:14px;min-height:232px;padding:20px;border-radius:16px;border:0;font:inherit;text-align:left;cursor:pointer;text-decoration:none;color:var(--fg);background:linear-gradient(160deg,var(--c1),var(--c2));box-shadow:0 10px 26px -16px var(--c2);transition:transform .18s ease,box-shadow .18s ease}
+.act::after{content:"";position:absolute;z-index:-1;right:-46px;top:-46px;width:170px;height:170px;border-radius:50%;background:var(--soft);opacity:.55}
+.act:hover{transform:translateY(-4px);box-shadow:0 18px 34px -16px var(--c2)}
+.act:active{transform:translateY(-1px)}
+.act:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.a-fix{--c1:#2a74a8;--c2:#174a6e}
+.a-hz{--c1:#f7c531;--c2:#e0a100;--fg:#1b1f22;--soft:rgb(0 0 0/.08);--line2:rgb(0 0 0/.18)}
+.a-info{--c1:#24935b;--c2:#155c38}
+.a-ptw{--c1:#c4521f;--c2:#8a2f0f}
+.act .ai{width:54px;height:54px;border-radius:14px;background:var(--soft);display:grid;place-items:center}
+.act .ai svg{width:30px;height:30px}
+.act h3{font-size:clamp(1.3rem,2.3vw,1.55rem);font-weight:700;margin:0;line-height:1.2}
+.act .sub{display:block;font-size:.82rem;opacity:.85;margin-top:2px}
+.act p{margin:8px 0 0;font-size:.86rem;line-height:1.45;opacity:.9}
+.act .go{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.82rem;font-weight:600;padding-top:12px;border-top:1px solid var(--line2)}
+.act .go svg{width:20px;height:20px;transition:transform .18s}
+.act:hover .go svg{transform:translateX(3px)}
+@media (max-width:520px){
+  .launch{grid-template-columns:minmax(0,1fr);gap:10px}
+  .act{grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:auto;align-items:center;min-height:0;padding:16px;gap:14px}
+  .act p{display:none} .act .go{border:0;padding:0} .act .go span{display:none}
+}
+.home-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
+@media (max-width:960px){.home-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.home-grid{grid-template-columns:minmax(0,1fr)}}
+.hp{gap:12px;border-radius:14px}
+.hp-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.hp-head h3{font-size:1.05rem}
+.more{font:inherit;font-size:.82rem;font-weight:600;background:none;border:0;color:var(--steel);cursor:pointer;padding:0}
+.more:hover{text-decoration:underline}
+.nums{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.num{border-radius:10px;padding:10px 12px;background:var(--field);border:1px solid var(--line)}
+.num b{display:block;font-family:var(--display);font-size:2rem;line-height:1;font-variant-numeric:tabular-nums}
+.num span{font-size:.78rem;color:var(--muted)}
+.num.ok b{color:var(--green)} .num.warn b{color:var(--warn)}
+.mini{display:grid;gap:6px}
+.mini button{font:inherit;text-align:left;cursor:pointer;display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;background:transparent;border:1px solid var(--line);border-radius:8px;padding:8px;color:var(--ink)}
+.mini button:hover{background:var(--field)}
+.mini img,.mini .mph{width:58px;height:44px;object-fit:cover;border-radius:4px;background:#fff;border:1px solid var(--line)}
+.mini .mph{display:grid;place-items:center;font-family:var(--mono);font-size:.68rem;color:#5d6670;background:#e9ebe8}
+.mini .pc{width:46px;height:36px;border-radius:6px;display:grid;place-items:center;font-family:var(--mono);font-size:.72rem;font-weight:500;color:#fff;background:var(--pc)}
+.mini b{display:block;font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini span.s{display:block;font-size:.75rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hp .none{margin:0;font-size:.85rem;color:var(--muted)}
+.sos{background:linear-gradient(160deg,var(--panel),var(--panel)) padding-box;border-top:4px solid var(--crit)}
+.tels{display:grid;gap:2px}
+.tels a{display:flex;justify-content:space-between;align-items:center;gap:8px;text-decoration:none;color:var(--ink);border-bottom:1px dashed var(--line);padding:6px 0}
+.tels a:last-child{border-bottom:0}
+.tels b{font-family:var(--display);font-size:1.6rem;color:var(--crit);font-variant-numeric:tabular-nums;line-height:1}
+.tels span{font-size:.84rem;text-align:right}
+.sos p{margin:0;font-size:.82rem;color:var(--muted)}
 .tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 @media (max-width:900px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;aspect-ratio:1/1;padding:24px 14px;border-radius:10px;border:0;font:inherit;cursor:pointer;text-decoration:none;text-align:center;transition:transform .15s,box-shadow .15s}
@@ -210,18 +284,18 @@ span.pp{color:var(--muted)} span.pp.on{color:var(--ink);border-color:var(--green
   .ck{padding:3px 6px} .cks{gap:2px}
   @page{size:A4;margin:12mm}
 }
-@media (prefers-reduced-motion:reduce){.tile{transition:none}}
+@media (prefers-reduced-motion:reduce){.tile,.act,.act .go svg{transition:none}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div>
-      <div class="tag">MCAM · EHS</div>
-      <h1>EHS Portal <span class="en">แจ้งซ่อม · แจ้งจุดเสี่ยง · ข้อมูลความปลอดภัย</span></h1>
+  <header class="topbar">
+    <div class="brand">
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.6-3.4 8.3-8 9-4.6-.7-8-4.4-8-9V6z"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8"/></svg></span>
+      <div><div class="tag">MCAM · EHS</div><h1>EHS Portal</h1></div>
     </div>
     <div class="who" id="who" hidden>
-      <span class="tag" id="whoId"></span>
+      <span class="idchip" id="whoId"></span>
       <button class="link" type="button" id="adminLink">Admin</button>
       <button class="link" type="button" id="logout">เปลี่ยนรหัส</button>
     </div>
@@ -236,29 +310,65 @@ span.pp{color:var(--muted)} span.pp.on{color:var(--ink);border-color:var(--green
     <button class="btn" type="submit" id="gateBtn">เข้าสู่ระบบ · Enter</button>
   </form>
 
-  <div class="view" id="home" hidden>
-    <p class="prompt">ต้องการทำอะไร? <span class="en">What would you like to do?</span></p>
-    <section class="tiles" aria-label="เมนูหลัก">
-      <a class="tile t-fix" data-log="repair" data-title="แจ้งซ่อม" href="https://maintenance-system-lac.vercel.app/" target="_blank" rel="noopener">
-        <span class="ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M30 8a10 10 0 0 0-9 14L8 35a4 4 0 0 0 5.7 5.7l13-13A10 10 0 0 0 40 18l-6 6-6-2-2-6 6-6a10 10 0 0 0-2-2z"/></svg></span>
-        <div><h2>แจ้งซ่อม</h2><div class="en">Maintenance Request ↗</div></div>
-        <p>เครื่องจักร อาคาร ไฟฟ้า ประปา ชำรุด</p>
+  <div class="view home" id="home" hidden>
+    <section class="hero">
+      <div class="hero-main">
+        <p class="hello" id="hello">สวัสดีครับ</p>
+        <h2>วันนี้ต้องการทำอะไร?<span class="en">What would you like to do today?</span></h2>
+        <p class="today" id="today"></p>
+      </div>
+      <aside class="rule" aria-label="กฎพิทักษ์ชีวิตประจำวัน">
+        <span class="tag">กฎพิทักษ์ชีวิตประจำวัน · Life-Saving Rule of the Day</span>
+        <div class="rule-row">
+          <span class="rule-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.6-3.4 8.3-8 9-4.6-.7-8-4.4-8-9V6z"/><path d="M12 8v5"/><circle cx="12" cy="16.2" r=".6" fill="currentColor"/></svg></span>
+          <div><b id="ruleTh"></b><span class="rule-en" id="ruleEn"></span></div>
+        </div>
+        <p id="ruleTip"></p>
+      </aside>
+    </section>
+
+    <section class="launch" aria-label="เมนูหลัก">
+      <a class="act a-fix" data-log="repair" data-title="แจ้งซ่อม" href="https://maintenance-system-lac.vercel.app/" target="_blank" rel="noopener">
+        <span class="ai"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M30 8a10 10 0 0 0-9 14L8 35a4 4 0 0 0 5.7 5.7l13-13A10 10 0 0 0 40 18l-6 6-6-2-2-6 6-6a10 10 0 0 0-2-2z"/></svg></span>
+        <div><h3>แจ้งซ่อม</h3><span class="sub">Maintenance Request</span><p>เครื่องจักร อาคาร ไฟฟ้า ประปา ชำรุด แจ้งช่างได้ทันที</p></div>
+        <span class="go"><span>เปิดระบบแจ้งซ่อม</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
       </a>
-      <a class="tile t-hz" data-log="hazard" data-title="แจ้งจุดเสี่ยง" href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=yh8yTLyz9k2x2qfJDD3FRmrEAOTRZOxOnYpRxH-ArPVUN0ZCRzAwRUxCVUxHV1I2NDlYVzRGUDE2Qy4u&amp;origin=QRCode" target="_blank" rel="noopener">
-        <span class="ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round" aria-hidden="true"><path d="M24 6 43 40H5z"/><path d="M24 18v10" stroke-linecap="round"/><circle cx="24" cy="34" r="1.8" fill="currentColor"/></svg></span>
-        <div><h2>แจ้งจุดเสี่ยง</h2><div class="en">Hazard / Near Miss ↗</div></div>
-        <p>สภาพไม่ปลอดภัย การกระทำไม่ปลอดภัย เกือบเกิดอุบัติเหตุ</p>
+      <a class="act a-hz" data-log="hazard" data-title="แจ้งจุดเสี่ยง" href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=yh8yTLyz9k2x2qfJDD3FRmrEAOTRZOxOnYpRxH-ArPVUN0ZCRzAwRUxCVUxHV1I2NDlYVzRGUDE2Qy4u&amp;origin=QRCode" target="_blank" rel="noopener">
+        <span class="ai"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linejoin="round" aria-hidden="true"><path d="M24 6 43 40H5z"/><path d="M24 18v10" stroke-linecap="round"/><circle cx="24" cy="34" r="1.8" fill="currentColor"/></svg></span>
+        <div><h3>แจ้งจุดเสี่ยง</h3><span class="sub">Hazard / Near Miss</span><p>เห็นสภาพหรือการกระทำที่ไม่ปลอดภัย แจ้ง EHS ก่อนเกิดเหตุ</p></div>
+        <span class="go"><span>เปิดแบบฟอร์ม</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
       </a>
-      <button class="tile t-info" type="button" id="goInfo">
-        <span class="ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M24 21v14"/><circle cx="24" cy="13.5" r="2" fill="currentColor" stroke="none"/></svg></span>
-        <div><h2>EHS Information</h2><div class="en">ข้อมูลความปลอดภัย</div></div>
-        <p>SDS · EHS Poster · Lesson Learned · อื่น ๆ</p>
+      <button class="act a-info" type="button" id="goInfo">
+        <span class="ai"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8h17l7 7v25H12z"/><path d="M29 8v7h7M18 24h12M18 30h12M18 36h7"/></svg></span>
+        <div><h3>EHS Information</h3><span class="sub">ข้อมูลความปลอดภัย</span><p>SDS, โปสเตอร์, Lesson Learned และเอกสาร EHS</p></div>
+        <span class="go"><span>ดูเอกสาร</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
       </button>
-      <button class="tile t-ptw" type="button" id="goPtw">
-        <span class="ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="10" y="7" width="28" height="35" rx="3"/><path d="M18 7v-1a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/><path d="M17 25l5 5 9-10"/></svg></span>
-        <div><h2>Permit to Work</h2><div class="en">ขอใบอนุญาตทำงาน</div></div>
-        <p>Hot Work · ที่สูง · LOTO · ที่อับอากาศ · Daily</p>
+      <button class="act a-ptw" type="button" id="goPtw">
+        <span class="ai"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="10" y="7" width="28" height="35" rx="3"/><path d="M18 7v-1a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/><path d="M17 25l5 5 9-10"/></svg></span>
+        <div><h3>Permit to Work</h3><span class="sub">ขอใบอนุญาตทำงาน</span><p>Hot Work, ที่สูง, LOTO, ที่อับอากาศ, Daily Work</p></div>
+        <span class="go"><span>ขอ / ติดตามใบอนุญาต</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
       </button>
+    </section>
+
+    <section class="home-grid">
+      <div class="panel hp">
+        <div class="hp-head"><h3>ใบอนุญาตทำงานวันนี้</h3><button class="more" type="button" id="hpPtwAll">ดูทั้งหมด →</button></div>
+        <div class="nums"><div class="num ok"><b id="hpActive">–</b><span>กำลังทำงาน · Active</span></div><div class="num warn"><b id="hpPending">–</b><span>รออนุมัติ · Pending</span></div></div>
+        <div class="mini" id="hpPtwList"></div>
+      </div>
+      <div class="panel hp">
+        <div class="hp-head"><h3>Lesson Learned ล่าสุด</h3><button class="more" type="button" id="hpLlAll">ดูทั้งหมด →</button></div>
+        <div class="mini" id="hpLlList"><p class="none">กำลังโหลด…</p></div>
+      </div>
+      <div class="panel hp sos">
+        <div class="hp-head"><h3>เบอร์ฉุกเฉิน · Emergency</h3></div>
+        <div class="tels">
+          <a href="tel:1669"><b>1669</b><span>เจ็บป่วยฉุกเฉิน / รถพยาบาล</span></a>
+          <a href="tel:199"><b>199</b><span>ดับเพลิง · Fire</span></a>
+          <a href="tel:191"><b>191</b><span>ตำรวจ · Police</span></a>
+        </div>
+        <p>เกิดเหตุในโรงงาน: แจ้งหัวหน้างานและ EHS ทันที แล้วอพยพไปจุดรวมพล</p>
+      </div>
     </section>
   </div>
 
@@ -456,11 +566,56 @@ function route(){
   if(!gated&&h==="ptw"){ if(ptwWasHidden) ptwShow("home"); loadPermits(); }
   $("#adminView").hidden=gated||h!=="admin"||!isAdmin;
   if(gated) setTimeout(()=>$("#empId").focus(),0);
+  if(!gated&&!$("#home").hidden) loadHome();
   if(!gated&&h==="ehs") loadDocs();
   if(!gated&&h==="admin"&&isAdmin){ loadDocs(); loadLogs(); loadEmps(); }
   if(!gated&&h==="admin"&&!isAdmin) openAdmin();
   window.scrollTo(0,0);
 }
+/* ---------- home ---------- */
+const LSR=[
+  ["ห้ามข้ามระบบป้องกันความปลอดภัย","Bypassing Safety Controls","ห้ามปลด ข้าม หรือปิดอุปกรณ์ป้องกันความปลอดภัยโดยไม่ได้รับอนุญาต ถ้าระบบขัดข้องให้หยุดงานแล้วแจ้งหัวหน้า"],
+  ["ที่อับอากาศ","Confined Space","เข้าที่อับอากาศเมื่อมีใบอนุญาต ตรวจวัดบรรยากาศแล้ว และมีผู้เฝ้าระวังอยู่ด้านนอกตลอดเวลาเท่านั้น"],
+  ["การขับขี่","Driving","คาดเข็มขัดนิรภัย ไม่ใช้โทรศัพท์ขณะขับ และขับตามความเร็วที่กำหนดในพื้นที่โรงงาน"],
+  ["ตัดแยกพลังงาน","Energy Isolation","ก่อนซ่อมเครื่องจักร ตัดแยกพลังงาน ล็อก ติดป้าย และทดสอบว่าไม่มีพลังงานตกค้างทุกครั้ง"],
+  ["งานที่ก่อให้เกิดความร้อน","Hot Work","งานเชื่อม ตัด เจียร ต้องมีใบอนุญาต เคลียร์วัสดุไวไฟ และมีผู้เฝ้าระวังไฟระหว่างและหลังทำงาน"],
+  ["แนวอันตราย","Line of Fire","อยู่นอกแนวของวัตถุที่เคลื่อนที่ ของที่อาจตกหล่น และพลังงานที่อาจปล่อยออกมา"],
+  ["การยกด้วยเครื่องจักร","Safe Mechanical Lifting","วางแผนการยกก่อนทุกครั้ง ใช้อุปกรณ์ที่ผ่านการตรวจ และห้ามอยู่ใต้ของที่กำลังยก"],
+  ["ใบอนุญาตทำงาน","Work Authorisation","เริ่มงานเมื่อได้รับใบอนุญาตแล้วเท่านั้น และทำตามเงื่อนไขในใบอนุญาตตลอดการทำงาน"],
+  ["ทำงานบนที่สูง","Working at Height","ป้องกันการตกทุกครั้ง สวมฮาร์เนสเกี่ยวกับจุดยึดที่มั่นคง และใช้นั่งร้านหรือรถกระเช้าที่ผ่านการตรวจ"]];
+let hpReq=0, ptwOpenAfterLoad=null;
+function renderHomeStatic(){
+  const now=new Date(), h=now.getHours();
+  $("#hello").textContent=(h<12?"อรุณสวัสดิ์":h<17?"สวัสดีตอนบ่าย":"สวัสดีตอนเย็น")+(emp?" · ID "+emp:"");
+  $("#today").textContent=now.toLocaleDateString("th-TH",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  const doy=Math.floor((now-new Date(now.getFullYear(),0,0))/864e5), r=LSR[doy%LSR.length];
+  $("#ruleTh").textContent=r[0]; $("#ruleEn").textContent=r[1]; $("#ruleTip").textContent=r[2];
+}
+async function loadHome(){
+  renderHomeStatic(); const my=++hpReq;
+  const [pr,lr]=await Promise.all([
+    sb.from("ehs_permits").select("id,seq,type,status,area,data,start_at,end_at,created_at").in("status",["approved","closing","pending"]).order("start_at",{ascending:false}).limit(200),
+    sb.from("ehs_docs").select("*").eq("cat","lesson").order("updated_at",{ascending:false}).limit(3)]);
+  if(my!==hpReq) return;
+  const pl=$("#hpPtwList"); pl.textContent="";
+  if(pr.error){ $("#hpActive").textContent="–"; $("#hpPending").textContent="–"; pl.append(el("p","none","ยังไม่ได้เปิดใช้ระบบใบอนุญาต")); }
+  else{ const rows=pr.data||[], act=rows.filter(p=>p.status==="approved"||p.status==="closing");
+    $("#hpActive").textContent=act.length; $("#hpPending").textContent=rows.filter(p=>p.status==="pending").length;
+    if(!act.length) pl.append(el("p","none","ไม่มีงานที่ใช้ใบอนุญาตอยู่ตอนนี้"));
+    act.slice(0,3).forEach(p=>{ const d=PT[p.type]||PT.daily, b=el("button"); b.type="button";
+      const c=el("span","pc",d.code); c.style.setProperty("--pc",d.color);
+      const t=el("span"); t.append(el("b",null,pno(p)+" · "+((p.data||{}).desc||"")),el("span","s",[p.area,(p.data||{}).company].filter(Boolean).join(" · ")));
+      b.append(c,t); b.addEventListener("click",()=>{ ptwOpenAfterLoad=p.id; ptwMode="home"; go("ptw"); }); pl.append(b); }); }
+  const ll=$("#hpLlList"); ll.textContent="";
+  const docsL=lr.error?[]:(lr.data||[]);
+  if(!docsL.length) ll.append(el("p","none","ยังไม่มี Lesson Learned"));
+  docsL.forEach(d=>{ const b=el("button"); b.type="button";
+    if(thumbOf(d)){ const i=el("img"); i.src=thumbOf(d); i.alt=""; i.loading="lazy"; b.append(i); } else b.append(el("span","mph",d.link?"LINK":"PDF"));
+    const t=el("span"); t.append(el("b",null,d.title||""),el("span","s",[d.tag,d.doc_date].filter(Boolean).join(" · ")));
+    b.append(t); b.addEventListener("click",()=>openViewer(d)); ll.append(b); });
+}
+$("#hpPtwAll").addEventListener("click",()=>{ ptwMode="home"; ptwTab="active"; go("ptw"); });
+$("#hpLlAll").addEventListener("click",()=>{ cat="lesson"; go("ehs"); });
 const go=h=>{ if(location.hash.slice(1)===h) route(); else location.hash=h; };
 window.addEventListener("hashchange",route);
 document.querySelectorAll("[data-home]").forEach(b=>b.addEventListener("click",()=>{history.replaceState(null,"",location.pathname);route();}));
@@ -996,6 +1151,7 @@ async function loadPermits(){
   const {data,error}=await sb.from("ehs_permits").select("*").order("created_at",{ascending:false}).limit(1000);
   if(error){ $("#ptwBoard").textContent=""; $("#ptwBoard").append(el("div","empty","โหลดใบอนุญาตไม่ได้: "+errText(error))); return; }
   permits=data||[]; renderPtw();
+  if(ptwOpenAfterLoad){ const id=ptwOpenAfterLoad; ptwOpenAfterLoad=null; if(permits.some(x=>x.id===id)) openPermit(id); }
   if(ptwMode==="detail"&&ptwSel&&permits.some(x=>x.id===ptwSel)) openPermit(ptwSel);
 }
 const hist=(p,act,by,note)=>(p&&p.history||[]).concat({at:new Date().toISOString(),act,by:by||emp,note:note||""});
