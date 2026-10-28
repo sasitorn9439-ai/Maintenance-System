@@ -11,7 +11,7 @@
 :root{
   --bg:#f3f4f2; --panel:#ffffff; --ink:#1b1f22; --muted:#5d6670; --line:#d9ddd8; --field:#f7f8f6;
   --steel:#1f5f8b; --steel-ink:#ffffff; --hz:#f2b705; --hz-ink:#1b1f22; --green:#1e7a4c; --green-ink:#ffffff;
-  --crit:#c62f2f; --crit-bg:#fbe3e3; --ok-bg:#e3f2e8;
+  --crit:#c62f2f; --crit-bg:#fbe3e3; --ok-bg:#e3f2e8; --rust:#9a3412; --rust-ink:#ffffff; --warn:#a15c00; --warn-bg:#fdf0d8; --info:#1f5f8b; --info-bg:#e1edf6;
   --display:"Bai Jamjuree","IBM Plex Sans Thai",system-ui,sans-serif;
   --body:"IBM Plex Sans Thai",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
   color-scheme:light;
@@ -19,7 +19,7 @@
 @media (prefers-color-scheme:dark){:root{
   --bg:#121518; --panel:#1b2024; --ink:#e7eaec; --muted:#9aa4ad; --line:#2c3338; --field:#15191c;
   --steel:#3d8cc4; --steel-ink:#0b1116; --hz:#f5c02a; --hz-ink:#121518; --green:#4fbf85; --green-ink:#0b1612;
-  --crit:#f07070; --crit-bg:#3a1a1a; --ok-bg:#16301f; color-scheme:dark}}
+  --crit:#f07070; --crit-bg:#3a1a1a; --ok-bg:#16301f; --rust:#f0855a; --rust-ink:#1a0d06; --warn:#f0a63a; --warn-bg:#33270f; --info:#6cb0e0; --info-bg:#132a3b; color-scheme:dark}}
 *{box-sizing:border-box}
 html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;
@@ -37,7 +37,8 @@ header h1{font-size:clamp(1.5rem,4vw,2.1rem);font-weight:700}
 .view{display:grid;gap:20px}
 .prompt{text-align:center;font-family:var(--display);font-size:1.15rem;font-weight:600;margin:8px 0 0}
 .note{text-align:center;color:var(--muted);font-size:.85rem;margin:0}
-.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:900px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;aspect-ratio:1/1;padding:24px 14px;border-radius:10px;border:0;font:inherit;cursor:pointer;text-decoration:none;text-align:center;transition:transform .15s,box-shadow .15s}
 .tile:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgb(0 0 0/.15)}
 .tile:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
@@ -46,13 +47,13 @@ header h1{font-size:clamp(1.5rem,4vw,2.1rem);font-weight:700}
 .tile h2{font-size:clamp(1.25rem,3.2vw,1.8rem);font-weight:700}
 .tile .en{color:inherit;opacity:.8}
 .tile p{margin:0;font-size:.85rem;opacity:.85;max-width:26ch}
-.t-fix{background:var(--steel);color:var(--steel-ink)} .t-hz{background:var(--hz);color:var(--hz-ink)} .t-info{background:var(--green);color:var(--green-ink)}
+.t-fix{background:var(--steel);color:var(--steel-ink)} .t-hz{background:var(--hz);color:var(--hz-ink)} .t-info{background:var(--green);color:var(--green-ink)} .t-ptw{background:var(--rust);color:var(--rust-ink)}
 @media (max-width:640px){.tiles{grid-template-columns:1fr;gap:12px}.tile{aspect-ratio:auto;flex-direction:row;justify-content:flex-start;text-align:left;padding:18px}.tile .ico{width:64px;height:64px}.tile p{display:none}}
 .gate,.modal-box{max-width:420px;margin:6vh auto 0;width:100%;background:var(--panel);border:1px solid var(--line);border-top:6px solid var(--green);border-radius:8px;padding:28px 24px;display:grid;gap:16px}
 .gate p{margin:0;color:var(--muted);font-size:.92rem}
 label{display:grid;gap:5px;font-weight:600;font-size:.9rem}
 label small{font-weight:400;color:var(--muted)}
-input[type=text],input[type=password],input[type=date],input[type=url],input[type=search],select,textarea{font:inherit;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:4px;padding:10px 12px;width:100%}
+input[type=text],input[type=password],input[type=date],input[type=url],input[type=search],input[type=tel],input[type=number],input[type=datetime-local],input[type=time],select,textarea{font:inherit;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:4px;padding:10px 12px;width:100%}
 textarea{min-height:80px;resize:vertical}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--steel);outline-offset:1px}
 #empId{font-family:var(--mono);font-size:1.3rem;letter-spacing:.1em;text-align:center}
@@ -105,6 +106,89 @@ td.m{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowra
 .actions .del{color:var(--crit);border-color:var(--crit)}
 .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
 .bar > *{flex:1 1 160px} .bar .btn{flex:0 0 auto}
+/* PTW */
+.ptypes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:10px}
+.ptype{font:inherit;text-align:left;cursor:pointer;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-left:6px solid var(--pc);border-radius:6px;padding:12px 14px;display:grid;gap:2px}
+.ptype .code,.prow .code{font-family:var(--mono);font-size:.75rem;font-weight:500;color:var(--pc)}
+.ptype b{font-family:var(--display);font-size:1rem;line-height:1.3} .ptype span:last-child{font-size:.78rem;color:var(--muted)}
+.ptype:hover{box-shadow:0 4px 14px rgb(0 0 0/.1)} .ptype:focus-visible,.prow:focus-visible{outline:3px solid var(--hz);outline-offset:2px}
+.chip i{font-style:normal;font-family:var(--mono);font-size:.75rem;margin-left:6px;opacity:.75}
+.board{display:grid;gap:8px}
+.prow{font:inherit;text-align:left;cursor:pointer;width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-left:6px solid var(--pc);border-radius:6px;padding:12px 14px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 14px;align-items:center}
+.prow .pmain{display:grid;gap:1px;min-width:0} .prow .pmain b{font-family:var(--display);overflow-wrap:anywhere} .prow .pmain span{font-size:.82rem;color:var(--muted)}
+@media (max-width:560px){.prow{grid-template-columns:auto minmax(0,1fr)}.prow .pst{grid-column:2;justify-self:start}}
+.pst{font-size:.75rem;font-weight:600;padding:3px 10px;border-radius:99px;white-space:nowrap;justify-self:end}
+.pst.warn{background:var(--warn-bg);color:var(--warn)} .pst.ok{background:var(--ok-bg);color:var(--green)} .pst.info{background:var(--info-bg);color:var(--info)} .pst.crit{background:var(--crit-bg);color:var(--crit)} .pst.muted{background:var(--field);color:var(--muted)}
+.ptw-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 20px;align-items:flex-start;border-bottom:4px solid var(--pc);padding-bottom:12px}
+.ptw-head h3{font-size:1.35rem} .pno{display:grid;gap:4px;justify-items:end;text-align:right} .pno b{font-family:var(--mono);font-size:1.15rem}
+.sec{font-family:var(--display);font-size:1rem;margin:6px 0 0;padding:6px 10px;background:var(--field);border-left:4px solid var(--pc,var(--ink));border-radius:2px}
+.sec small{font-family:var(--body);font-weight:400;color:var(--muted);font-size:.8rem}
+.req{color:var(--crit)}
+.cks{display:grid;gap:6px}
+.ck{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:4px;padding:8px 10px}
+.ck-t{display:grid;gap:1px;min-width:0} .ck-t b{font-weight:600;font-size:.92rem} .ck-t span{font-size:.78rem;color:var(--muted)}
+@media (max-width:520px){.ck{grid-template-columns:1fr}}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden;justify-self:start}
+.seg label{display:block;position:relative;font-weight:600;font-size:.85rem}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:block;padding:6px 14px;cursor:pointer;white-space:nowrap}
+.seg label+label span{border-left:1px solid var(--line)}
+.seg input:checked+span{background:var(--ink);color:var(--bg)}
+.seg input:focus-visible+span{outline:2px solid var(--hz);outline-offset:-2px}
+.seg input:disabled+span{opacity:.4;cursor:not-allowed}
+.ans{font-weight:700;font-size:.85rem;padding:3px 10px;border-radius:4px} .ans.y{background:var(--ok-bg);color:var(--green)} .ans.na{background:var(--field);color:var(--muted)}
+.ppe{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,190px),1fr));gap:6px}
+.pp{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--line);border-radius:4px;padding:7px 9px;font-weight:500;font-size:.86rem;line-height:1.3}
+.pp small{display:block;color:var(--muted);font-size:.76rem;font-weight:400} .pp input[type=checkbox]{margin-top:3px}
+span.pp{color:var(--muted)} span.pp.on{color:var(--ink);border-color:var(--green);background:var(--ok-bg)}
+.decl{display:flex;gap:10px;align-items:flex-start;font-weight:500;background:var(--field);border:1px solid var(--line);border-radius:4px;padding:10px 12px}
+.decl input{margin-top:4px;flex:none}
+.grid-in input{width:100%;min-width:90px;font:inherit;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:3px;padding:6px 8px}
+.kvs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:8px}
+.kv{display:grid;gap:2px;border-bottom:1px dashed var(--line);padding-bottom:6px;min-width:0} .kv span{font-size:.8rem;color:var(--muted)} .kv small{font-size:.72rem} .kv b{font-weight:600;overflow-wrap:anywhere;white-space:pre-wrap}
+.signs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px}
+.sign{border:1px solid var(--line);border-radius:4px;padding:12px;display:grid;gap:6px;align-content:space-between}
+.sign p{margin:0;font-size:.8rem;color:var(--muted)} .sign b{font-family:var(--display);font-size:1.05rem;border-bottom:1px solid var(--ink);padding-bottom:2px} .sign span{font-size:.75rem;color:var(--muted)}
+.atts{display:flex;flex-wrap:wrap;gap:8px} .atts a{display:grid;gap:4px;width:110px;text-decoration:none;color:var(--ink);font-size:.75rem;overflow-wrap:anywhere}
+.atts a img,.atts a:not(:has(img))::before{width:110px;height:80px;object-fit:cover;border:1px solid var(--line);border-radius:4px}
+.hist summary{cursor:pointer;font-weight:600} .hist ul{margin:8px 0 0;padding-left:1.2em;font-size:.85rem;color:var(--muted)}
+.msg.warn{background:var(--warn-bg);color:var(--warn)}
+.btn.danger{background:transparent;color:var(--crit);border:1px solid var(--crit)}
+/* camera-only photos */
+.shots{display:flex;flex-wrap:wrap;gap:8px}
+.shot{position:relative;width:104px}
+.shot img{width:104px;height:78px;object-fit:cover;border-radius:4px;border:1px solid var(--line);display:block}
+.shot button{position:absolute;top:4px;right:4px;font:inherit;font-size:.72rem;font-weight:700;background:rgb(0 0 0/.65);color:#fff;border:0;border-radius:3px;padding:2px 7px;cursor:pointer}
+.shot span{display:block;font-family:var(--mono);font-size:.68rem;color:var(--muted);margin-top:2px}
+.cam-btn{display:inline-flex;gap:8px;align-items:center;justify-self:start}
+.cam-btn svg{width:20px;height:20px}
+.cam{position:fixed;inset:0;z-index:30;background:#000;color:#fff;display:grid;grid-template-rows:minmax(0,1fr) auto}
+.cam video{width:100%;height:100%;object-fit:contain;background:#000}
+.cam-clock{position:absolute;left:max(12px,env(safe-area-inset-left,0px));top:max(12px,env(safe-area-inset-top,0px));font-family:var(--mono);font-size:.95rem;background:rgb(0 0 0/.55);padding:4px 10px;border-radius:4px}
+.cam-count{position:absolute;right:max(12px,env(safe-area-inset-right,0px));top:max(12px,env(safe-area-inset-top,0px));font-weight:700;background:rgb(0 0 0/.55);padding:4px 10px;border-radius:4px}
+.cam .msg{position:absolute;left:16px;right:16px;top:30%;text-align:center}
+.cam-bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:16px max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:#000}
+.cam-bar button{font:inherit;font-weight:600;color:#fff;background:transparent;border:1px solid rgb(255 255 255/.4);border-radius:4px;padding:9px 14px;cursor:pointer;justify-self:start}
+.cam-bar #camFlip{justify-self:end}
+.cam-bar #camShoot{width:72px;height:72px;border-radius:50%;border:5px solid #fff;background:#fff;box-shadow:inset 0 0 0 4px #000;padding:0;justify-self:center}
+.cam-bar #camShoot:disabled{opacity:.35;cursor:not-allowed}
+.cam-bar #camShoot:active{transform:scale(.94)}
+.cam-bar button:focus-visible{outline:3px solid var(--hz);outline-offset:2px}
+.cam-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .25s}
+.pgal{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));gap:8px}
+.pgal a{display:grid;gap:3px;text-decoration:none;color:var(--muted);font-size:.75rem;font-family:var(--mono)}
+.pgal img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;border:1px solid var(--line)}
+@media print{
+  .cam{display:none!important}
+  .pgal{grid-template-columns:repeat(3,1fr)}
+  body{background:#fff;color:#000;padding:0;font-size:11px}
+  header,.noprint,#home,#gate,#infoView,#adminView,#ptw-home,.lb,.modal,.hist{display:none!important}
+  .wrap,.view{gap:8px} .panel{border:0;padding:0}
+  .permit{--field:#f2f2f2;--line:#999;--muted:#333}
+  .sec{break-after:avoid} .ck,.sign,.kv{break-inside:avoid}
+  .ck{padding:3px 6px} .cks{gap:2px}
+  @page{size:A4;margin:12mm}
+}
 @media (prefers-reduced-motion:reduce){.tile{transition:none}}
 </style>
 </head>
@@ -149,6 +233,11 @@ td.m{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowra
         <div><h2>EHS Information</h2><div class="en">ข้อมูลความปลอดภัย</div></div>
         <p>SDS · EHS Poster · Lesson Learned · อื่น ๆ</p>
       </button>
+      <button class="tile t-ptw" type="button" id="goPtw">
+        <span class="ico"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="10" y="7" width="28" height="35" rx="3"/><path d="M18 7v-1a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/><path d="M17 25l5 5 9-10"/></svg></span>
+        <div><h2>Permit to Work</h2><div class="en">ขอใบอนุญาตทำงาน</div></div>
+        <p>Hot Work · ที่สูง · LOTO · ที่อับอากาศ · Daily</p>
+      </button>
     </section>
   </div>
 
@@ -158,6 +247,29 @@ td.m{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowra
     <div class="cats" id="cats"></div>
     <input type="search" id="q" placeholder="ค้นหาชื่อเอกสาร / สารเคมี / พื้นที่ · Search" aria-label="ค้นหาเอกสาร">
     <div id="docList" class="docs"><div class="empty">กำลังโหลดเอกสาร… · Loading</div></div>
+  </div>
+
+  <div class="view" id="ptwView" hidden>
+    <div class="view" id="ptw-home">
+      <button class="back" type="button" data-home>← หน้าแรก · Home</button>
+      <h2>Permit to Work <span class="en">ขอใบอนุญาตทำงาน</span></h2>
+      <section class="panel">
+        <h3>ขอใบอนุญาตใหม่ · New request</h3>
+        <div class="ptypes" id="ptwTypes"></div>
+      </section>
+      <section class="view">
+        <div class="tabs" id="ptwTabs">
+          <button class="chip" type="button" data-t="active" aria-pressed="true">กำลังทำงาน<i></i></button>
+          <button class="chip" type="button" data-t="pending" aria-pressed="false">รออนุมัติ<i></i></button>
+          <button class="chip" type="button" data-t="mine" aria-pressed="false">ของฉัน<i></i></button>
+          <button class="chip" type="button" data-t="all" aria-pressed="false">ทั้งหมด<i></i></button>
+        </div>
+        <input type="search" id="ptwQ" placeholder="ค้นหาเลขที่ / บริษัท / พื้นที่ / งาน · Search" aria-label="ค้นหาใบอนุญาต">
+        <div class="board" id="ptwBoard"><div class="empty">กำลังโหลด… · Loading</div></div>
+      </section>
+    </div>
+    <div class="view" id="ptw-form" hidden></div>
+    <div class="view" id="ptw-detail" hidden></div>
   </div>
 
   <div class="view" id="adminView" hidden>
@@ -241,6 +353,19 @@ td.m{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowra
   </form>
 </div>
 
+<div class="cam" id="cam" hidden role="dialog" aria-modal="true" aria-label="กล้องถ่ายรูปหน้างาน">
+  <video id="camVideo" playsinline muted autoplay></video>
+  <div class="cam-flash" id="camFlash"></div>
+  <div class="cam-clock" id="camClock"></div>
+  <div class="cam-count" id="camCount"></div>
+  <p class="msg err" id="camErr" hidden></p>
+  <div class="cam-bar">
+    <button type="button" id="camClose">เสร็จ · Done</button>
+    <button type="button" id="camShoot" aria-label="ถ่ายรูป · Take photo" disabled></button>
+    <button type="button" id="camFlip">สลับกล้อง</button>
+  </div>
+</div>
+
 <div class="lb" id="lb" hidden><button type="button" id="lbClose">ปิด · Close</button><img id="lbImg" alt=""></div>
 
 <script>
@@ -298,8 +423,11 @@ function log(act,target,title){ if(!emp) return; sb.from("ehs_access_logs").inse
 function route(){
   const h=location.hash.slice(1), gated=!emp;
   $("#gate").hidden=!gated; $("#who").hidden=gated;
-  $("#home").hidden=gated||h==="ehs"||(h==="admin"&&isAdmin);
+  $("#home").hidden=gated||h==="ehs"||h==="ptw"||(h==="admin"&&isAdmin);
   $("#infoView").hidden=gated||h!=="ehs";
+  const ptwWasHidden=$("#ptwView").hidden;
+  $("#ptwView").hidden=gated||h!=="ptw";
+  if(!gated&&h==="ptw"){ if(ptwWasHidden) ptwShow("home"); loadPermits(); }
   $("#adminView").hidden=gated||h!=="admin"||!isAdmin;
   if(gated) setTimeout(()=>$("#empId").focus(),0);
   if(!gated&&h==="ehs") loadDocs();
@@ -311,6 +439,7 @@ const go=h=>{ if(location.hash.slice(1)===h) route(); else location.hash=h; };
 window.addEventListener("hashchange",route);
 document.querySelectorAll("[data-home]").forEach(b=>b.addEventListener("click",()=>{history.replaceState(null,"",location.pathname);route();}));
 $("#goInfo").addEventListener("click",()=>{go("ehs");log("open","ehs","EHS Information");});
+$("#goPtw").addEventListener("click",()=>{ptwMode="home";ptwShow("home");go("ptw");log("open","ptw","Permit to Work");});
 document.querySelectorAll("[data-log]").forEach(a=>a.addEventListener("click",()=>log("open",a.dataset.log,a.dataset.title)));
 
 /* gate */
@@ -501,6 +630,463 @@ $("#empForm").addEventListener("submit",async e=>{
   }catch(err){msg("#empMsg","บันทึกไม่สำเร็จ: "+errText(err));}
   finally{btn.disabled=false;}
 });
+
+/* ================= PERMIT TO WORK ================= */
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const AREAS=["Factory 1","Factory 2","Factory 3","Factory 4","Factory 5","Factory 6","Office 1","Office 3","Engineering","Cleanroom","Warehouse / คลังสินค้า","Utility / ห้องเครื่อง","ภายนอกอาคาร / Outdoor","อื่น ๆ / Other"];
+const PPE={earplug:["Ear plug / Ear muffs","ที่อุดหู"],gloves:["Leather gloves","ถุงมือหนัง"],harness:["Safety harness with double lanyard","เข็มขัดนิรภัยกันตกพร้อมเชือกคู่"],coverall:["Coverall or flash suit","ชุดหมี หรือชุดป้องกันไฟ"],
+  shoes:["Safety shoes","รองเท้านิรภัย"],glasses:["Safety glasses","แว่นตานิรภัย"],n95:["Filtering facepiece / N95","หน้ากากป้องกันสารเคมี"],frsheet:["Flame retardant sheet","ผ้ากันสะเก็ดไฟ"],
+  helmet:["Safety helmet","หมวกนิรภัย"],face:["Face shield","กระบังหน้า"],vest:["Safety vest","เสื้อสะท้อนแสง"],ext:["Fire extinguisher","ถังดับเพลิง"],hood:["Flash suit hood","ที่คลุมศีรษะป้องกันไฟวาบ"]};
+const DECL_REQ="ข้าพเจ้าขอรับรองว่า ลูกทีมทุกคนภายใต้การควบคุมของข้าพเจ้า ผ่านการอบรม เข้าใจ JSEA/ใบอนุญาต และจะปฏิบัติตามกฎความปลอดภัยของ MCAM ตลอดเวลา";
+const DECL_APPR="ข้าพเจ้าขอรับรองว่า ได้ตรวจสอบพื้นที่ทำงานแล้ว และมีมาตรการความปลอดภัยครบถ้วน (PPE, การกั้นเขต, การแยกพลังงาน, การตรวจแก๊ส, การเฝ้าระวังไฟ/แผนกู้ภัย) ก่อนเริ่มงาน";
+const i_=(id,th,en)=>({id,th,en});
+const PT={
+  hot:{code:"HW",form:"14-2045-TH Rev.A",en:"Hot Work Permit",th:"ใบขออนุญาตปฏิบัติงานที่มีความร้อนและประกายไฟ",color:"#c2410c",
+    ppe:["earplug","gloves","harness","coverall","shoes","glasses","n95","frsheet","helmet","face","vest","ext"],
+    checks:[{key:"pre",title:"Section II · Pre-Work Safety Checklist · รายการตรวจสอบก่อนปฏิบัติงาน",items:[
+      i_("h1","พื้นที่ปฏิบัติงานปลอดจากวัสดุไวไฟภายในระยะ 11 เมตร","Work area cleared of combustible material within 11 meters."),
+      i_("h2","วัสดุไวไฟที่ไม่สามารถย้ายได้ถูกปกคลุมด้วยผ้าหรือโล่กันไฟ","Combustibles that cannot be moved are protected with fire-resistant shields/covers."),
+      i_("h3","มีการกำจัด/แยกเชื้อเพลิง ก๊าซ ฝุ่นที่ติดไฟได้ออกจากพื้นที่","Flammable liquids, gases, and dust removed or isolated."),
+      i_("h4","มีถังดับเพลิงและอุปกรณ์ดับเพลิงพร้อมใช้งานและตรวจสอบแล้ว","Fire extinguisher and fire-fighting equipment available and inspected."),
+      i_("h5","มีผู้เฝ้าระวังไฟตลอดงาน และอย่างน้อย 30–60 นาทีหลังงานเสร็จ","Fire watch assigned during and minimum 30–60 minutes after hot work."),
+      i_("h6","มีการระบายอากาศเพียงพอ ไม่สะสมก๊าซหรือควัน","Ventilation adequate, no accumulation of fumes/gases."),
+      i_("h7","มีการตรวจสอบก๊าซและออกซิเจน (หากทำงานในพื้นที่อับอากาศ)","Gas/Oxygen level tested (if confined space)."),
+      i_("h8","มีการทำ LOTO หากงานเกี่ยวข้องกับอุปกรณ์ที่ยังมีกำลังงาน","Lockout/Tagout applied where necessary."),
+      i_("h9","พื้นที่ทำงานมีการกั้นเขตและติดป้ายเตือน","Work area barricaded and warning signs posted."),
+      i_("h10","มีแผนฉุกเฉินและเบอร์โทรฉุกเฉินชัดเจน","Emergency plan and contact number communicated.")]},
+     {key:"during",title:"Section III · During Work · ขณะปฏิบัติงาน",items:[
+      i_("d1","มีผู้เฝ้าระวังไฟตลอดการทำงาน","Fire watch present at all times."),
+      i_("d2","ผู้ปฏิบัติงานสวมใส่ PPE ตลอดเวลา","PPE worn at all times."),
+      i_("d3","ควบคุมสะเก็ดไฟ เศษเชื่อม และวัสดุร้อนให้อยู่ในพื้นที่จำกัด","Sparks, slag, and hot materials controlled and contained."),
+      i_("d4","หยุดงานทันทีหากพบสภาพไม่ปลอดภัย","Stop work immediately if unsafe conditions are found."),
+      i_("d5","มีแผนรองรับเหตุฉุกเฉิน","Emergency response plans in place.")]}],
+    close:{title:"Section V · Post-Work Fire Watch · การตรวจสอบหลังเสร็จงาน",items:[
+      i_("c1","ตรวจสอบพื้นที่ไม่พบความร้อนสะสม สะเก็ดไฟ หรือไฟซ่อน","Work area inspected for hot spots, sparks, or hidden fires."),
+      i_("c2","มีผู้เฝ้าระวังไฟต่อเนื่องอย่างน้อย 60 นาทีหลังงานเสร็จ","Fire watch continued for at least 30–60 minutes after work completion."),
+      i_("c3","เก็บเครื่องมือ อุปกรณ์ออกหมด พื้นที่สะอาด และประกาศความปลอดภัย","All equipment/tools removed, area cleaned, and declared safe.")],
+      fields:[["doneTime","เวลาที่เสร็จสิ้นงาน","Completion time of hot work","time"],["fwTime","เวลาตรวจพื้นที่เฝ้าระวังหลังงาน 1 ชั่วโมง","Post-work fire watch inspection time","time"],["fwName","ชื่อผู้เฝ้าระวังไฟ","Fire watch name","text"]]},
+    closeDecl:"ข้าพเจ้าขอรับรองว่างานเสร็จสิ้นอย่างปลอดภัย พื้นที่สะอาดเรียบร้อย ไม่มีความเสี่ยงไฟไหม้หรือความร้อนตกค้าง และใบอนุญาตได้ปิดเรียบร้อยแล้ว"},
+
+  wah:{code:"WAH",form:"14-2044-TH Rev.A",en:"Work at Height Permit",th:"ใบขออนุญาตการปฏิบัติงานบนที่สูง",color:"#1d4ed8",
+    ppe:["earplug","gloves","harness","coverall","shoes","glasses","n95","frsheet","helmet","face","vest","ext"],
+    checks:[{key:"lift",group:true,title:"รถกระเช้า · Man-Lift",items:[
+      i_("l1","มีพนักงานผู้ช่วยด้านล่างตลอดการทำงาน","Workers have assistants throughout the working hours."),
+      i_("l2","สวมใส่อุปกรณ์ป้องกันการตกแบบเต็มตัวทุกครั้ง","Wear full-body fall protection every time."),
+      i_("l3","ผู้ปฏิบัติงานรถกระเช้าผ่านการอบรมการใช้งานรถกระเช้า","Man-lift operators have been trained in man-lift operation."),
+      i_("l4","มีแผนรองรับกรณีเกิดเหตุฉุกเฉิน","Contingency plans for emergencies are in place."),
+      i_("l5","มีเอกสารรับรองการตรวจสอบรถกระเช้า","Man-lift inspection documentation available.")]},
+     {key:"scaf",group:true,title:"นั่งร้าน · Scaffolding",items:[
+      i_("s1","สภาพนั่งร้านมีความสมบูรณ์ แข็งแรง","The condition of the scaffolding is sturdy."),
+      i_("s2","ราวกันตกมีความแข็งแรง","The fall protection railings are strong."),
+      i_("s3","ฐานของนั่งร้านมีความมั่นคงแข็งแรง","The base of the scaffolding is sturdy."),
+      i_("s4","มีแผนรองรับกรณีเกิดเหตุฉุกเฉิน","Emergency response plans are in place."),
+      i_("s5","กรณีเป็นนั่งร้านเคลื่อนที่ ล้อต้องล็อกได้","Mobile scaffolding wheels are securely locked.")]},
+     {key:"ladder",group:true,title:"บันได · Ladder",items:[
+      i_("a1","สภาพบันไดพร้อมใช้งาน","Ladder is ready to use."),
+      i_("a2","มีคนจับตลอดระยะเวลาการทำงาน","A worker holds the ladder throughout the work."),
+      i_("a3","มีตัวล็อกที่ครบถ้วนและสามารถใช้งานได้ปกติ","The ladder is properly secured/locked."),
+      i_("a4","มีแผนรองรับกรณีเกิดเหตุฉุกเฉิน","Contingency plans for emergencies are in place.")]},
+     {key:"cert",group:true,title:"เอกสารรับรองการตรวจจากวิศวกร · Certification",items:[
+      i_("e1","มีใบรับรองการตรวจสอบรถกระเช้า นั่งร้าน และบันได อายุไม่เกิน 1 ปี","Valid inspection certificate for man-lift, scaffolding and ladders (within 1 year).")]}],
+    close:null,
+    closeDecl:"ข้าพเจ้าขอรับรองว่างานเสร็จสิ้นอย่างปลอดภัย พื้นที่สะอาดเรียบร้อย และใบอนุญาตได้ปิดเรียบร้อยแล้ว"},
+
+  loto:{code:"LOTO",form:"14-2043-TH Rev.A",en:"Lock Out and Tag Out Permit",th:"ใบขออนุญาตล็อกและแขวนป้ายการตัดแยกพลังงาน",color:"#b91c1c",
+    ppe:["earplug","gloves","harness","coverall","shoes","face","n95","frsheet","helmet","hood","vest","ext"],
+    checks:[{key:"loto",title:"Section IV · LOTO Inspections · รายการตรวจสอบ LOTO",items:[
+      i_("o1","มีขั้นตอนการตัดแยกและล็อกระบบอย่างชัดเจน","A written lockout procedure is in use."),
+      i_("o2","ดำเนินการแจ้งผู้เกี่ยวข้องอย่างครบถ้วน","All affected employees have been notified."),
+      i_("o3","ตัดแยกพลังงานหลักและพลังงานสำรองครบถ้วน","All energy sources are de-energized and isolated."),
+      i_("o4","มีการทดสอบพลังงานตกค้าง (กดปุ่ม ตรวจเกจ ทดสอบวงจร ฯลฯ)","Zero energy test performed (press start button, check gauges, test circuits)."),
+      i_("o5","อุปกรณ์ตัดแยก ล็อก และป้ายเตือนได้รับการติดตั้งครบถ้วน","Lock, lockout device, and tags were applied."),
+      i_("o6","แรงดันลม ความร้อน สารเคมีได้รับการระบายจากระบบแล้ว และอยู่ในอุณหภูมิที่ปลอดภัย","Equipment has been depressurized, drained and cooled."),
+      i_("o7","มีแผนฉุกเฉินและเบอร์ติดต่อทีมกู้ภัย","Emergency plan and rescue contact available.")]}],
+    close:{title:"Section VII · Return to Service · การปลดอุปกรณ์และจ่ายพลังงานคืนระบบ",items:[
+      i_("r1","อุปกรณ์ตัดแยกพลังงานและป้ายถูกปลดโดยผู้ที่ได้รับมอบหมาย","Lock, lockout device, and tags were removed."),
+      i_("r2","ดำเนินการแจ้งผู้เกี่ยวข้องอย่างครบถ้วน","All affected employees have been informed work is complete."),
+      i_("r3","ดำเนินการคืนพลังงานหลักและพลังงานสำรองครบถ้วน","Equipment has been re-energized."),
+      i_("r4","เจ้าของพื้นที่ทดสอบอุปกรณ์ และยืนยันความปลอดภัยก่อนนำพลังงานกลับมาใช้","Equipment has been inspected for operational readiness.")],
+      fields:[["deIsoBy","ผู้ปลดการตัดแยก","De-isolated by","text"]]},
+    ownerDecl:"ข้าพเจ้าขอรับรองว่า แหล่งพลังงานทั้งหมดที่เกี่ยวข้องกับอุปกรณ์นี้ได้ถูกแยก ล็อก และติดแท็กเรียบร้อยแล้ว มีการตรวจสอบว่าไม่มีพลังงานตกค้าง และปลอดภัยสำหรับการทำงาน",
+    closeDecl:"ข้าพเจ้าขอรับรองว่างานเสร็จสิ้นอย่างปลอดภัย พื้นที่สะอาดเรียบร้อย ตรวจสอบและพิจารณาแล้วว่าสามารถถอดออกได้อย่างปลอดภัย และใบอนุญาตได้ปิดเรียบร้อยแล้ว"},
+
+  cs:{code:"CS",form:"มาตรฐานทั่วไป (ยังไม่มีแบบฟอร์ม MCAM)",en:"Confined Space Entry Permit",th:"ใบอนุญาตทำงานในที่อับอากาศ",color:"#7c3aed",
+    ppe:["earplug","gloves","harness","coverall","shoes","glasses","n95","helmet","face","vest","ext","hood"],
+    checks:[{key:"cs",title:"Pre-Entry Checklist · รายการตรวจสอบก่อนเข้าพื้นที่",items:[
+      i_("q1","ติดป้ายและกั้นเขตทางเข้าที่อับอากาศ","Confined space entrance signed and barricaded."),
+      i_("q2","ตัดแยกท่อ/พลังงานที่เข้าสู่พื้นที่ (LOTO / ใส่ blind)","Lines and energy into the space isolated (LOTO / blinds)."),
+      i_("q3","ระบายอากาศก่อนและระหว่างการทำงาน","Ventilation provided before and during entry."),
+      i_("q4","ตรวจวัดบรรยากาศก่อนเข้า และระหว่างทำงานเป็นระยะ","Atmosphere tested before entry and periodically during work."),
+      i_("q5","มีผู้เฝ้าระวัง (Attendant) อยู่ด้านนอกตลอดเวลา","Attendant stationed outside at all times."),
+      i_("q6","ผู้เข้าทำงาน ผู้ช่วยเหลือ ผู้ควบคุม ผ่านการอบรมที่อับอากาศตามกฎหมาย","Entrants, attendant and supervisor trained per Thai confined space regulation."),
+      i_("q7","มีอุปกรณ์ช่วยเหลือและกู้ภัยพร้อมใช้ (ขาตั้งสามขา รอก เชือก)","Rescue equipment ready (tripod, winch, lifeline)."),
+      i_("q8","มีระบบสื่อสารระหว่างผู้เข้าทำงานกับผู้เฝ้าระวัง","Communication between entrants and attendant established."),
+      i_("q9","มีบันทึกรายชื่อเข้า-ออกพื้นที่","Entry/exit log in place."),
+      i_("q10","มีแผนฉุกเฉินและเบอร์ติดต่อทีมกู้ภัย","Emergency plan and rescue contact available.")]}],
+    close:{title:"Closure · การปิดงานที่อับอากาศ",items:[
+      i_("x1","ผู้ปฏิบัติงานออกจากพื้นที่ครบทุกคนและตรวจนับแล้ว","All entrants have exited and been accounted for."),
+      i_("x2","นำเครื่องมือ อุปกรณ์ออกจากพื้นที่หมด","All tools and equipment removed."),
+      i_("x3","ปิดฝา/ช่องทางเข้า และคืนสภาพพื้นที่","Openings closed and area restored."),
+      i_("x4","ปลดการตัดแยกพลังงานตามขั้นตอน","Isolations removed per procedure.")]},
+    closeDecl:"ข้าพเจ้าขอรับรองว่างานเสร็จสิ้นอย่างปลอดภัย ผู้ปฏิบัติงานออกจากพื้นที่ครบ และใบอนุญาตได้ปิดเรียบร้อยแล้ว"},
+
+  daily:{code:"DW",form:"14-2046-TH Rev.A",en:"Daily Work Permit for External Contractors",th:"ใบอนุญาตปฏิบัติงานประจำวันภายในพื้นที่ของบริษัทภายนอก",color:"#0f766e",
+    ppe:["earplug","gloves","harness","coverall","shoes","glasses","n95","hood","helmet","face","vest","ext"],
+    checks:[{key:"meas",title:"ส่วนที่ 3 · มาตรการความปลอดภัย (ผู้ควบคุมงาน)",items:[
+      i_("m1","มีรายการเครื่องมือ อุปกรณ์ตามที่ขออนุญาต ไม่ชำรุด พร้อมใช้งาน","Tools and equipment listed, undamaged and ready to use."),
+      i_("m2","มีการขออนุญาตปฏิบัติงานตามความเสี่ยงอื่น ๆ ตามข้อกำหนด","Other risk-specific permits obtained as required."),
+      i_("m3","สถานที่ปฏิบัติงานถูกปิดกั้นเพื่อความปลอดภัย","Work area barricaded for safety."),
+      i_("m4","ผู้ปฏิบัติงานผ่านการอบรมกฎระเบียบและพร้อมปฏิบัติงาน","Workers trained on site rules and ready to work.")]}],
+    close:{title:"ส่วนที่ 4 · การเลิกปฏิบัติงานประจำวัน",items:[
+      i_("w1","จัดเก็บวัสดุอุปกรณ์ต่าง ๆ ให้เป็นระเบียบ ไม่มีสิ่งกีดขวางทางสัญจร","Materials stored tidily; no obstruction to walkways."),
+      i_("w2","ถอดปลั๊กอุปกรณ์ไฟฟ้า และ/หรือปิดวาล์วถังบรรจุแรงดัน","Electrical equipment unplugged and/or pressure cylinder valves closed."),
+      i_("w3","แสดงขอบเขตพื้นที่ปฏิบัติงาน และ/หรือป้ายแจ้งเครื่องจักร อุปกรณ์ที่ยังไม่แล้วเสร็จ","Work boundary and/or signs shown for unfinished machinery/equipment."),
+      i_("w4","ไม่ทิ้งอุปกรณ์ไฟฟ้าที่อาจเกิดความร้อน หรือสายไฟไว้ต่อกับแหล่งจ่ายไฟ","No heat-producing equipment or cables left connected to power."),
+      i_("w5","บริเวณทำงานสะอาด ปราศจากคราบน้ำมัน/ฝุ่น/เศษวัสดุแหลมคม","Work area clean; free of oil, dust and sharp debris."),
+      i_("w6","ป้องกันเหตุอื่น ๆ อันอาจก่อให้เกิดอันตราย","Other potential hazards prevented.")],
+      fields:[["doneTime","เวลาที่เลิกปฏิบัติงาน","Time work stopped","time"]]},
+    ownerDecl:"ได้รับทราบและพิจารณาเห็นว่ามีความปลอดภัย จึงอนุญาตให้เข้ามาปฏิบัติงานได้",
+    reqDecl:"ข้าพเจ้าขอรับรองว่าได้ตรวจงานดังกล่าวให้เป็นไปตามข้อกำหนดและระเบียบของบริษัทฯ โดยมีการเตรียมพร้อมอย่างเหมาะสมในการปฏิบัติงาน",
+    closeDecl:"ผู้รับเหมาได้เลิกปฏิบัติงานในวันที่ขออนุญาต และได้ตรวจสอบส่วนที่เกี่ยวข้องตามรายการข้างต้นแล้ว"}
+};
+const PT_ORDER=["daily","hot","wah","loto","cs"];
+const DAILY_TYPES=["งานที่สูง","งานที่ก่อให้เกิดความร้อนและประกายไฟ","งานรถเครน","งานขุดเจาะ","งานระบบไฟฟ้า"];
+const ENERGY=["Electrical","Pneumatic","Hydraulic","Thermal","Chemical","Biological","Gravitational","Fuel","Stored","Radiation"];
+const PST={pending:["รออนุมัติ","Pending","warn"],approved:["อนุมัติแล้ว · กำลังทำงาน","Active","ok"],closing:["รอยืนยันปิดงาน","Close requested","info"],closed:["ปิดงานแล้ว","Closed","muted"],rejected:["ไม่อนุมัติ","Rejected","crit"],cancelled:["ยกเลิก","Cancelled","muted"]};
+const pno=p=>(PT[p.type]||{code:"PTW"}).code+"-"+new Date(p.created_at||Date.now()).getFullYear()+"-"+String(p.seq||0).padStart(4,"0");
+const dt=v=>v?new Date(v).toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"}):"–";
+const isExpired=p=>p.status==="approved"&&p.end_at&&new Date(p.end_at)<new Date();
+
+let permits=[], ptwTab="active", ptwMode="home", ptwType=null, ptwSel=null;
+
+/* ---- camera-only site photos, stamped with date/time ---- */
+const shots={req:[],close:[]}; const MAX_SHOTS=6;
+let camStream=null, camFacing="environment", camKey=null, camCtx=()=>"", camTimer=null;
+const CAM_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>';
+function photoBoxHTML(key,required,hint){
+  return `<h4 class="sec">รูปถ่ายหน้างาน${required?' <span class="req">*</span>':''} <small>${esc(hint)} · ถ่ายจากกล้องเท่านั้น ระบบประทับวันเวลาลงในรูป</small></h4>
+  <div class="shots" id="shots-${key}"></div>
+  <button class="btn sec cam-btn" type="button" data-cam="${key}">${CAM_ICON}ถ่ายรูป · Take photo</button>`;
+}
+const stampTime=d=>d.toLocaleString("th-TH",{timeZone:"Asia/Bangkok",day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"});
+function renderShots(key){
+  const box=$("#shots-"+key); if(!box) return; box.textContent="";
+  shots[key].forEach((sh,i)=>{ const w=el("div","shot"), im=el("img"); im.src=sh.url; im.alt="รูปที่ "+(i+1);
+    const rm=el("button",null,"ลบ"); rm.type="button"; rm.setAttribute("aria-label","ลบรูปที่ "+(i+1));
+    rm.addEventListener("click",()=>{ URL.revokeObjectURL(sh.url); shots[key].splice(i,1); renderShots(key); });
+    w.append(im,rm,el("span",null,stampTime(new Date(sh.taken_at)).split(" ")[1]||"")); box.append(w); });
+  const b=document.querySelector(`[data-cam="${key}"]`); if(b) b.disabled=shots[key].length>=MAX_SHOTS;
+}
+function camMsg(t){ const m=$("#camErr"); m.textContent=t||""; m.hidden=!t; }
+function stopCam(){ if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; } }
+async function startCam(){
+  stopCam(); $("#camShoot").disabled=true;
+  if(!window.isSecureContext||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    camMsg("เบราว์เซอร์นี้เปิดกล้องไม่ได้ กรุณาเปิดเว็บด้วย Chrome หรือ Safari บนมือถือ · This browser cannot open the camera."); return; }
+  try{
+    camStream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:camFacing},width:{ideal:1920},height:{ideal:1080}}});
+    const v=$("#camVideo"); v.srcObject=camStream; await v.play().catch(()=>{});
+    $("#camShoot").disabled=false; camMsg("");
+  }catch(e){
+    camMsg(e&&e.name==="NotAllowedError"?"ยังไม่ได้อนุญาตให้ใช้กล้อง กดอนุญาต (Allow) ที่แถบด้านบนของเบราว์เซอร์ แล้วลองใหม่ · Camera permission is blocked."
+      : e&&e.name==="NotFoundError"?"ไม่พบกล้องในอุปกรณ์นี้ กรุณาใช้มือถือถ่ายรูป · No camera found on this device."
+      : "เปิดกล้องไม่ได้: "+(e&&e.message||e)); }
+}
+function camTick(){ $("#camClock").textContent=stampTime(new Date()); $("#camCount").textContent=shots[camKey].length+"/"+MAX_SHOTS; }
+async function openCam(key,ctx){
+  camKey=key; camCtx=ctx||(()=>""); $("#cam").hidden=false; document.body.style.overflow="hidden";
+  camTick(); camTimer=setInterval(camTick,1000); await startCam(); $("#camShoot").focus();
+}
+function closeCam(){ stopCam(); clearInterval(camTimer); $("#cam").hidden=true; document.body.style.overflow=""; const b=document.querySelector(`[data-cam="${camKey}"]`); if(b) b.focus(); }
+function drawStamp(x,W,H,now){
+  const fs=Math.max(16,Math.round(Math.min(W,H)*0.038)), pad=Math.round(fs*0.55);
+  const l1=stampTime(now)+" น.", l2=["ID "+emp,camCtx()].filter(Boolean).join(" · ");
+  const bh=Math.round(fs*1.9+pad*3);
+  x.fillStyle="rgba(0,0,0,0.62)"; x.fillRect(0,H-bh,W,bh);
+  x.fillStyle="#ffd23f"; x.fillRect(0,H-bh,Math.max(6,Math.round(fs*0.3)),bh);
+  x.fillStyle="#ffffff"; x.textBaseline="top";
+  x.font=`700 ${fs}px "IBM Plex Mono","IBM Plex Sans Thai",monospace`; x.fillText(l1,pad*2,H-bh+pad,W-pad*3);
+  x.font=`500 ${Math.round(fs*0.82)}px "IBM Plex Sans Thai",sans-serif`; x.fillText(l2,pad*2,H-bh+pad*2+fs,W-pad*3);
+}
+async function shoot(){
+  const v=$("#camVideo"); if(!v.videoWidth||shots[camKey].length>=MAX_SHOTS) return;
+  const now=new Date(), k=Math.min(1,1600/Math.max(v.videoWidth,v.videoHeight));
+  const W=Math.round(v.videoWidth*k), H=Math.round(v.videoHeight*k);
+  const c=document.createElement("canvas"); c.width=W; c.height=H; const x=c.getContext("2d");
+  x.drawImage(v,0,0,W,H); drawStamp(x,W,H,now);
+  const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",0.85)); if(!blob) return;
+  shots[camKey].push({blob,url:URL.createObjectURL(blob),taken_at:now.toISOString()});
+  const f=$("#camFlash"); f.style.opacity=".8"; setTimeout(()=>f.style.opacity="0",80);
+  renderShots(camKey); camTick();
+  if(shots[camKey].length>=MAX_SHOTS){ $("#camShoot").disabled=true; camMsg("ครบ "+MAX_SHOTS+" รูปแล้ว · Photo limit reached."); }
+}
+async function uploadShots(key){
+  const out=[];
+  for(const sh of shots[key]){ const path="ptw/photos/"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+".jpg";
+    const up=await sb.storage.from(BUCKET).upload(path,sh.blob,{contentType:"image/jpeg"}); if(up.error) throw up.error;
+    out.push({path,url:sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl,taken_at:sh.taken_at,source:"camera"}); }
+  return out;
+}
+const galHTML=list=>`<div class="pgal">${list.map(x=>`<a href="${esc(x.url)}" target="_blank" rel="noopener"><img src="${esc(x.url)}" alt="รูปหน้างาน ${esc(dt(x.taken_at))}" loading="lazy"><span>${esc(stampTime(new Date(x.taken_at)))}</span></a>`).join("")}</div>`;
+$("#camShoot").addEventListener("click",shoot);
+$("#camClose").addEventListener("click",closeCam);
+$("#camFlip").addEventListener("click",()=>{ camFacing=camFacing==="environment"?"user":"environment"; startCam(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("#cam").hidden) closeCam(); });
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-cam]"); if(!b) return;
+  const key=b.dataset.cam;
+  if(key==="req"){ const f=$("#ptwForm"); openCam("req",()=>[PT[ptwType].code, f&&f.area.value, f&&f.loc.value].filter(Boolean).join(" · ")); }
+  else { const p=permits.find(x=>x.id===ptwSel); openCam("close",()=>p?[pno(p),"ปิดงาน",p.area].filter(Boolean).join(" · "):""); }
+});
+
+/* ---- form builders ---- */
+const fld=(n,th,en,req,type,extra)=>`<label for="pf-${n}"><span>${esc(th)}${req?' <span class="req">*</span>':''} <small>${esc(en)}</small></span><input type="${type||"text"}" id="pf-${n}" name="${n}" ${req?"required":""} ${extra||""}></label>`;
+const yn=(name,it,dis)=>`<div class="ck"><div class="ck-t"><b>${esc(it.th)}</b><span>${esc(it.en)}</span></div><div class="seg" role="radiogroup" aria-label="${esc(it.th)}">
+  <label><input type="radio" name="${name}" value="y" ${dis?"disabled":""}><span>✓ ใช่</span></label><label><input type="radio" name="${name}" value="na" ${dis?"disabled":""}><span>N/A</span></label></div></div>`;
+function ppeHTML(list,prefix,readonly,vals){
+  return `<div class="ppe">${list.map(k=>{const on=vals&&vals.includes(k);
+    return readonly?`<span class="pp ${on?"on":""}">${on?"☑":"☐"} ${esc(PPE[k][0])}<small>${esc(PPE[k][1])}</small></span>`
+    :`<label class="pp"><input type="checkbox" name="${prefix}${k}"><span>${esc(PPE[k][0])}<small>${esc(PPE[k][1])}</small></span></label>`;}).join("")}</div>`;
+}
+function ptwFormHTML(t){
+  const d=PT[t]; let h=`<form id="ptwForm" class="panel ptwf" novalidate style="--pc:${d.color}">
+  <div class="ptw-head"><div><div class="tag">${esc(d.form)}</div><h3>${esc(d.en)}</h3><div class="en">${esc(d.th)}</div></div><div class="tag">Permit No. · ออกให้อัตโนมัติ</div></div>`;
+  if(t==="cs") h+=`<p class="msg warn">แบบฟอร์มนี้ใช้รายการตรวจมาตรฐาน เพราะยังไม่มีแบบฟอร์มที่อับอากาศของ MCAM · Standard checklist (no MCAM form yet).</p>`;
+  h+=`<h4 class="sec">${t==="daily"?"ส่วนที่ 1 · ผู้รับเหมา":"Section I · General Information · ข้อมูลทั่วไป"}</h4>
+  <div class="row">${fld("requester","ผู้ขออนุญาต","Requester",1)}${fld("tel","เบอร์โทร","Tel.",1,"tel")}${fld("company","บริษัท","Company",1)}</div>`;
+  if(t==="loto") h+=`<div class="row">${fld("machine","เครื่องมือ / เครื่องจักร / ระบบ","Machine, equipment or system",1)}${fld("voltage","แรงดันไฟฟ้า","Voltage",0)}${fld("dept","แผนกที่ดำเนินการตัดแยก","Department",1)}</div>`;
+  h+=`<label for="pf-desc"><span>รายละเอียดของงาน <span class="req">*</span> <small>Description of work</small></span><textarea id="pf-desc" name="desc" required></textarea></label>
+  <div class="row"><label for="pf-area"><span>พื้นที่ทำงาน <span class="req">*</span> <small>Area</small></span><select id="pf-area" name="area" required><option value="">— เลือก —</option>${AREAS.map(a=>`<option>${esc(a)}</option>`).join("")}</select></label>
+  ${fld("loc","จุดปฏิบัติงาน","Exact location",1)}${fld("workers","จำนวนคน","Number of workers",1,"number",'min="1"')}</div>
+  <div class="row">${fld("start","เริ่มปฏิบัติงาน","Start",1,"datetime-local")}${fld("end","สิ้นสุด","End",1,"datetime-local")}${fld("ref","Ref. JSEA/PTW","Related JSEA or permit no.",0)}</div>`;
+  if(t==="daily") h+=`<div class="row">${fld("owner","ชื่อเจ้าของพื้นที่","Area owner",1)}${fld("ownerTel","เบอร์โทรเจ้าของพื้นที่","Area owner tel.",0,"tel")}</div>
+    <h4 class="sec">งานที่ต้องขออนุญาตตามระเบียบบริษัทฯ <small>Work requiring a specific permit</small></h4>
+    <div class="ppe">${DAILY_TYPES.map((x,i)=>`<label class="pp"><input type="checkbox" name="dt_${i}"><span>${esc(x)}</span></label>`).join("")}<label class="pp"><span>อื่น ๆ <input type="text" name="dtOther" placeholder="ระบุ" style="margin-top:4px"></span></label></div>
+    <p class="note" style="text-align:left">ถ้ามีงานที่สูง ความร้อน หรือไฟฟ้า ต้องขอใบอนุญาตเฉพาะเพิ่ม และใส่เลขที่ในช่อง Ref.</p>`;
+  if(t==="loto"){
+    h+=`<h4 class="sec">Section II · Person in Charge · ผู้รับผิดชอบ</h4><div class="tbl"><table class="grid-in"><thead><tr><th>#</th><th>ชื่อ-นามสกุล</th><th>ตำแหน่ง</th><th>เบอร์โทร</th></tr></thead><tbody>
+      ${[0,1,2].map(i=>`<tr><td>${i+1}</td><td><input name="pc_n_${i}" aria-label="ชื่อ ${i+1}"></td><td><input name="pc_p_${i}" aria-label="ตำแหน่ง ${i+1}"></td><td><input name="pc_m_${i}" aria-label="เบอร์โทร ${i+1}"></td></tr>`).join("")}</tbody></table></div>
+    <h4 class="sec">Section III · Lockout/Tagout Equipment List · รายการอุปกรณ์ตัดแยกพลังงาน</h4><div class="tbl"><table class="grid-in"><thead><tr><th>#</th><th>Lock No.</th><th>Tag No.</th><th>Isolation point · จุดที่ติดตั้ง</th><th>Zero test</th><th>ผู้ตัดแยก</th></tr></thead><tbody>
+      ${[0,1,2,3,4].map(i=>`<tr><td>${i+1}</td><td><input name="is_l_${i}" aria-label="Lock ${i+1}"></td><td><input name="is_t_${i}" aria-label="Tag ${i+1}"></td><td><input name="is_p_${i}" aria-label="Point ${i+1}"></td><td style="text-align:center"><input type="checkbox" name="is_z_${i}" aria-label="Zero test ${i+1}"></td><td><input name="is_b_${i}" aria-label="Isolator ${i+1}"></td></tr>`).join("")}</tbody></table></div>
+    <h4 class="sec">Types of Energy · ชนิดพลังงาน</h4><div class="ppe">${ENERGY.map(x=>`<label class="pp"><input type="checkbox" name="en_${x}"><span>${x}</span></label>`).join("")}<label class="pp"><span>Others <input type="text" name="enOther" placeholder="ระบุ" style="margin-top:4px"></span></label></div>`;
+  }
+  if(t==="cs") h+=`<h4 class="sec">Atmospheric Test · ผลตรวจวัดบรรยากาศ <small>O₂ 19.5–23.5% · LEL &lt; 10%</small></h4>
+    <div class="row">${fld("o2","ออกซิเจน O₂ (%)","Oxygen",1,"number",'step="0.1"')}${fld("lel","LEL (%)","Flammable gas",1,"number",'step="0.1"')}${fld("h2s","H₂S (ppm)","Hydrogen sulfide",0,"number",'step="0.1"')}${fld("co","CO (ppm)","Carbon monoxide",0,"number",'step="0.1"')}</div>
+    <div class="row">${fld("tester","ผู้ตรวจวัด","Tested by",1)}${fld("attendant","ผู้ช่วยเหลือ / Attendant","Attendant",1)}${fld("entrants","รายชื่อผู้เข้าทำงาน","Entrants",1)}</div>`;
+  d.checks.forEach(s=>{
+    h+=`<h4 class="sec">${esc(s.title)}</h4>`;
+    if(s.group) h+=`<div class="seg rel" data-g="${s.key}"><label><input type="radio" name="g_${s.key}" value="rel"><span>เกี่ยวข้อง · Related</span></label><label><input type="radio" name="g_${s.key}" value="nr" checked><span>ไม่เกี่ยวข้อง · Not related</span></label></div>`;
+    h+=`<div class="cks" data-gbox="${s.group?s.key:""}" ${s.group?"hidden":""}>${s.items.map(it=>yn("c_"+it.id,it,!!s.group)).join("")}</div>`;
+  });
+  h+=`<h4 class="sec">PPE and Devices Required · อุปกรณ์ป้องกันอันตรายส่วนบุคคล</h4>${ppeHTML(d.ppe,"p_")}
+  <label for="pf-ppeNote"><span>มาตรการ / อุปกรณ์เพิ่มเติม <small>Other measures (optional)</small></span><input type="text" id="pf-ppeNote" name="ppeNote"></label>
+  ${photoBoxHTML("req",true,"สภาพหน้างานก่อนเริ่มงาน · Before work")}
+  <h4 class="sec">เอกสารแนบ (PDF) <small>JSEA, รายชื่อผู้ปฏิบัติงาน${t==="daily"?" · ต้องแนบรายชื่อผู้ปฏิบัติงาน":""}</small></h4>
+  <input type="file" id="pf-files" multiple accept="application/pdf">
+  <h4 class="sec">${t==="daily"?"การรับรองของผู้ควบคุมงาน":"Authorization · การรับรองของหัวหน้างาน"}</h4>
+  <label class="decl"><input type="checkbox" name="decl" required><span>${esc(d.reqDecl||DECL_REQ)}</span></label>
+  ${fld("supervisor",t==="daily"?"หัวหน้างานผู้รับเหมา หรือผู้ควบคุมงาน":"หัวหน้างานผู้รับเหมา","Subcontractor supervisor",1)}
+  <p class="msg err" id="ptwMsg" hidden></p>
+  <div class="actions"><button class="btn" type="submit" id="ptwSubmit">ส่งขออนุญาต · Submit</button><button class="btn sec" type="button" data-ptwhome>ยกเลิก</button></div></form>`;
+  return h;
+}
+function readPtwForm(t){
+  const f=$("#ptwForm"), fd=new FormData(f), d=PT[t], g=k=>(fd.get(k)||"").toString().trim();
+  const errs=[]; f.querySelectorAll("[required]").forEach(x=>{ if(x.type==="checkbox"?!x.checked:!x.value.trim()) errs.push(x); });
+  const v={requester:g("requester"),tel:g("tel"),company:g("company"),desc:g("desc"),area:g("area"),loc:g("loc"),workers:g("workers"),ref:g("ref"),supervisor:g("supervisor"),ppeNote:g("ppeNote")};
+  const start=g("start"), end=g("end");
+  if(start&&end&&new Date(end)<=new Date(start)) return {err:"เวลาสิ้นสุดต้องหลังเวลาเริ่ม · End must be after start."};
+  const checks={}, groups={}; let missing=0;
+  d.checks.forEach(s=>{ let active=true;
+    if(s.group){ groups[s.key]=g("g_"+s.key)||"nr"; active=groups[s.key]==="rel"; }
+    s.items.forEach(it=>{ const a=g("c_"+it.id); if(active){ if(!a) missing++; else checks[it.id]=a; } }); });
+  if(errs.length){ errs[0].focus(); return {err:"กรอกข้อมูลที่มีเครื่องหมาย * ให้ครบ และติ๊กรับรอง · Fill in all required fields."}; }
+  if(missing) return {err:"รายการตรวจสอบยังตอบไม่ครบ "+missing+" ข้อ (เลือก ✓ ใช่ หรือ N/A) · "+missing+" checklist items unanswered."};
+  v.checks=checks; v.groups=groups; v.ppe=d.ppe.filter(k=>fd.get("p_"+k));
+  if(t==="daily"){ v.owner=g("owner"); v.ownerTel=g("ownerTel"); v.dtypes=DAILY_TYPES.filter((x,i)=>fd.get("dt_"+i)); if(g("dtOther")) v.dtypes.push("อื่น ๆ: "+g("dtOther")); }
+  if(t==="loto"){ v.machine=g("machine"); v.voltage=g("voltage"); v.dept=g("dept");
+    v.persons=[0,1,2].map(i=>({n:g("pc_n_"+i),p:g("pc_p_"+i),m:g("pc_m_"+i)})).filter(r=>r.n);
+    v.isolations=[0,1,2,3,4].map(i=>({l:g("is_l_"+i),t:g("is_t_"+i),p:g("is_p_"+i),z:!!fd.get("is_z_"+i),b:g("is_b_"+i)})).filter(r=>r.l||r.p);
+    if(!v.isolations.length) return {err:"ใส่รายการจุดตัดแยกพลังงานอย่างน้อย 1 จุด · Add at least one isolation point."};
+    v.energy=ENERGY.filter(x=>fd.get("en_"+x)); if(g("enOther")) v.energy.push(g("enOther")); }
+  if(t==="cs"){ ["o2","lel","h2s","co","tester","attendant","entrants"].forEach(k=>v[k]=g(k));
+    const o2=parseFloat(v.o2), lel=parseFloat(v.lel);
+    if(o2<19.5||o2>23.5||lel>=10) return {err:"ผลตรวจบรรยากาศไม่อยู่ในเกณฑ์ปลอดภัย (O₂ 19.5–23.5%, LEL < 10%) ห้ามเข้าพื้นที่ · Atmosphere unsafe — do not enter."}; }
+  return {v,start,end};
+}
+
+/* ---- data ---- */
+async function loadPermits(){
+  const {data,error}=await sb.from("ehs_permits").select("*").order("created_at",{ascending:false}).limit(1000);
+  if(error){ $("#ptwBoard").textContent=""; $("#ptwBoard").append(el("div","empty","โหลดใบอนุญาตไม่ได้: "+errText(error))); return; }
+  permits=data||[]; renderPtw();
+  if(ptwMode==="detail"&&ptwSel&&permits.some(x=>x.id===ptwSel)) openPermit(ptwSel);
+}
+const hist=(p,act,by,note)=>(p&&p.history||[]).concat({at:new Date().toISOString(),act,by:by||emp,note:note||""});
+function notifyPtw(p,kind){
+  fetch("/api/send-ptw-line",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({kind,no:pno(p),type:PT[p.type].en,typeTh:PT[p.type].th,
+    title:(p.data||{}).desc||"",location:[p.area,(p.data||{}).loc].filter(Boolean).join(" · "),requester:(p.data||{}).requester||"",company:(p.data||{}).company||"",
+    start:dt(p.start_at),end:dt(p.end_at),url:location.origin+location.pathname+"#ptw"})}).catch(()=>{});
+}
+
+/* ---- views ---- */
+function ptwShow(mode){ ptwMode=mode; ["home","form","detail"].forEach(m=>$("#ptw-"+m).hidden=m!==mode); window.scrollTo(0,0); }
+function renderPtwTypes(){
+  const box=$("#ptwTypes"); box.textContent="";
+  PT_ORDER.forEach(k=>{const d=PT[k], b=el("button","ptype"); b.type="button"; b.style.setProperty("--pc",d.color);
+    b.append(el("span","code",d.code),el("b",null,d.th),el("span",null,d.en)); b.addEventListener("click",()=>openPtwForm(k)); box.append(b);});
+}
+function openPtwForm(t){
+  ptwType=t; shots.req.forEach(x=>URL.revokeObjectURL(x.url)); shots.req=[];
+  $("#ptw-form").innerHTML=ptwFormHTML(t); ptwShow("form"); renderShots("req");
+  const f=$("#ptwForm"), now=new Date(), pad=n=>String(n).padStart(2,"0"), loc=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+"T"+pad(d.getHours())+":"+pad(d.getMinutes());
+  f.start.value=loc(now); const e=new Date(now); e.setHours(17,0,0,0); if(e<=now) e.setTime(now.getTime()+4*3600e3); f.end.value=loc(e);
+  try{ const last=JSON.parse(localStorage.getItem("ptwLast")||"{}"); ["requester","tel","company","supervisor"].forEach(k=>{ if(last[k]) f[k].value=last[k]; }); }catch(x){}
+  f.querySelectorAll(".rel").forEach(r=>r.addEventListener("change",()=>{ const k=r.dataset.g, on=f["g_"+k].value==="rel", box=f.querySelector(`[data-gbox="${k}"]`);
+    box.hidden=!on; box.querySelectorAll("input").forEach(i=>i.disabled=!on); }));
+  f.querySelector("[data-ptwhome]").addEventListener("click",()=>ptwShow("home"));
+  f.addEventListener("submit",submitPtw);
+  setTimeout(()=>f.requester.focus(),0);
+}
+async function submitPtw(e){
+  e.preventDefault(); const t=ptwType, r=readPtwForm(t), m=$("#ptwMsg");
+  if(!r.err&&!shots.req.length) r.err="ถ่ายรูปหน้างานอย่างน้อย 1 รูป (กดปุ่ม ถ่ายรูป) · Take at least one site photo.";
+  if(r.err){ m.className="msg err"; m.textContent=r.err; m.hidden=false; m.scrollIntoView({block:"center",behavior:"smooth"}); return; }
+  const btn=$("#ptwSubmit"); btn.disabled=true; btn.textContent="กำลังส่ง…";
+  try{
+    const files=[...$("#pf-files").files].filter(f=>/pdf/i.test(f.type)||/\.pdf$/i.test(f.name)).slice(0,10), att=[];
+    btn.textContent="กำลังอัปโหลดรูป…"; r.v.photos=await uploadShots("req");
+    for(const f of files){ const ext=(f.name.split(".").pop()||"bin").toLowerCase().replace(/[^a-z0-9]/g,""), path="ptw/"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+"."+ext;
+      const up=await sb.storage.from(BUCKET).upload(path,f,{contentType:f.type||undefined}); if(up.error) throw up.error;
+      att.push({name:f.name,type:f.type,path,url:sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl}); }
+    const row={type:t,status:"pending",requester_emp:emp,area:r.v.area,start_at:new Date(r.start).toISOString(),end_at:new Date(r.end).toISOString(),
+      data:r.v,attachments:att,history:hist(null,"submit",emp,"")};
+    const {data,error}=await sb.from("ehs_permits").insert(row).select().single(); if(error) throw error;
+    try{ localStorage.setItem("ptwLast",JSON.stringify({requester:r.v.requester,tel:r.v.tel,company:r.v.company,supervisor:r.v.supervisor})); }catch(x){}
+    log("open","ptw:"+data.id,"ขอ "+pno(data)); notifyPtw(data,"new");
+    permits.unshift(data); openPermit(data.id,"ส่งคำขอแล้ว เลขที่ "+pno(data)+" · รอ EHS อนุมัติ");
+  }catch(err){ m.className="msg err"; m.textContent="ส่งไม่สำเร็จ: "+errText(err); m.hidden=false; }
+  finally{ btn.disabled=false; btn.textContent="ส่งขออนุญาต · Submit"; }
+}
+function renderPtw(){
+  const tabs={active:p=>p.status==="approved"||p.status==="closing",pending:p=>p.status==="pending",mine:p=>p.requester_emp===emp,all:()=>true};
+  const cnt={}; Object.keys(tabs).forEach(k=>cnt[k]=permits.filter(tabs[k]).length);
+  document.querySelectorAll("#ptwTabs .chip").forEach(b=>{ b.setAttribute("aria-pressed",b.dataset.t===ptwTab); b.querySelector("i").textContent=cnt[b.dataset.t]; });
+  const q=($("#ptwQ").value||"").trim().toLowerCase();
+  const list=permits.filter(tabs[ptwTab]).filter(p=>!q||[pno(p),p.area,(p.data||{}).desc,(p.data||{}).company,(p.data||{}).requester,(p.data||{}).loc].join(" ").toLowerCase().includes(q));
+  const box=$("#ptwBoard"); box.textContent="";
+  if(!list.length){ box.append(el("div","empty",{active:"ไม่มีงานที่กำลังดำเนินการ · No active permits",pending:"ไม่มีคำขอรออนุมัติ",mine:"คุณยังไม่มีคำขอใบอนุญาต",all:"ยังไม่มีใบอนุญาต"}[ptwTab])); return; }
+  list.forEach(p=>{const d=PT[p.type]||PT.daily, st=PST[p.status]||PST.pending, b=el("button","prow"); b.type="button"; b.style.setProperty("--pc",d.color);
+    b.innerHTML=`<span class="code">${esc(d.code)}</span><span class="pmain"><b>${esc(pno(p))} · ${esc((p.data||{}).desc||"")}</b><span>${esc(p.area||"")} ${esc((p.data||{}).loc?"· "+p.data.loc:"")} · ${esc((p.data||{}).company||"")}</span><span>${esc(dt(p.start_at))} → ${esc(dt(p.end_at))}</span></span>
+      <span class="pst ${st[2]}">${esc(st[0])}</span>${isExpired(p)?'<span class="pst crit">เกินเวลา</span>':""}`;
+    b.addEventListener("click",()=>openPermit(p.id)); box.append(b);});
+}
+const ckView=(d,v,s)=>{ if(s.group&&(v.groups||{})[s.key]!=="rel") return `<h4 class="sec">${esc(s.title)}</h4><p class="note" style="text-align:left">ไม่เกี่ยวข้อง · Not related</p>`;
+  return `<h4 class="sec">${esc(s.title)}</h4><div class="cks">${s.items.map(it=>{const a=(v.checks||{})[it.id];
+    return `<div class="ck view"><div class="ck-t"><b>${esc(it.th)}</b><span>${esc(it.en)}</span></div><span class="ans ${a==="y"?"y":"na"}">${a==="y"?"✓ ใช่":a==="na"?"N/A":"–"}</span></div>`;}).join("")}</div>`; };
+const kv=(th,en,val)=>`<div class="kv"><span>${esc(th)} <small>${esc(en)}</small></span><b>${esc(val||"–")}</b></div>`;
+function permitHTML(p){
+  const d=PT[p.type], v=p.data||{}, st=PST[p.status]||PST.pending, a=p.approval||{}, c=p.closure||{};
+  let h=`<article class="panel permit" style="--pc:${d.color}"><div class="ptw-head"><div><div class="tag">${esc(d.form)}</div><h3>${esc(d.en)}</h3><div class="en">${esc(d.th)}</div></div>
+    <div class="pno"><span class="tag">Permit No.</span><b>${esc(pno(p))}</b><span class="pst ${st[2]}">${esc(st[0])}</span>${isExpired(p)?'<span class="pst crit">เกินเวลาที่อนุญาต</span>':""}</div></div>
+  <h4 class="sec">Section I · ข้อมูลทั่วไป</h4><div class="kvs">
+    ${kv("ผู้ขออนุญาต","Requester",v.requester)}${kv("เบอร์โทร","Tel.",v.tel)}${kv("บริษัท","Company",v.company)}
+    ${p.type==="loto"?kv("เครื่องจักร/ระบบ","Machine/system",v.machine)+kv("แรงดันไฟฟ้า","Voltage",v.voltage)+kv("แผนก","Department",v.dept):""}
+    ${kv("พื้นที่","Area",p.area)}${kv("จุดปฏิบัติงาน","Location",v.loc)}${kv("จำนวนคน","Workers",v.workers)}
+    ${kv("เริ่ม","Start",dt(p.start_at))}${kv("สิ้นสุด","End",dt(p.end_at))}${kv("Ref. JSEA/PTW","",v.ref)}
+    ${p.type==="daily"?kv("เจ้าของพื้นที่","Area owner",v.owner)+kv("เบอร์เจ้าของพื้นที่","Owner tel.",v.ownerTel):""}
+    ${kv("รหัสพนักงานผู้ส่ง","Submitted by ID",p.requester_emp)}</div>
+  <div class="kv wide"><span>รายละเอียดของงาน <small>Description of work</small></span><b>${esc(v.desc)}</b></div>`;
+  if(p.type==="daily") h+=`<div class="kv wide"><span>งานที่ต้องขออนุญาตเพิ่ม <small>Specific permits required</small></span><b>${esc((v.dtypes||[]).join(", ")||"ไม่มี")}</b></div>`;
+  if(p.type==="loto"){
+    h+=`<h4 class="sec">Section II · ผู้รับผิดชอบ</h4><div class="tbl"><table><thead><tr><th>#</th><th>ชื่อ</th><th>ตำแหน่ง</th><th>โทร</th></tr></thead><tbody>${(v.persons||[]).map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.n)}</td><td>${esc(r.p)}</td><td>${esc(r.m)}</td></tr>`).join("")||'<tr><td colspan="4">–</td></tr>'}</tbody></table></div>
+    <h4 class="sec">Section III · จุดตัดแยกพลังงาน</h4><div class="tbl"><table><thead><tr><th>#</th><th>Lock</th><th>Tag</th><th>Isolation point</th><th>Zero test</th><th>ผู้ตัดแยก</th></tr></thead><tbody>${(v.isolations||[]).map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.l)}</td><td>${esc(r.t)}</td><td>${esc(r.p)}</td><td>${r.z?"✓":"–"}</td><td>${esc(r.b)}</td></tr>`).join("")}</tbody></table></div>
+    <div class="kv wide"><span>ชนิดพลังงาน <small>Types of energy</small></span><b>${esc((v.energy||[]).join(", ")||"–")}</b></div>`;
+  }
+  if(p.type==="cs"){ const bad=parseFloat(v.o2)<19.5||parseFloat(v.o2)>23.5||parseFloat(v.lel)>=10;
+    h+=`<h4 class="sec">ผลตรวจวัดบรรยากาศ</h4><div class="kvs">${kv("O₂","%",v.o2)}${kv("LEL","%",v.lel)}${kv("H₂S","ppm",v.h2s)}${kv("CO","ppm",v.co)}${kv("ผู้ตรวจวัด","Tested by",v.tester)}${kv("Attendant","",v.attendant)}</div>
+    <div class="kv wide"><span>ผู้เข้าทำงาน <small>Entrants</small></span><b>${esc(v.entrants)}</b></div>${bad?'<p class="msg err">ผลตรวจไม่อยู่ในเกณฑ์</p>':""}`; }
+  d.checks.forEach(s=>h+=ckView(d,v,s));
+  h+=`<h4 class="sec">PPE · อุปกรณ์ป้องกันอันตรายส่วนบุคคล</h4>${ppeHTML(d.ppe,"",true,v.ppe||[])}${v.ppeNote?`<div class="kv wide"><span>มาตรการเพิ่มเติม</span><b>${esc(v.ppeNote)}</b></div>`:""}`;
+  if((v.photos||[]).length) h+=`<h4 class="sec">รูปถ่ายหน้างานก่อนเริ่มงาน <small>Before work · ${v.photos.length} รูป · ถ่ายจากกล้อง</small></h4>${galHTML(v.photos)}`;
+  if((p.attachments||[]).length) h+=`<h4 class="sec">เอกสารแนบ</h4><div class="atts">${p.attachments.map(x=>`<a href="${esc(x.url)}" target="_blank" rel="noopener">${/^image\//.test(x.type||"")?`<img src="${esc(x.url)}" alt="">`:"PDF"}<span>${esc(x.name)}</span></a>`).join("")}</div>`;
+  h+=`<h4 class="sec">Authorization · การอนุมัติ</h4><div class="signs">
+    <div class="sign"><p>${esc(d.reqDecl||DECL_REQ)}</p><b>${esc(v.supervisor)}</b><span>หัวหน้างานผู้รับเหมา · ${esc(dt(p.created_at))}</span></div>
+    ${d.ownerDecl?`<div class="sign"><p>${esc(d.ownerDecl)}</p><b>${esc(a.owner||"…………………")}</b><span>เจ้าของพื้นที่ · Area Owner${a.at?" · "+esc(dt(a.at)):""}</span></div>`:""}
+    <div class="sign"><p>${esc(DECL_APPR)}</p><b>${esc(a.approver||"…………………")}</b><span>ผู้อนุมัติ · Authorized Approver${a.at?" · "+esc(dt(a.at)):""}</span></div></div>
+    ${a.note?`<div class="kv wide"><span>หมายเหตุผู้อนุมัติ</span><b>${esc(a.note)}</b></div>`:""}`;
+  if(p.status==="closing"||p.status==="closed"){
+    if(d.close){ h+=`<h4 class="sec">${esc(d.close.title)}</h4><div class="cks">${d.close.items.map(it=>{const x=(c.checks||{})[it.id];return `<div class="ck view"><div class="ck-t"><b>${esc(it.th)}</b><span>${esc(it.en)}</span></div><span class="ans ${x==="y"?"y":"na"}">${x==="y"?"✓ ใช่":x==="na"?"N/A":"–"}</span></div>`;}).join("")}</div>
+      <div class="kvs">${(d.close.fields||[]).map(f=>kv(f[1],f[2],(c.fields||{})[f[0]])).join("")}</div>`; }
+    if((c.photos||[]).length) h+=`<h4 class="sec">รูปหลังเสร็จงาน <small>After work · ${c.photos.length} รูป · ถ่ายจากกล้อง</small></h4>${galHTML(c.photos)}`;
+    h+=`<h4 class="sec">Closure · การปิดงาน</h4><div class="signs"><div class="sign"><p>${esc(d.closeDecl)}</p><b>${esc(c.by||"")}</b><span>ผู้ขอปิดงาน${c.at?" · "+esc(dt(c.at)):""}</span></div>
+      <div class="sign"><p>ยืนยันการปิดใบอนุญาต</p><b>${esc(c.owner||"…………………")}</b><span>เจ้าของพื้นที่ · Area Owner</span></div>
+      <div class="sign"><p>ยืนยันการปิดใบอนุญาต</p><b>${esc(c.approver||"…………………")}</b><span>ผู้อนุมัติ · Authorized Approver${c.closedAt?" · "+esc(dt(c.closedAt)):""}</span></div></div>`;
+  }
+  if(p.status==="rejected") h+=`<p class="msg err">ไม่อนุมัติ: ${esc(a.note||"")}</p>`;
+  h+=`<details class="hist"><summary>ประวัติ · History</summary><ul>${(p.history||[]).map(x=>`<li>${esc(dt(x.at))} · ${esc({submit:"ส่งคำขอ",approve:"อนุมัติ",reject:"ไม่อนุมัติ",closereq:"ขอปิดงาน",close:"ปิดงาน",cancel:"ยกเลิก"}[x.act]||x.act)} · ${esc(x.by)}${x.note?" · "+esc(x.note):""}</li>`).join("")}</ul></details></article>`;
+  return h;
+}
+function closeFormHTML(p,admin){
+  const d=PT[p.type]; let h=`<form class="panel noprint" id="closeForm" novalidate><h3>${admin&&p.status==="closing"?"ยืนยันปิดงาน · Confirm closure":"ขอปิดงาน · Request closure"}</h3>`;
+  if(p.status!=="closing"){
+    if(d.close){ h+=`<h4 class="sec">${esc(d.close.title)}</h4><div class="cks">${d.close.items.map(it=>yn("x_"+it.id,it)).join("")}</div><div class="row">${(d.close.fields||[]).map(f=>fld("cf_"+f[0],f[1],f[2],1,f[3])).join("")}</div>`; }
+    h+=`${photoBoxHTML("close",false,"สภาพหน้างานหลังเสร็จงาน · After work")}<label class="decl"><input type="checkbox" name="cdecl" required><span>${esc(d.closeDecl)}</span></label>${fld("cby","ชื่อผู้ขอปิดงาน","Your name",1)}`;
+  }
+  if(admin) h+=`<div class="row">${fld("cowner","เจ้าของพื้นที่","Area owner",1)}${fld("cappr","ผู้อนุมัติปิดงาน","Authorized approver",1)}</div>`;
+  h+=`<p class="msg err" id="closeMsg" hidden></p><button class="btn" type="submit">${admin?"ปิดใบอนุญาต · Close permit":"ส่งขอปิดงาน · Submit"}</button></form>`;
+  return h;
+}
+function openPermit(id,flash){
+  const p=permits.find(x=>x.id===id); if(!p) return; ptwSel=id; ptwShow("detail");
+  const box=$("#ptw-detail"), mine=p.requester_emp===emp;
+  let h=`<div class="actions noprint"><button class="back" type="button" data-ptwhome>← รายการใบอนุญาต</button><button class="back" type="button" id="ptwPrint">พิมพ์ · Print</button></div>`;
+  if(flash) h+=`<p class="msg ok noprint">${esc(flash)}</p>`;
+  h+=permitHTML(p);
+  if(p.status==="pending"&&isAdmin) h+=`<form class="panel noprint" id="apprForm" novalidate><h3>พิจารณาอนุมัติ · Review</h3>
+    <label class="decl"><input type="checkbox" name="adecl"><span>${esc(DECL_APPR)}</span></label>
+    <div class="row">${fld("aappr","ผู้อนุมัติ","Authorized approver",1)}${PT[p.type].ownerDecl||p.type!=="cs"?fld("aowner","เจ้าของพื้นที่","Area owner",PT[p.type].ownerDecl?1:0):""}</div>
+    <label for="pf-anote"><span>หมายเหตุ / เงื่อนไขเพิ่มเติม <small>Note (required when rejecting)</small></span><textarea id="pf-anote" name="anote" style="min-height:60px"></textarea></label>
+    <p class="msg err" id="apprMsg" hidden></p><div class="actions"><button class="btn" type="submit" data-act="approve">อนุมัติ · Approve</button><button class="btn danger" type="submit" data-act="reject">ไม่อนุมัติ · Reject</button></div></form>`;
+  if(p.status==="pending"&&mine&&!isAdmin) h+=`<div class="actions noprint"><button class="btn sec" type="button" id="ptwCancel">ยกเลิกคำขอ · Cancel request</button></div>`;
+  if((p.status==="approved"&&(mine||isAdmin))||(p.status==="closing"&&isAdmin)) h+=closeFormHTML(p,isAdmin);
+  box.innerHTML=h;
+  shots.close.forEach(x=>URL.revokeObjectURL(x.url)); shots.close=[]; renderShots("close");
+  box.querySelectorAll("[data-ptwhome]").forEach(b=>b.addEventListener("click",()=>{ptwShow("home");renderPtw();}));
+  $("#ptwPrint").addEventListener("click",()=>window.print());
+  const af=$("#apprForm"); if(af){ let act="approve"; af.querySelectorAll("[data-act]").forEach(b=>b.addEventListener("click",()=>act=b.dataset.act));
+    af.addEventListener("submit",async e=>{ e.preventDefault(); const fd=new FormData(af), g=k=>(fd.get(k)||"").toString().trim(), m=$("#apprMsg");
+      if(!g("aappr")){ m.textContent="ใส่ชื่อผู้อนุมัติ"; m.hidden=false; return; }
+      if(act==="approve"&&!fd.get("adecl")){ m.textContent="ติ๊กรับรองการตรวจสอบพื้นที่ก่อนอนุมัติ"; m.hidden=false; return; }
+      if(act==="approve"&&PT[p.type].ownerDecl&&!g("aowner")){ m.textContent="ใส่ชื่อเจ้าของพื้นที่"; m.hidden=false; return; }
+      if(act==="reject"&&!g("anote")){ m.textContent="ใส่เหตุผลที่ไม่อนุมัติในช่องหมายเหตุ"; m.hidden=false; return; }
+      const upd={status:act==="approve"?"approved":"rejected",approval:{approver:g("aappr"),owner:g("aowner"),note:g("anote"),at:new Date().toISOString()},history:hist(p,act,g("aappr"),g("anote")),updated_at:new Date().toISOString()};
+      await savePermit(p,upd,act==="approve"?"อนุมัติแล้ว":"บันทึกการไม่อนุมัติแล้ว",m); }); }
+  const cb=$("#ptwCancel"); if(cb) cb.addEventListener("click",async()=>{ if(cb.dataset.arm!=="1"){cb.dataset.arm="1";cb.textContent="กดอีกครั้งเพื่อยืนยันยกเลิก";return;}
+    await savePermit(p,{status:"cancelled",history:hist(p,"cancel",emp,""),updated_at:new Date().toISOString()},"ยกเลิกคำขอแล้ว"); });
+  const cf=$("#closeForm"); if(cf) cf.addEventListener("submit",async e=>{ e.preventDefault(); const fd=new FormData(cf), g=k=>(fd.get(k)||"").toString().trim(), m=$("#closeMsg"), d=PT[p.type];
+    const errs=[...cf.querySelectorAll("[required]")].filter(x=>x.type==="checkbox"?!x.checked:!x.value.trim());
+    if(errs.length){ m.textContent="กรอกข้อมูลปิดงานให้ครบ และติ๊กรับรอง"; m.hidden=false; errs[0].focus(); return; }
+    let c=Object.assign({},p.closure||{});
+    if(p.status!=="closing"){ const checks={}; let miss=0; (d.close?d.close.items:[]).forEach(it=>{const a=g("x_"+it.id); if(!a) miss++; else checks[it.id]=a;});
+      if(miss){ m.textContent="รายการตรวจสอบปิดงานยังตอบไม่ครบ "+miss+" ข้อ"; m.hidden=false; return; }
+      const fields={}; (d.close&&d.close.fields||[]).forEach(f=>fields[f[0]]=g("cf_"+f[0]));
+      const sb2=cf.querySelector('button[type=submit]'); sb2.disabled=true; sb2.textContent="กำลังบันทึก…";
+      let photos=[]; try{ photos=await uploadShots("close"); }catch(err){ sb2.disabled=false; sb2.textContent="ส่งขอปิดงาน · Submit"; m.textContent="อัปโหลดรูปไม่สำเร็จ: "+errText(err); m.hidden=false; return; }
+      c={checks,fields,by:g("cby"),at:new Date().toISOString(),photos}; }
+    let upd;
+    if(isAdmin){ c.owner=g("cowner"); c.approver=g("cappr"); c.closedAt=new Date().toISOString(); upd={status:"closed",closure:c,history:hist(p,"close",g("cappr"),""),updated_at:new Date().toISOString()}; }
+    else upd={status:"closing",closure:c,history:hist(p,"closereq",emp,""),updated_at:new Date().toISOString()};
+    await savePermit(p,upd,isAdmin?"ปิดใบอนุญาตแล้ว":"ส่งขอปิดงานแล้ว · รอ EHS ยืนยัน",m);
+    if(!isAdmin) notifyPtw(Object.assign({},p,upd),"close"); });
+}
+async function savePermit(p,upd,okMsg,m){
+  const {data,error}=await sb.from("ehs_permits").update(upd).eq("id",p.id).select().single();
+  if(error){ if(m){m.textContent="บันทึกไม่สำเร็จ: "+errText(error); m.hidden=false;} return; }
+  permits=permits.map(x=>x.id===p.id?data:x); openPermit(p.id,okMsg);
+}
+document.querySelectorAll("#ptwTabs .chip").forEach(b=>b.addEventListener("click",()=>{ptwTab=b.dataset.t;renderPtw();}));
+$("#ptwQ").addEventListener("input",renderPtw);
+renderPtwTypes();
 
 /* boot */
 emp=store.get("emp")||""; isAdmin=store.get("adm",true)==="1";
