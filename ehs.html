@@ -265,6 +265,15 @@ span.pp{color:var(--muted)} span.pp.on{color:var(--ink);border-color:var(--green
 .cam-bar #camShoot:disabled{opacity:.35;cursor:not-allowed}
 .cam-bar #camShoot:active{transform:scale(.94)}
 .cam-bar button:focus-visible{outline:3px solid var(--hz);outline-offset:2px}
+.attpick{display:flex;flex-wrap:wrap;gap:10px}
+.attpick .btn:disabled{opacity:.45;cursor:not-allowed}
+.attlist{display:grid;gap:8px}
+.attrow{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--panel)}
+.attth{width:52px;height:52px;border-radius:6px;background:var(--field);display:grid;place-items:center;font-family:var(--mono);font-size:.7rem;color:var(--muted);overflow:hidden;border:1px solid var(--line)}
+.attth img{width:100%;height:100%;object-fit:cover}
+.attnm{display:grid;min-width:0}.attnm b{font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.attnm span{font-size:.78rem;color:var(--muted)}
+.attrow button{font:inherit;font-size:.82rem;background:transparent;color:var(--crit);border:1px solid var(--crit);border-radius:6px;padding:5px 12px;cursor:pointer}
+.atts a i.attext{width:110px;height:80px;display:grid;place-items:center;font-style:normal;font-family:var(--mono);background:var(--field);border:1px solid var(--line);border-radius:4px;color:var(--muted)}
 .cam-native{position:absolute;left:50%;top:calc(30% + 120px);transform:translateX(-50%);font:inherit;font-weight:700;font-size:1rem;background:#f2b705;color:#16202b;border:0;border-radius:10px;padding:14px 22px;cursor:pointer;white-space:nowrap}
 .cam-wait{position:absolute;left:0;right:0;top:45%;text-align:center;color:#cbd5e1;margin:0;font-size:.95rem}
 .cam-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .25s}
@@ -314,7 +323,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .tabbar .nv{flex-direction:column;gap:3px;padding:7px 2px;font-size:.7rem;line-height:1.15;white-space:normal;text-align:center;justify-content:center;border-radius:10px}
 .tabbar .nv svg{width:22px;height:22px}.tabbar .nv .ext{display:none}
 .tabbar .nv[aria-current=page]{box-shadow:none}
-@media (max-width:1180px){.nav .nv{padding:8px 10px;font-size:.86rem;gap:6px}.nav .nv .ext{display:none}}
+@media (max-width:1320px){.nav .nv{padding:8px 10px;font-size:.86rem;gap:6px}.nav .nv .ext{display:none}.brand .tag{display:none}}
+@media (max-width:1200px){.nav .nv{padding:10px}.nav .nv span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}
 @media (max-width:960px){.nav{display:none}.tabbar{display:grid}body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}}
 @media (max-width:520px){.bar-in{min-height:58px;gap:10px}.brand .tag{display:none}.brand h1{font-size:1.1rem}.mark{width:34px;height:34px}.mark svg{width:20px;height:20px}
   .tools{gap:8px}.who{gap:8px}.who .link{font-size:.78rem}.idchip{font-size:.72rem;padding:4px 9px}.wrap{padding-top:18px}}
@@ -340,6 +350,7 @@ input[type=search]{background:#fff;border-radius:12px;padding:12px 14px}
 .pstw{display:flex;flex-direction:column;gap:4px;align-items:flex-end}
 @media (max-width:560px){.pstw{grid-column:2;align-items:flex-start;flex-direction:row;flex-wrap:wrap}}
 @media print{.appbar,.tabbar,body::before{display:none!important}body{padding:0!important}}
+@media (hover:none),(max-width:960px){input,select,textarea,.grid-in input{font-size:16px!important}}
 @media (prefers-reduced-motion:reduce){.tile,.act,.act .go svg,.nv{transition:none}}
 </style>
 </head>
@@ -653,6 +664,7 @@ function applyLang(){
   document.querySelectorAll("[data-i]").forEach(e=>{ e.textContent=t(e.dataset.i); });
   document.querySelectorAll("[data-ip]").forEach(e=>{ e.placeholder=t(e.dataset.ip); e.setAttribute("aria-label",t(e.dataset.ip)); });
   document.querySelectorAll("[data-lang]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lang===lang));
+  document.querySelectorAll("#nav .nv").forEach(n=>{ const sp=n.querySelector("span"); if(sp) n.title=sp.textContent; });
   if(emp) renderHomeStatic();
   renderCats(); if(!$("#infoView").hidden) renderDocs();
   renderPtwTypes(); if(!$("#ptwView").hidden&&ptwMode==="home") renderPtw();
@@ -1098,6 +1110,10 @@ const PT={
     reqDecl:"ข้าพเจ้าขอรับรองว่าได้ตรวจงานดังกล่าวให้เป็นไปตามข้อกำหนดและระเบียบของบริษัทฯ โดยมีการเตรียมพร้อมอย่างเหมาะสมในการปฏิบัติงาน",
     closeDecl:"ผู้รับเหมาได้เลิกปฏิบัติงานในวันที่ขออนุญาต และได้ตรวจสอบส่วนที่เกี่ยวข้องตามรายการข้างต้นแล้ว"}
 };
+/* Authorized Work Permit Approvers for High-Risk Work: Announcement No. 013/2025 (Revise.01), effective 22 Aug 2025 */
+const APPROVERS_REF="013/2025 Rev.01";
+const APPROVERS=["Mr. Sarunyu Kumpusiri","Mr. Sunti Khoonpak","Mr. Jakkree Thongchai","Mr. Ulit Moonthong","Mr. Rawat Nimnual","Ms. Jutamas Kan-ubon",
+  "Ms. Tippawan Kongjeen","Mr. Wiriya Pratumkhum","Mr. Chaiya Pachoo","Mr. Arkom Mingjunthuk","Mr. Pattharapol Khammaneejan"];
 const PT_ORDER=["daily","hot","wah","loto","cs"];
 const DAILY_TYPES=["งานที่สูง","งานที่ก่อให้เกิดความร้อนและประกายไฟ","งานรถเครน","งานขุดเจาะ","งานระบบไฟฟ้า"];
 const ENERGY=["Electrical","Pneumatic","Hydraulic","Thermal","Chemical","Biological","Gravitational","Fuel","Stored","Radiation"];
@@ -1173,10 +1189,17 @@ function camTick(){ $("#camClock").textContent=stampTime(new Date()); $("#camCou
 async function openCam(key,ctx){
   camKey=key; camCtx=ctx||(()=>"");
   if(inAppBrowser||!window.isSecureContext||!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)){ nativeCam(); return; }
-  $("#cam").hidden=false; document.body.style.overflow="hidden"; $("#camNative").hidden=true; $("#camWait").hidden=false; camMsg("");
+  if(document.activeElement&&document.activeElement.blur) document.activeElement.blur();
+  lockZoom(true); $("#cam").hidden=false; document.body.style.overflow="hidden"; fitCam(); setTimeout(fitCam,350); $("#camNative").hidden=true; $("#camWait").hidden=false; camMsg("");
   camTick(); camTimer=setInterval(camTick,1000); await startCam(); $("#camShoot").focus();
 }
-function closeCam(){ stopCam(); clearInterval(camTimer); $("#cam").hidden=true; document.body.style.overflow=""; const b=document.querySelector(`[data-cam="${camKey}"]`); if(b) b.focus(); }
+const vpMeta=document.querySelector('meta[name=viewport]'), vpOrig=vpMeta?vpMeta.content:"";
+function fitCam(){ const c=$("#cam"), vv=window.visualViewport; if(c.hidden) return;
+  if(!vv){ c.removeAttribute("style"); return; }
+  Object.assign(c.style,{left:vv.offsetLeft+"px",top:vv.offsetTop+"px",width:vv.width+"px",height:vv.height+"px",right:"auto",bottom:"auto"}); }
+if(window.visualViewport){ visualViewport.addEventListener("resize",fitCam); visualViewport.addEventListener("scroll",fitCam); }
+function lockZoom(on){ if(!vpMeta) return; vpMeta.content=on?"width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover":vpOrig; }
+function closeCam(){ stopCam(); clearInterval(camTimer); $("#cam").hidden=true; document.body.style.overflow=""; lockZoom(false); $("#cam").removeAttribute("style"); const b=document.querySelector(`[data-cam="${camKey}"]`); if(b) b.focus(); }
 function drawStamp(x,W,H,now){
   const fs=Math.max(16,Math.round(Math.min(W,H)*0.038)), pad=Math.round(fs*0.55);
   const l1=stampTime(now)+" น.", l2=["ID "+emp,camCtx()].filter(Boolean).join(" · ");
@@ -1261,11 +1284,19 @@ function ptwFormHTML(t){
   h+=`<h4 class="sec">PPE and Devices Required · อุปกรณ์ป้องกันอันตรายส่วนบุคคล</h4>${ppeHTML(d.ppe,"p_")}
   <label for="pf-ppeNote"><span>มาตรการ / อุปกรณ์เพิ่มเติม <small>Other measures (optional)</small></span><input type="text" id="pf-ppeNote" name="ppeNote"></label>
   ${photoBoxHTML("req",true,"สภาพหน้างานก่อนเริ่มงาน · Before work")}
-  <h4 class="sec">เอกสารแนบ (PDF) <small>JSEA, รายชื่อผู้ปฏิบัติงาน${t==="daily"?" · ต้องแนบรายชื่อผู้ปฏิบัติงาน":""}</small></h4>
-  <input type="file" id="pf-files" multiple accept="application/pdf">
-  <h4 class="sec">${t==="daily"?"การรับรองของผู้ควบคุมงาน":"Authorization · การรับรองของหัวหน้างาน"}</h4>
+  <h4 class="sec">เอกสารแนบ · Attachments <small>JSEA รายชื่อผู้ปฏิบัติงาน ใบรับรอง ฯลฯ · ถ่ายรูป เลือกจากแกลเลอรี่ หรืออัปโหลด PDF / Word / Excel · สูงสุด 10 ไฟล์${t==="daily"?" · ต้องแนบรายชื่อผู้ปฏิบัติงาน":""}</small></h4>
+  <div class="attpick">
+    <button class="btn sec cam-btn" type="button" data-att="cam">${CAM_ICON}ถ่ายรูปเอกสาร · Take photo</button>
+    <button class="btn sec cam-btn" type="button" data-att="pick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5l-8.6 8.6a5 5 0 0 1-7.1-7.1l8.6-8.6a3.5 3.5 0 0 1 5 5l-8.6 8.6a2 2 0 0 1-2.8-2.8l7.9-7.9"/></svg>เลือกไฟล์ / แกลเลอรี่ · Choose file</button>
+  </div>
+  <input type="file" id="pf-attcam" accept="image/*" capture="environment" hidden>
+  <input type="file" id="pf-files" multiple accept="image/*,application/pdf,.pdf,.doc,.docx,.xls,.xlsx" hidden>
+  <p class="msg err" id="attMsg" hidden></p>
+  <div class="attlist" id="attList"></div>
+  <h4 class="sec">Authorization · การรับรองของผู้ควบคุมงาน</h4>
   <label class="decl"><input type="checkbox" name="decl" required><span>${esc(d.reqDecl||DECL_REQ)}</span></label>
-  ${fld("supervisor",t==="daily"?"หัวหน้างานผู้รับเหมา หรือผู้ควบคุมงาน":"หัวหน้างานผู้รับเหมา","Subcontractor supervisor",1)}
+  <label for="pf-supervisor"><span>ผู้ควบคุมงาน <span class="req">*</span> <small>Authorized work permit approver · ตามประกาศ ${esc(APPROVERS_REF)}</small></span>
+    <select id="pf-supervisor" name="supervisor" required><option value="">— เลือกชื่อ · Select —</option>${APPROVERS.map(n=>`<option>${esc(n)}</option>`).join("")}</select></label>
   <p class="msg err" id="ptwMsg" hidden></p>
   <div class="actions"><button class="btn" type="submit" id="ptwSubmit">ส่งขออนุญาต · Submit</button><button class="btn sec" type="button" data-ptwhome>ยกเลิก</button></div></form>`;
   return h;
@@ -1319,8 +1350,41 @@ function renderPtwTypes(){
   PT_ORDER.forEach(k=>{const d=PT[k], b=el("button","ptype"); b.type="button"; b.style.setProperty("--pc",d.color);
     b.append(el("span","code",d.code),el("b",null,lang==="en"?d.en:d.th),el("span",null,lang==="en"?d.th:d.en)); b.addEventListener("click",()=>openPtwForm(k)); box.append(b);});
 }
+/* ---- attachments: camera, gallery or files ---- */
+let attFiles=[]; const MAX_ATT=10, MAX_ATT_MB=20;
+const fmtSize=b=>b>=1048576?(b/1048576).toFixed(1)+" MB":Math.max(1,Math.round(b/1024))+" KB";
+const extOf=n=>((n||"").split(".").pop()||"").toUpperCase().slice(0,4)||"FILE";
+function renderAtt(){
+  const box=$("#attList"); if(!box) return; box.textContent="";
+  attFiles.forEach((a,i)=>{ const row=el("div","attrow"), th=el("div","attth");
+    if(a.preview){ const im=el("img"); im.src=a.preview; im.alt=""; th.append(im); } else th.textContent=extOf(a.file.name);
+    const nm=el("div","attnm"); nm.append(el("b",null,a.file.name), el("span",null,fmtSize(a.file.size)));
+    const rm=el("button",null,"ลบ"); rm.type="button"; rm.setAttribute("aria-label","ลบ "+a.file.name);
+    rm.addEventListener("click",()=>{ if(a.preview) URL.revokeObjectURL(a.preview); attFiles.splice(i,1); renderAtt(); });
+    row.append(th,nm,rm); box.append(row); });
+  document.querySelectorAll("[data-att]").forEach(b=>b.disabled=attFiles.length>=MAX_ATT);
+}
+function addAtt(list){
+  const m=$("#attMsg"); let skipped=[];
+  for(const f of list){
+    if(attFiles.length>=MAX_ATT){ skipped.push(f.name+" (เกิน "+MAX_ATT+" ไฟล์)"); continue; }
+    if(f.size>MAX_ATT_MB*1048576){ skipped.push(f.name+" (ใหญ่เกิน "+MAX_ATT_MB+" MB)"); continue; }
+    if(!/^image\/|pdf|word|excel|sheet|officedocument/i.test(f.type||"")&&!/\.(pdf|docx?|xlsx?|jpe?g|png|heic|webp)$/i.test(f.name)){ skipped.push(f.name+" (ไม่รองรับไฟล์ชนิดนี้)"); continue; }
+    attFiles.push({file:f, preview:/^image\//.test(f.type||"")?URL.createObjectURL(f):""});
+  }
+  m.textContent=skipped.length?"ไม่ได้แนบ: "+skipped.join(", "):""; m.hidden=!skipped.length; renderAtt();
+}
+async function prepAtt(f){
+  if(!/^image\/(jpeg|png|webp)$/i.test(f.type||"")||f.size<700*1024) return {blob:f,name:f.name,type:f.type};
+  try{ const u=URL.createObjectURL(f); const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=u;});
+    const k=Math.min(1,2000/Math.max(img.naturalWidth,img.naturalHeight)), c=document.createElement("canvas");
+    c.width=Math.round(img.naturalWidth*k); c.height=Math.round(img.naturalHeight*k); c.getContext("2d").drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(u);
+    const b=await new Promise(r=>c.toBlob(r,"image/jpeg",0.85)); return b?{blob:b,name:f.name.replace(/\.\w+$/,"")+".jpg",type:"image/jpeg"}:{blob:f,name:f.name,type:f.type};
+  }catch(e){ return {blob:f,name:f.name,type:f.type}; }
+}
 function openPtwForm(t){
   ptwType=t; shots.req.forEach(x=>URL.revokeObjectURL(x.url)); shots.req=[];
+  attFiles.forEach(a=>a.preview&&URL.revokeObjectURL(a.preview)); attFiles=[];
   $("#ptw-form").innerHTML=ptwFormHTML(t); ptwShow("form"); renderShots("req");
   const f=$("#ptwForm"), now=new Date(), pad=n=>String(n).padStart(2,"0"), loc=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+"T"+pad(d.getHours())+":"+pad(d.getMinutes());
   f.start.value=loc(now); const e=new Date(now); e.setHours(17,0,0,0); if(e<=now) e.setTime(now.getTime()+4*3600e3); f.end.value=loc(e);
@@ -1329,6 +1393,11 @@ function openPtwForm(t){
     box.hidden=!on; box.querySelectorAll("input").forEach(i=>i.disabled=!on); }));
   f.querySelector("[data-ptwhome]").addEventListener("click",()=>ptwShow("home"));
   f.addEventListener("submit",submitPtw);
+  f.querySelector('[data-att="cam"]').addEventListener("click",()=>{ const i=$("#pf-attcam"); i.value=""; i.click(); });
+  f.querySelector('[data-att="pick"]').addEventListener("click",()=>{ const i=$("#pf-files"); i.value=""; i.click(); });
+  $("#pf-attcam").addEventListener("change",e=>addAtt([...e.target.files]));
+  $("#pf-files").addEventListener("change",e=>addAtt([...e.target.files]));
+  renderAtt();
   setTimeout(()=>f.requester.focus(),0);
 }
 async function submitPtw(e){
@@ -1337,11 +1406,12 @@ async function submitPtw(e){
   if(r.err){ m.className="msg err"; m.textContent=r.err; m.hidden=false; m.scrollIntoView({block:"center",behavior:"smooth"}); return; }
   const btn=$("#ptwSubmit"); btn.disabled=true; btn.textContent="กำลังส่ง…";
   try{
-    const files=[...$("#pf-files").files].filter(f=>/pdf/i.test(f.type)||/\.pdf$/i.test(f.name)).slice(0,10), att=[];
+    const att=[];
     btn.textContent="กำลังอัปโหลดรูป…"; r.v.photos=await uploadShots("req");
-    for(const f of files){ const ext=(f.name.split(".").pop()||"bin").toLowerCase().replace(/[^a-z0-9]/g,""), path="ptw/"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+"."+ext;
-      const up=await sb.storage.from(BUCKET).upload(path,f,{contentType:f.type||undefined}); if(up.error) throw up.error;
-      att.push({name:f.name,type:f.type,path,url:sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl}); }
+    for(let i=0;i<attFiles.length;i++){ btn.textContent="กำลังอัปโหลดเอกสาร "+(i+1)+"/"+attFiles.length+"…";
+      const a=await prepAtt(attFiles[i].file), ext=(a.name.split(".").pop()||"bin").toLowerCase().replace(/[^a-z0-9]/g,"")||"bin", path="ptw/"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+"."+ext;
+      const up=await sb.storage.from(BUCKET).upload(path,a.blob,{contentType:a.type||undefined}); if(up.error) throw up.error;
+      att.push({name:a.name,type:a.type,size:a.blob.size,path,url:sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl}); }
     const row={type:t,status:"pending",requester_emp:emp,area:r.v.area,start_at:new Date(r.start).toISOString(),end_at:new Date(r.end).toISOString(),
       data:r.v,attachments:att,history:hist(null,"submit",emp,"")};
     const {data,error}=await sb.from("ehs_permits").insert(row).select().single(); if(error) throw error;
@@ -1392,9 +1462,9 @@ function permitHTML(p){
   d.checks.forEach(s=>h+=ckView(d,v,s));
   h+=`<h4 class="sec">PPE · อุปกรณ์ป้องกันอันตรายส่วนบุคคล</h4>${ppeHTML(d.ppe,"",true,v.ppe||[])}${v.ppeNote?`<div class="kv wide"><span>มาตรการเพิ่มเติม</span><b>${esc(v.ppeNote)}</b></div>`:""}`;
   if((v.photos||[]).length) h+=`<h4 class="sec">รูปถ่ายหน้างานก่อนเริ่มงาน <small>Before work · ${v.photos.length} รูป · ถ่ายจากกล้อง</small></h4>${galHTML(v.photos)}`;
-  if((p.attachments||[]).length) h+=`<h4 class="sec">เอกสารแนบ</h4><div class="atts">${p.attachments.map(x=>`<a href="${esc(x.url)}" target="_blank" rel="noopener">${/^image\//.test(x.type||"")?`<img src="${esc(x.url)}" alt="">`:"PDF"}<span>${esc(x.name)}</span></a>`).join("")}</div>`;
+  if((p.attachments||[]).length) h+=`<h4 class="sec">เอกสารแนบ</h4><div class="atts">${p.attachments.map(x=>`<a href="${esc(x.url)}" target="_blank" rel="noopener">${/^image\//.test(x.type||"")?`<img src="${esc(x.url)}" alt="">`:`<i class="attext">${esc(extOf(x.name))}</i>`}<span>${esc(x.name)}</span></a>`).join("")}</div>`;
   h+=`<h4 class="sec">Authorization · การอนุมัติ</h4><div class="signs">
-    <div class="sign"><p>${esc(d.reqDecl||DECL_REQ)}</p><b>${esc(v.supervisor)}</b><span>หัวหน้างานผู้รับเหมา · ${esc(dt(p.created_at))}</span></div>
+    <div class="sign"><p>${esc(d.reqDecl||DECL_REQ)}</p><b>${esc(v.supervisor)}</b><span>ผู้ควบคุมงาน · ${esc(dt(p.created_at))}</span></div>
     ${d.ownerDecl?`<div class="sign"><p>${esc(d.ownerDecl)}</p><b>${esc(a.owner||"…………………")}</b><span>เจ้าของพื้นที่ · Area Owner${a.at?" · "+esc(dt(a.at)):""}</span></div>`:""}
     <div class="sign"><p>${esc(DECL_APPR)}</p><b>${esc(a.approver||"…………………")}</b><span>ผู้อนุมัติ · Authorized Approver${a.at?" · "+esc(dt(a.at)):""}</span></div></div>
     ${a.note?`<div class="kv wide"><span>หมายเหตุผู้อนุมัติ</span><b>${esc(a.note)}</b></div>`:""}`;
