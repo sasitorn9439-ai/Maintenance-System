@@ -350,6 +350,7 @@ input[type=search]{background:#fff;border-radius:12px;padding:12px 14px}
 .pstw{display:flex;flex-direction:column;gap:4px;align-items:flex-end}
 @media (max-width:560px){.pstw{grid-column:2;align-items:flex-start;flex-direction:row;flex-wrap:wrap}}
 .sign.review .pst{font-size:.72rem;margin-left:4px;vertical-align:1px}.rvnote{margin:0;white-space:pre-wrap;color:var(--ink)}.rvnote.blank{color:var(--muted);letter-spacing:1px}
+.apprname{display:block;margin-top:4px;font-size:.82rem;font-weight:600}.apprname.ok{color:#1e7a4c}.apprname.bad{color:#b91c1c}.pinchg summary{cursor:pointer;font-weight:600}.pinchg form{margin-top:12px;display:grid;gap:10px}
 /* ===== print: A4, nothing split across pages, nothing past the margins ===== */
 @page{size:A4;margin:10mm 11mm 12mm}
 @media print{
@@ -496,6 +497,13 @@ input[type=search]{background:#fff;border-radius:12px;padding:12px 14px}
         <input type="search" id="ptwQ" data-ip="searchPtw" placeholder="ค้นหาเลขที่ / บริษัท / พื้นที่ / งาน">
         <div class="board" id="ptwBoard"><div class="empty" data-i="loading">กำลังโหลด…</div></div>
       </section>
+      <details class="panel pinchg"><summary>สำหรับผู้อนุมัติ: เปลี่ยน PIN · Approvers: change PIN</summary>
+        <form id="pinChg" novalidate><div class="row">
+          <label for="pc-emp">รหัสพนักงาน <small>Employee code</small><input type="text" id="pc-emp" inputmode="numeric" autocomplete="off"></label>
+          <label for="pc-old">PIN เดิม <small>Current PIN</small><input type="password" id="pc-old" inputmode="numeric" maxlength="6" autocomplete="off"></label>
+          <label for="pc-new">PIN ใหม่ 4–6 หลัก <small>New PIN</small><input type="password" id="pc-new" inputmode="numeric" maxlength="6" autocomplete="off"></label></div>
+          <p class="msg" id="pcMsg" hidden></p><button class="btn sec" type="submit">เปลี่ยน PIN · Change PIN</button></form>
+      </details>
     </div>
     <div class="view" id="ptw-form" hidden></div>
     <div class="view" id="ptw-detail" hidden></div>
@@ -508,6 +516,7 @@ input[type=search]{background:#fff;border-radius:12px;padding:12px 14px}
       <button class="chip" type="button" data-t="docs" aria-pressed="true">เอกสาร · Documents</button>
       <button class="chip" type="button" data-t="logs" aria-pressed="false">ประวัติการเข้าใช้ · Access log</button>
       <button class="chip" type="button" data-t="emps" aria-pressed="false">รหัสพนักงาน · Employee IDs</button>
+      <button class="chip" type="button" data-t="appr" aria-pressed="false">ผู้อนุมัติ PTW · PTW approvers</button>
     </div>
 
     <section id="t-docs" class="view">
@@ -568,6 +577,21 @@ input[type=search]{background:#fff;border-radius:12px;padding:12px 14px}
         <p class="msg" id="empMsg" hidden></p>
         <button class="btn" type="submit" id="empSave">บันทึกรายชื่อ · Save list</button>
       </form>
+    </section>
+    <section id="t-appr" class="view" hidden>
+      <div class="panel">
+        <h3>ผู้อนุมัติ Permit to Work <small style="font-weight:400;color:var(--muted)">ตามประกาศ 013/2025 Rev.01</small></h3>
+        <p class="note" style="text-align:left">เฉพาะรหัสในรายการนี้ที่ออกและปิดใบอนุญาตได้ ต้องใส่ PIN ทุกครั้ง · PIN เก็บแบบเข้ารหัส EHS ดูย้อนหลังไม่ได้ ตั้งใหม่ได้อย่างเดียว · ใส่ผิด 5 ครั้งล็อก 15 นาที</p>
+        <label for="ap-key">รหัสผ่าน Admin <small>ต้องใส่ทุกครั้งที่บันทึก · Admin password</small><input type="password" id="ap-key" autocomplete="current-password"></label>
+        <div class="tbl"><table><thead><tr><th>รหัส</th><th>ชื่อ</th><th>ใช้งาน</th><th>PIN</th><th></th></tr></thead><tbody id="apprAdmList"></tbody></table></div>
+        <h4 class="sec">เพิ่ม / แก้ไข / ตั้ง PIN · Add, edit or set PIN</h4>
+        <form id="apprForm2" novalidate><div class="row">
+          <label for="ap-emp">รหัสพนักงาน<input type="text" id="ap-emp" inputmode="numeric" autocomplete="off"></label>
+          <label for="ap-name">ชื่อ (ตามประกาศ)<input type="text" id="ap-name" autocomplete="off"></label>
+          <label for="ap-pin">PIN ใหม่ <small>เว้นว่าง = ไม่เปลี่ยน</small><input type="password" id="ap-pin" inputmode="numeric" maxlength="6" autocomplete="new-password"></label></div>
+          <label class="decl" style="padding:8px 12px"><input type="checkbox" id="ap-active" checked><span>ใช้งาน · Active</span></label>
+          <p class="msg" id="apMsg" hidden></p><div class="actions"><button class="btn" type="submit">บันทึก · Save</button><button class="btn sec" type="button" id="apClear">ล้างฟอร์ม</button></div></form>
+      </div>
     </section>
   </div>
 </div>
@@ -908,8 +932,19 @@ document.addEventListener("keydown",e=>{
 /* admin tabs */
 document.querySelectorAll("#aTabs .chip").forEach(b=>b.addEventListener("click",()=>{aTab=b.dataset.t;
   document.querySelectorAll("#aTabs .chip").forEach(x=>x.setAttribute("aria-pressed",x===b));
-  ["docs","logs","emps"].forEach(t=>$("#t-"+t).hidden=t!==aTab);
-  if(aTab==="logs") loadLogs();}));
+  ["docs","logs","emps","appr"].forEach(t=>$("#t-"+t).hidden=t!==aTab);
+  if(aTab==="logs") loadLogs(); if(aTab==="appr") loadApprovers();}));
+function renderApprAdmin(){ const tb=$("#apprAdmList"); tb.innerHTML=approversErr?`<tr><td colspan="5">ยังไม่ได้ติดตั้ง (รัน ptw-approver-pin.sql) · ${esc(approversErr)}</td></tr>`:approvers.map(a=>`<tr><td>${esc(a.emp)}</td><td>${esc(a.name)}</td><td>${a.active?"✓":"–"}</td><td>${a.has_pin?"ตั้งแล้ว":'<b style="color:var(--crit,#b91c1c)">ยังไม่ตั้ง</b>'}</td><td><button class="link" type="button" data-ape="${esc(a.emp)}">แก้ไข</button> <button class="link" type="button" data-apd="${esc(a.emp)}">ลบ</button></td></tr>`).join("")||'<tr><td colspan="5">–</td></tr>';
+  tb.querySelectorAll("[data-ape]").forEach(b=>b.addEventListener("click",()=>{ const a=approvers.find(x=>x.emp===b.dataset.ape); $("#ap-emp").value=a.emp; $("#ap-name").value=a.name; $("#ap-active").checked=a.active; $("#ap-pin").value=""; $("#ap-pin").focus(); }));
+  tb.querySelectorAll("[data-apd]").forEach(b=>b.addEventListener("click",async()=>{ if(b.dataset.arm!=="1"){b.dataset.arm="1";b.textContent="กดอีกครั้งเพื่อลบ";return;}
+    const r=await rpc("ptw_admin_delete",{k:$("#ap-key").value,p_emp:b.dataset.apd}); const m=$("#apMsg"); m.hidden=false; m.className="msg "+(r&&r.ok?"ok":"err"); m.textContent=r&&r.ok?"ลบแล้ว":pinErr(r); loadApprovers(); })); }
+$("#apClear").addEventListener("click",()=>{ ["ap-emp","ap-name","ap-pin"].forEach(i=>$("#"+i).value=""); $("#ap-active").checked=true; });
+$("#apprForm2").addEventListener("submit",async e=>{ e.preventDefault(); const m=$("#apMsg");
+  const r=await rpc("ptw_admin_save",{k:$("#ap-key").value,p_emp:$("#ap-emp").value.trim(),p_name:$("#ap-name").value.trim(),p_active:$("#ap-active").checked,p_pin:$("#ap-pin").value.trim()});
+  m.hidden=false; m.className="msg "+(r&&r.ok?"ok":"err"); m.textContent=r&&r.ok?"บันทึกแล้ว · Saved":pinErr(r); if(r&&r.ok){ $("#ap-pin").value=""; loadApprovers(); } });
+$("#pinChg").addEventListener("submit",async e=>{ e.preventDefault(); const m=$("#pcMsg");
+  const r=await rpc("ptw_change_pin",{p_emp:$("#pc-emp").value.trim(),p_old:$("#pc-old").value.trim(),p_new:$("#pc-new").value.trim()});
+  m.hidden=false; m.className="msg "+(r&&r.ok?"ok":"err"); m.textContent=r&&r.ok?(lang==="en"?"PIN changed":"เปลี่ยน PIN แล้ว"):pinErr(r); if(r&&r.ok) ["pc-old","pc-new"].forEach(i=>$("#"+i).value=""); });
 CATS.forEach(c=>{const o=el("option",null,c.th+" · "+c.en);o.value=c.k;$("#d-cat").append(o);});
 
 /* admin documents */
@@ -1329,8 +1364,7 @@ function ptwFormHTML(t){
   <div class="attlist" id="attList"></div>
   <h4 class="sec">Authorization · ผู้ควบคุมงานอนุมัติให้ปฏิบัติงาน <small>เมื่อส่งแล้วเริ่มงานได้ทันที · จป. จะรีวิวภายหลัง</small></h4>
   <label class="decl"><input type="checkbox" name="decl" required><span>${esc(DECL_AUTH)}</span></label>
-  <label for="pf-supervisor"><span>ผู้ควบคุมงาน <span class="req">*</span> <small>Authorized work permit approver · ตามประกาศ ${esc(APPROVERS_REF)}</small></span>
-    <select id="pf-supervisor" name="supervisor" required><option value="">— เลือกชื่อ · Select —</option>${APPROVERS.map(n=>`<option>${esc(n)}</option>`).join("")}</select></label>
+  ${pinFields("s",apprOf(emp)?emp:"")}
   <p class="msg err" id="ptwMsg" hidden></p>
   <div class="actions"><button class="btn" type="submit" id="ptwSubmit">อนุมัติและออกใบอนุญาต · Issue permit</button><button class="btn sec" type="button" data-ptwhome>ยกเลิก</button></div></form>`;
   return h;
@@ -1338,7 +1372,7 @@ function ptwFormHTML(t){
 function readPtwForm(t){
   const f=$("#ptwForm"), fd=new FormData(f), d=PT[t], g=k=>(fd.get(k)||"").toString().trim();
   const errs=[]; f.querySelectorAll("[required]").forEach(x=>{ if(x.type==="checkbox"?!x.checked:!x.value.trim()) errs.push(x); });
-  const v={requester:g("requester"),tel:g("tel"),company:g("company"),desc:g("desc"),area:g("area"),loc:g("loc"),workers:g("workers"),ref:g("ref"),supervisor:g("supervisor"),ppeNote:g("ppeNote")};
+  const v={requester:g("requester"),tel:g("tel"),company:g("company"),desc:g("desc"),area:g("area"),loc:g("loc"),workers:g("workers"),ref:g("ref"),ppeNote:g("ppeNote")};
   const start=g("start"), end=g("end");
   if(start&&end&&new Date(end)<=new Date(start)) return {err:"เวลาสิ้นสุดต้องหลังเวลาเริ่ม · End must be after start."};
   const checks={}, groups={}; let missing=0;
@@ -1361,7 +1395,24 @@ function readPtwForm(t){
 }
 
 /* ---- data ---- */
+let approvers=[], approversErr="";
+async function loadApprovers(){
+  const {data,error}=await sb.from("ehs_ptw_approvers_pub").select("emp,name,active,has_pin").order("name");
+  approversErr=error?errText(error):""; approvers=data||[]; if($("#apprAdmList")) renderApprAdmin();
+}
+const apprOf=c=>approvers.find(a=>a.emp===String(c||"").trim()&&a.active);
+const PINERR={not_approver:["รหัสนี้ไม่อยู่ในรายชื่อผู้อนุมัติ Permit to Work","This employee code is not an authorised approver"],
+  wrong_pin:["PIN ไม่ถูกต้อง","Wrong PIN"],locked:["ใส่ PIN ผิดหลายครั้ง ล็อก 15 นาที","Too many wrong PINs, locked for 15 minutes"],
+  no_pin:["ผู้อนุมัตินี้ยังไม่ได้ตั้ง PIN · ติดต่อ EHS","No PIN set for this approver · contact EHS"],bad_pin:["PIN ต้องเป็นตัวเลข 4–6 หลัก","PIN must be 4–6 digits"],
+  not_admin:["รหัสผ่าน Admin ไม่ถูกต้อง","Wrong admin password"],missing:["กรอกรหัสและชื่อ","Enter code and name"],not_pending:["ใบนี้ไม่ได้อยู่ในสถานะรออนุมัติแล้ว","This permit is no longer pending"]};
+const pinErr=r=>{ if(!r) return "เชื่อมต่อระบบไม่ได้"; const x=PINERR[r.error]||[r.error,r.error]; let t=lang==="en"?x[1]:x[0]; if(r.error==="wrong_pin"&&r.left!=null) t+=lang==="en"?` (${r.left} tries left)`:` (เหลือ ${r.left} ครั้ง)`; return t; };
+async function rpc(fn,args){ const {data,error}=await sb.rpc(fn,args); if(error) return {ok:false,error:/function|schema cache|does not exist/i.test(error.message||"")?"ยังไม่ได้ติดตั้งระบบ PIN (รัน ptw-approver-pin.sql) · "+errText(error):errText(error)}; return data; }
+const pinFields=(pre,code)=>`<div class="row pinrow">
+  <label for="pf-${pre}emp"><span>รหัสพนักงานผู้อนุมัติ <span class="req">*</span> <small>Approver employee code · ตามประกาศ ${esc(APPROVERS_REF)}</small></span><input type="text" id="pf-${pre}emp" name="${pre}emp" inputmode="numeric" autocomplete="off" required value="${esc(code||"")}"><small class="apprname" id="${pre}name"></small></label>
+  <label for="pf-${pre}pin"><span>PIN <span class="req">*</span> <small>4 ตัวแรกของเลขบัตรประชาชน · first 4 digits of ID card</small></span><input type="password" id="pf-${pre}pin" name="${pre}pin" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" required></label></div>`;
+function wirePin(pre){ const i=$("#pf-"+pre+"emp"), o=$("#"+pre+"name"); if(!i) return; const upd=()=>{ const a=apprOf(i.value); o.textContent=i.value.trim()?(a?"✓ "+a.name:(lang==="en"?"Not an authorised approver":"ไม่อยู่ในรายชื่อผู้อนุมัติ")):""; o.className="apprname "+(a?"ok":"bad"); }; i.addEventListener("input",upd); upd(); }
 async function loadPermits(){
+  loadApprovers();
   const {data,error}=await sb.from("ehs_permits").select("*").order("created_at",{ascending:false}).limit(1000);
   if(error){ $("#ptwBoard").textContent=""; $("#ptwBoard").append(el("div","empty","โหลดใบอนุญาตไม่ได้: "+errText(error))); return; }
   permits=data||[]; renderPtw();
@@ -1422,11 +1473,11 @@ function openPtwForm(t){
   $("#ptw-form").innerHTML=ptwFormHTML(t); ptwShow("form"); renderShots("req");
   const f=$("#ptwForm"), now=new Date(), pad=n=>String(n).padStart(2,"0"), loc=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+"T"+pad(d.getHours())+":"+pad(d.getMinutes());
   f.start.value=loc(now); const e=new Date(now); e.setHours(17,0,0,0); if(e<=now) e.setTime(now.getTime()+4*3600e3); f.end.value=loc(e);
-  try{ const last=JSON.parse(localStorage.getItem("ptwLast")||"{}"); ["requester","tel","company","supervisor"].forEach(k=>{ if(last[k]) f[k].value=last[k]; }); }catch(x){}
+  try{ const last=JSON.parse(localStorage.getItem("ptwLast")||"{}"); ["requester","tel","company"].forEach(k=>{ if(last[k]) f[k].value=last[k]; }); }catch(x){}
   f.querySelectorAll(".rel").forEach(r=>r.addEventListener("change",()=>{ const k=r.dataset.g, on=f["g_"+k].value==="rel", box=f.querySelector(`[data-gbox="${k}"]`);
     box.hidden=!on; box.querySelectorAll("input").forEach(i=>i.disabled=!on); }));
   f.querySelector("[data-ptwhome]").addEventListener("click",()=>ptwShow("home"));
-  f.addEventListener("submit",submitPtw);
+  f.addEventListener("submit",submitPtw); wirePin("s");
   f.querySelector('[data-att="cam"]').addEventListener("click",()=>{ const i=$("#pf-attcam"); i.value=""; i.click(); });
   f.querySelector('[data-att="pick"]').addEventListener("click",()=>{ const i=$("#pf-files"); i.value=""; i.click(); });
   $("#pf-attcam").addEventListener("change",e=>addAtt([...e.target.files]));
@@ -1438,24 +1489,23 @@ async function submitPtw(e){
   e.preventDefault(); const t=ptwType, r=readPtwForm(t), m=$("#ptwMsg");
   if(!r.err&&!shots.req.length) r.err="ถ่ายรูปหน้างานอย่างน้อย 1 รูป (กดปุ่ม ถ่ายรูป) · Take at least one site photo.";
   if(r.err){ m.className="msg err"; m.textContent=r.err; m.hidden=false; m.scrollIntoView({block:"center",behavior:"smooth"}); return; }
-  const btn=$("#ptwSubmit"); btn.disabled=true; btn.textContent="กำลังส่ง…";
+  const fd=new FormData($("#ptwForm")), sEmp=(fd.get("semp")||"").toString().trim(), sPin=(fd.get("spin")||"").toString().trim();
+  const btn=$("#ptwSubmit"); btn.disabled=true; btn.textContent="กำลังตรวจ PIN…";
   try{
+    const ok=await rpc("ptw_verify",{p_emp:sEmp,p_pin:sPin});
+    if(!ok||!ok.ok){ m.className="msg err"; m.textContent=pinErr(ok); m.hidden=false; $("#pf-spin").value=""; $("#pf-spin").focus(); return; }
     const att=[];
     btn.textContent="กำลังอัปโหลดรูป…"; r.v.photos=await uploadShots("req");
     for(let i=0;i<attFiles.length;i++){ btn.textContent="กำลังอัปโหลดเอกสาร "+(i+1)+"/"+attFiles.length+"…";
       const a=await prepAtt(attFiles[i].file), ext=(a.name.split(".").pop()||"bin").toLowerCase().replace(/[^a-z0-9]/g,"")||"bin", path="ptw/"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+"."+ext;
       const up=await sb.storage.from(BUCKET).upload(path,a.blob,{contentType:a.type||undefined}); if(up.error) throw up.error;
       att.push({name:a.name,type:a.type,size:a.blob.size,path,url:sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl}); }
-    const now=new Date().toISOString();
-    const row={type:t,status:"approved",requester_emp:emp,area:r.v.area,start_at:new Date(r.start).toISOString(),end_at:new Date(r.end).toISOString(),
-      data:r.v,attachments:att,approval:{approver:r.v.supervisor,by:"supervisor",at:now},history:hist(null,"issue",r.v.supervisor+" ("+emp+")","")};
-    let {data,error}=await sb.from("ehs_permits").insert(row).select().single();
-    if(error&&/row-level security|violates/i.test(error.message||"")){ // database not yet updated: insert as pending, then issue
-      const r1=await sb.from("ehs_permits").insert(Object.assign({},row,{status:"pending"})).select().single(); if(r1.error) throw r1.error;
-      const r2=await sb.from("ehs_permits").update({status:"approved"}).eq("id",r1.data.id).select().single(); if(r2.error) throw r2.error;
-      data=r2.data; error=null; }
-    if(error) throw error;
-    try{ localStorage.setItem("ptwLast",JSON.stringify({requester:r.v.requester,tel:r.v.tel,company:r.v.company,supervisor:r.v.supervisor})); }catch(x){}
+    btn.textContent="กำลังออกใบอนุญาต…";
+    const row={type:t,requester_emp:emp,area:r.v.area,start_at:new Date(r.start).toISOString(),end_at:new Date(r.end).toISOString(),data:r.v,attachments:att};
+    const res=await rpc("ptw_issue",{p_emp:sEmp,p_pin:sPin,p_row:row});
+    if(!res||!res.ok){ m.className="msg err"; m.textContent=pinErr(res); m.hidden=false; return; }
+    const data=res.permit;
+    try{ localStorage.setItem("ptwLast",JSON.stringify({requester:r.v.requester,tel:r.v.tel,company:r.v.company})); }catch(x){}
     log("open","ptw:"+data.id,"ขอ "+pno(data)); notifyPtw(data,"new");
     permits.unshift(data); openPermit(data.id,lang==="en"?"Permit issued: "+pno(data)+" · work may start · safety officer will review":"ออกใบอนุญาตแล้ว เลขที่ "+pno(data)+" · เริ่มงานได้ · จป. จะรีวิวภายหลัง");
   }catch(err){ m.className="msg err"; m.textContent="ส่งไม่สำเร็จ: "+errText(err); m.hidden=false; }
@@ -1524,9 +1574,10 @@ function closeFormHTML(p,admin){
   const d=PT[p.type]; let h=`<form class="panel noprint" id="closeForm" novalidate><h3>${p.status==="closing"?"ยืนยันปิดงาน · Confirm closure":"ปิดงาน · Close permit"}</h3>`;
   if(p.status!=="closing"){
     if(d.close){ h+=`<h4 class="sec">${esc(d.close.title)}</h4><div class="cks">${d.close.items.map(it=>yn("x_"+it.id,it)).join("")}</div><div class="row">${(d.close.fields||[]).map(f=>fld("cf_"+f[0],f[1],f[2],1,f[3])).join("")}</div>`; }
-    h+=`${photoBoxHTML("close",false,"สภาพหน้างานหลังเสร็จงาน · After work")}<label class="decl"><input type="checkbox" name="cdecl" required><span>${esc(d.closeDecl)}</span></label>${fld("cby","ชื่อผู้ปิดงาน","Your name",1)}`;
+    h+=`${photoBoxHTML("close",false,"สภาพหน้างานหลังเสร็จงาน · After work")}<label class="decl"><input type="checkbox" name="cdecl" required><span>${esc(d.closeDecl)}</span></label>${admin?fld("cby","ชื่อผู้ปิดงาน","Your name",1):""}`;
   }
-  if(p.status==="closing") h+=`<div class="row">${fld("cappr","ชื่อผู้ยืนยันปิดงาน","Confirmed by",1)}</div>`;
+  if(!admin) h+=pinFields("c",apprOf(emp)?emp:((p.approval||{}).approver_emp||""));
+  if(p.status==="closing"&&admin) h+=`<div class="row">${fld("cappr","ชื่อผู้ยืนยันปิดงาน","Confirmed by",1)}</div>`;
   h+=`<p class="msg err" id="closeMsg" hidden></p><button class="btn" type="submit">ปิดใบอนุญาต · Close permit</button></form>`;
   return h;
 }
@@ -1536,21 +1587,25 @@ function openPermit(id,flash){
   let h=`<div class="actions noprint"><button class="back" type="button" data-ptwhome>${lang==="en"?"← Permit list":"← รายการใบอนุญาต"}</button><button class="back" type="button" id="ptwPrint">พิมพ์ · Print</button></div>`;
   if(flash) h+=`<p class="msg ok noprint">${esc(flash)}</p>`;
   h+=permitHTML(p);
-  if(p.status==="pending"&&(mine||isAdmin)) h+=`<div class="actions noprint"><button class="btn" type="button" id="ptwIssue">ผู้ควบคุมงานอนุมัติ · Issue permit</button><button class="btn sec" type="button" id="ptwCancel">ยกเลิกคำขอ · Cancel request</button></div>`;
-  if(p.status==="approved"&&(mine||isAdmin)) h+=`<div class="actions noprint"><button class="btn sec" type="button" id="ptwCancel">ยกเลิกใบอนุญาต · Cancel permit</button></div>`;
+  if(p.status==="pending") h+=`<form class="panel noprint" id="issueForm" novalidate><h3>ผู้ควบคุมงานอนุมัติ · Issue permit</h3><label class="decl"><input type="checkbox" name="idecl" required><span>${esc(DECL_AUTH)}</span></label>${pinFields("i",apprOf(emp)?emp:"")}<p class="msg err" id="issueMsg" hidden></p><div class="actions"><button class="btn" type="submit">อนุมัติ · Issue</button>${mine||isAdmin?'<button class="btn sec" type="button" id="ptwCancel">ยกเลิกคำขอ · Cancel request</button>':""}</div></form>`;
+  if(p.status==="approved"&&isAdmin) h+=`<div class="actions noprint"><button class="btn sec" type="button" id="ptwCancel">ยกเลิกใบอนุญาต · Cancel permit</button></div>`;
   if(isAdmin&&["approved","closing","closed"].includes(p.status)){ const rv=(p.approval||{}).review||{};
     h+=`<form class="panel noprint" id="reviewForm" novalidate><h3>ความเห็น จป. · Safety officer review <small style="font-weight:400;color:var(--muted)">ไม่หยุดงาน · ใช้บันทึกผลตรวจและติดตาม</small></h3>
     <fieldset class="seg" style="border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px"><legend style="margin-bottom:6px;font-weight:600;display:block;width:100%">ผลการรีวิว · Result <span class="req">*</span></legend>${Object.entries(REVIEW_RES).map(([k,x])=>`<label class="pp" style="cursor:pointer"><input type="radio" name="rres" value="${k}"${rv.result===k?" checked":""}><span>${esc(x[0])} <small>${esc(x[1])}</small></span></label>`).join("")}</fieldset>
     <label for="pf-rnote"><span>ความเห็น / สิ่งที่ต้องแก้ไข <small>Comments</small></span><textarea id="pf-rnote" name="rnote" style="min-height:70px">${esc(rv.note||"")}</textarea></label>
     <div class="row">${fld("rby","ชื่อ จป.","Safety officer",1)}</div>
     <p class="msg err" id="reviewMsg" hidden></p><div class="actions"><button class="btn" type="submit">บันทึกการรีวิว · Save review</button></div></form>`; }
-  if((p.status==="approved"&&(mine||isAdmin))||(p.status==="closing"&&isAdmin)) h+=closeFormHTML(p,isAdmin);
+  if(p.status==="approved"||p.status==="closing") h+=closeFormHTML(p,isAdmin);
   box.innerHTML=h;
   shots.close.forEach(x=>URL.revokeObjectURL(x.url)); shots.close=[]; renderShots("close");
   box.querySelectorAll("[data-ptwhome]").forEach(b=>b.addEventListener("click",()=>{ptwShow("home");renderPtw();}));
   $("#ptwPrint").addEventListener("click",()=>window.print());
-  const iss=$("#ptwIssue"); if(iss) iss.addEventListener("click",async()=>{ const sv=(p.data||{}).supervisor||"";
-    await savePermit(p,{status:"approved",approval:Object.assign({},p.approval||{},{approver:sv,by:"supervisor",at:new Date().toISOString()}),history:hist(p,"issue",sv+" ("+emp+")",""),updated_at:new Date().toISOString()},lang==="en"?"Permit issued · work may start":"ออกใบอนุญาตแล้ว · เริ่มงานได้"); });
+  wirePin("i"); wirePin("c");
+  const isf=$("#issueForm"); if(isf) isf.addEventListener("submit",async e=>{ e.preventDefault(); const fd=new FormData(isf), g=k=>(fd.get(k)||"").toString().trim(), m=$("#issueMsg");
+    if(!fd.get("idecl")){ m.textContent="ติ๊กรับรองก่อนอนุมัติ"; m.hidden=false; return; }
+    const res=await rpc("ptw_issue_pending",{p_emp:g("iemp"),p_pin:g("ipin"),p_id:p.id});
+    if(!res||!res.ok){ m.textContent=pinErr(res); m.hidden=false; $("#pf-ipin").value=""; return; }
+    permits=permits.map(x=>x.id===p.id?res.permit:x); notifyPtw(res.permit,"new"); openPermit(p.id,lang==="en"?"Permit issued · work may start":"ออกใบอนุญาตแล้ว · เริ่มงานได้"); });
   const rf=$("#reviewForm"); if(rf){ const rb=rf.querySelector("[name=rby]"); if(rb&&!rb.value) rb.value=((p.approval||{}).review||{}).by||"";
     rf.addEventListener("submit",async e=>{ e.preventDefault(); const fd=new FormData(rf), g=k=>(fd.get(k)||"").toString().trim(), m=$("#reviewMsg");
       if(!g("rres")){ m.textContent="เลือกผลการรีวิว"; m.hidden=false; return; }
@@ -1571,15 +1626,17 @@ function openPermit(id,flash){
   const cf=$("#closeForm"); if(cf) cf.addEventListener("submit",async e=>{ e.preventDefault(); const fd=new FormData(cf), g=k=>(fd.get(k)||"").toString().trim(), m=$("#closeMsg"), d=PT[p.type];
     const errs=[...cf.querySelectorAll("[required]")].filter(x=>x.type==="checkbox"?!x.checked:!x.value.trim());
     if(errs.length){ m.textContent="กรอกข้อมูลปิดงานให้ครบ และติ๊กรับรอง"; m.hidden=false; errs[0].focus(); return; }
+    let closer=null;
+    if(!isAdmin){ const v=await rpc("ptw_verify",{p_emp:g("cemp"),p_pin:g("cpin")}); if(!v||!v.ok){ m.textContent=pinErr(v); m.hidden=false; $("#pf-cpin").value=""; return; } closer=v.name+" ("+v.emp+")"; }
     let c=Object.assign({},p.closure||{});
     if(p.status!=="closing"){ const checks={}; let miss=0; (d.close?d.close.items:[]).forEach(it=>{const a=g("x_"+it.id); if(!a) miss++; else checks[it.id]=a;});
       if(miss){ m.textContent="รายการตรวจสอบปิดงานยังตอบไม่ครบ "+miss+" ข้อ"; m.hidden=false; return; }
       const fields={}; (d.close&&d.close.fields||[]).forEach(f=>fields[f[0]]=g("cf_"+f[0]));
       const sb2=cf.querySelector('button[type=submit]'); sb2.disabled=true; sb2.textContent="กำลังบันทึก…";
       let photos=[]; try{ photos=await uploadShots("close"); }catch(err){ sb2.disabled=false; sb2.textContent="ปิดใบอนุญาต · Close permit"; m.textContent="อัปโหลดรูปไม่สำเร็จ: "+errText(err); m.hidden=false; return; }
-      c={checks,fields,by:g("cby"),at:new Date().toISOString(),photos}; }
-    const wasClosing=p.status==="closing"; if(wasClosing) c.approver=g("cappr"); c.closedAt=new Date().toISOString();
-    const upd={status:"closed",closure:c,history:hist(p,"close",wasClosing?g("cappr"):(c.by+" ("+emp+")"),""),updated_at:new Date().toISOString()};
+      c={checks,fields,by:closer?closer.replace(/ \(\d+\)$/,""):g("cby"),by_emp:closer?g("cemp"):"",at:new Date().toISOString(),photos}; }
+    const wasClosing=p.status==="closing"; if(wasClosing) c.approver=closer?closer.replace(/ \(\d+\)$/,""):g("cappr"); c.closedAt=new Date().toISOString();
+    const upd={status:"closed",closure:c,history:hist(p,"close",closer||((wasClosing?g("cappr"):c.by)+" (Admin)"),""),updated_at:new Date().toISOString()};
     await savePermit(p,upd,lang==="en"?"Permit closed":"ปิดใบอนุญาตแล้ว",m);
     if(!wasClosing) notifyPtw(Object.assign({},p,upd),"close"); });
 }
