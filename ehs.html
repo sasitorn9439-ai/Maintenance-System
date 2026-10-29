@@ -349,7 +349,38 @@ input[type=search]{background:#fff;border-radius:12px;padding:12px 14px}
 .prow .code{background:var(--pc);color:#fff;padding:4px 8px;border-radius:6px;min-width:46px;text-align:center}
 .pstw{display:flex;flex-direction:column;gap:4px;align-items:flex-end}
 @media (max-width:560px){.pstw{grid-column:2;align-items:flex-start;flex-direction:row;flex-wrap:wrap}}
-@media print{.appbar,.tabbar,body::before{display:none!important}body{padding:0!important}}
+.sign.review .pst{font-size:.72rem;margin-left:4px;vertical-align:1px}.rvnote{margin:0;white-space:pre-wrap;color:var(--ink)}.rvnote.blank{color:var(--muted);letter-spacing:1px}
+/* ===== print: A4, nothing split across pages, nothing past the margins ===== */
+@page{size:A4;margin:10mm 11mm 12mm}
+@media print{
+  .appbar,.tabbar,body::before,.flash,#flash,.toast{display:none!important}
+  html,body{width:auto!important;min-width:0!important;background:#fff!important;padding:0!important;margin:0!important}
+  *,*::before,*::after{box-shadow:none!important;text-shadow:none!important}
+  .wrap{max-width:none!important;width:auto!important;padding:0!important;margin:0!important;display:block!important}
+  .view{display:block!important}.view>*+*{margin-top:8px}
+  .panel{box-shadow:none!important;border:0!important;padding:0!important;border-radius:0!important}
+  .permit,.permit *{max-width:100%;overflow-wrap:anywhere}
+  .panel.permit{display:block!important}.panel.permit>*+*{margin-top:8px}
+  img{max-width:100%!important;break-inside:avoid;page-break-inside:avoid}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  /* headings stay with what follows */
+  .sec{break-after:avoid;page-break-after:avoid;break-inside:avoid;margin-top:10px}
+  /* boxes never cut in half */
+  .pp,.ck,.kv,.sign,.decl,.pgal a,.atts a,tr,.note,.pill,.phead{break-inside:avoid;page-break-inside:avoid}
+  .signs{break-inside:avoid;page-break-inside:avoid;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px}
+  /* fixed columns so A4 width is predictable */
+  .ppe{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px;break-inside:avoid;page-break-inside:avoid}
+  .pp{padding:4px 6px;font-size:10px;line-height:1.25}.pp small{font-size:9px}
+  .kvs{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px}
+  .kv.wide{grid-column:1/-1}
+  .pgal{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px}
+  .pgal img{aspect-ratio:4/3;height:auto;max-height:52mm;object-fit:cover}
+  .atts{gap:6px}.atts a{width:30mm}.atts a img,.atts a i.attext{width:30mm;height:22mm}
+  .tbl{overflow:visible!important}
+  .tbl table,.permit table{width:100%!important;table-layout:fixed;border-collapse:collapse;font-size:10px}
+  .permit th,.permit td{word-break:break-word;padding:3px 4px}
+  thead{display:table-header-group}
+}
 @media (hover:none),(max-width:960px){input,select,textarea,.grid-in input{font-size:16px!important}}
 @media (prefers-reduced-motion:reduce){.tile,.act,.act .go svg,.nv{transition:none}}
 </style>
@@ -422,7 +453,7 @@ input[type=search]{background:#fff;border-radius:12px;padding:12px 14px}
     <section class="home-grid">
       <div class="panel hp">
         <div class="hp-head"><h3 data-i="hpPtwT">ใบอนุญาตทำงานวันนี้</h3><button class="more" type="button" id="hpPtwAll" data-i="viewAll">ดูทั้งหมด →</button></div>
-        <div class="nums"><div class="num ok"><b id="hpActive">–</b><span data-i="stActive">กำลังทำงาน</span></div><div class="num warn"><b id="hpPending">–</b><span data-i="stPending">รออนุมัติ</span></div></div>
+        <div class="nums"><div class="num ok"><b id="hpActive">–</b><span data-i="stActive">กำลังทำงาน</span></div><div class="num warn"><b id="hpPending">–</b><span data-i="stPending">รอ จป. รีวิว</span></div></div>
         <div class="mini" id="hpPtwList"></div>
       </div>
       <div class="panel hp">
@@ -458,7 +489,7 @@ input[type=search]{background:#fff;border-radius:12px;padding:12px 14px}
       <section class="view">
         <div class="tabs" id="ptwTabs">
           <button class="chip" type="button" data-t="active" aria-pressed="true"><span data-i="stActive">กำลังทำงาน</span><i></i></button>
-          <button class="chip" type="button" data-t="pending" aria-pressed="false"><span data-i="stPending">รออนุมัติ</span><i></i></button>
+          <button class="chip" type="button" data-t="pending" aria-pressed="false"><span data-i="stPending">รอ จป. รีวิว</span><i></i></button>
           <button class="chip" type="button" data-t="mine" aria-pressed="false"><span data-i="tabMine">ของฉัน</span><i></i></button>
           <button class="chip" type="button" data-t="all" aria-pressed="false"><span data-i="tabAll">ทั้งหมด</span><i></i></button>
         </div>
@@ -633,13 +664,13 @@ const I18N={
   c2t:"แจ้งจุดเสี่ยง",c2s:"Hazard / Near Miss",c2p:"เห็นสภาพหรือการกระทำที่ไม่ปลอดภัย แจ้ง EHS ก่อนเกิดเหตุ",c2g:"เปิดแบบฟอร์ม",
   c3t:"EHS Information",c3s:"ข้อมูลความปลอดภัย",c3p:"SDS โปสเตอร์ Lesson Learned และเอกสาร EHS",c3g:"ดูเอกสาร",
   c4t:"Permit to Work",c4s:"ขอใบอนุญาตทำงาน",c4p:"Hot Work ที่สูง LOTO ที่อับอากาศ และ Daily Work",c4g:"ขอ / ติดตามใบอนุญาต",
-  hpPtwT:"ใบอนุญาตทำงานวันนี้",viewAll:"ดูทั้งหมด →",stActive:"กำลังทำงาน",stPending:"รออนุมัติ",hpLlT:"Lesson Learned ล่าสุด",loading:"กำลังโหลด…",
+  hpPtwT:"ใบอนุญาตทำงานวันนี้",viewAll:"ดูทั้งหมด →",stActive:"กำลังทำงาน",stPending:"รอ จป. รีวิว",hpLlT:"Lesson Learned ล่าสุด",loading:"กำลังโหลด…",
   sosT:"เบอร์ฉุกเฉิน",tel1:"เจ็บป่วยฉุกเฉิน / รถพยาบาล",tel2:"ดับเพลิง",tel3:"ตำรวจ",sosNote:"เกิดเหตุในโรงงาน แจ้งหัวหน้างานและ EHS ทันที แล้วอพยพไปจุดรวมพล",
   hpNoSys:"ยังไม่ได้เปิดใช้ระบบใบอนุญาต",hpNoAct:"ไม่มีงานที่ใช้ใบอนุญาตอยู่ตอนนี้",hpNoLl:"ยังไม่มี Lesson Learned",
   infoT:"EHS Information",infoSub:"เลือกหมวดเอกสาร",searchDocs:"ค้นหาชื่อเอกสาร / สารเคมี / พื้นที่",items:"รายการ",noMatch:"ไม่พบเอกสารที่ค้นหา",noDocs:"ยังไม่มีเอกสารในหมวดนี้",
   loadErr:"โหลดข้อมูลไม่ได้: ",preview:"ดูตัวอย่าง",openFile:"เปิดไฟล์ ↗",open:"เปิดดู ↗",
   ptwSub:"ขอใบอนุญาตทำงาน และติดตามสถานะ",newReq:"ขอใบอนุญาตใหม่",tabMine:"ของฉัน",tabAll:"ทั้งหมด",searchPtw:"ค้นหาเลขที่ / บริษัท / พื้นที่ / งาน",
-  eActive:"ไม่มีงานที่กำลังดำเนินการ",ePending:"ไม่มีคำขอรออนุมัติ",eMine:"คุณยังไม่มีคำขอใบอนุญาต",eAll:"ยังไม่มีใบอนุญาต",overdue:"เกินเวลา",locale:"th-TH"},
+  eActive:"ไม่มีงานที่กำลังดำเนินการ",ePending:"ไม่มีใบอนุญาตที่รอ จป. รีวิว",eMine:"คุณยังไม่มีคำขอใบอนุญาต",eAll:"ยังไม่มีใบอนุญาต",overdue:"เกินเวลา",locale:"th-TH"},
  en:{navHome:"Home",navRepair:"Maintenance",navHazard:"Report hazard",navEhs:"EHS info",navPtw:"Work permits",changeId:"Change ID",backHome:"← Home",
   gateTitle:"Welcome",gateText:"Enter your employee ID to continue.",empIdLabel:"Employee ID",empIdPh:"e.g. 12345",gateBtn:"Continue",
   gateErrFmt:"Employee ID must be 3–16 letters or digits.",gateErrNF:"This ID is not registered. Check it or contact EHS.",
@@ -648,13 +679,13 @@ const I18N={
   c2t:"Report a Hazard",c2s:"แจ้งจุดเสี่ยง",c2p:"Saw an unsafe condition, unsafe act or near miss? Tell EHS before someone gets hurt.",c2g:"Open form",
   c3t:"EHS Information",c3s:"ข้อมูลความปลอดภัย",c3p:"Safety data sheets, posters, lessons learned and other EHS documents.",c3g:"Browse documents",
   c4t:"Permit to Work",c4s:"ขอใบอนุญาตทำงาน",c4p:"Hot work, work at height, LOTO, confined space and daily work permits.",c4g:"Request or track a permit",
-  hpPtwT:"Permits today",viewAll:"View all →",stActive:"Active",stPending:"Pending approval",hpLlT:"Latest lessons learned",loading:"Loading…",
+  hpPtwT:"Permits today",viewAll:"View all →",stActive:"Active",stPending:"Awaiting safety review",hpLlT:"Latest lessons learned",loading:"Loading…",
   sosT:"Emergency numbers",tel1:"Medical emergency / ambulance",tel2:"Fire",tel3:"Police",sosNote:"Incident on site: tell your supervisor and EHS immediately, then go to the assembly point.",
   hpNoSys:"Permit system is not set up yet",hpNoAct:"No permit work in progress",hpNoLl:"No lessons learned yet",
   infoT:"EHS Information",infoSub:"Choose a category",searchDocs:"Search by title, chemical or area",items:"items",noMatch:"No documents match your search",noDocs:"No documents in this category yet",
   loadErr:"Could not load data: ",preview:"Preview",openFile:"Open file ↗",open:"Open ↗",
   ptwSub:"Request work permits and track their status",newReq:"New permit request",tabMine:"Mine",tabAll:"All",searchPtw:"Search permit no., company, area or work",
-  eActive:"No permits in progress",ePending:"No requests waiting for approval",eMine:"You have no permit requests yet",eAll:"No permits yet",overdue:"Overdue",locale:"en-GB"}};
+  eActive:"No permits in progress",ePending:"No permits awaiting safety review",eMine:"You have no permit requests yet",eAll:"No permits yet",overdue:"Overdue",locale:"en-GB"}};
 const CATL={sds:{th:["SDS","เอกสารข้อมูลความปลอดภัยสารเคมี"],en:["SDS","Safety Data Sheets"]},poster:{th:["โปสเตอร์ EHS","EHS Posters"],en:["EHS Posters","โปสเตอร์ความปลอดภัย"]},
   lesson:{th:["Lesson Learned","บทเรียนจากอุบัติเหตุ"],en:["Lessons Learned","บทเรียนจากอุบัติเหตุ"]},other:{th:["อื่น ๆ","เอกสารอื่น"],en:["Other","Other documents"]}};
 let lang="th"; try{ const l=localStorage.getItem("ehsLang"); if(l==="en"||l==="th") lang=l; }catch(e){}
@@ -722,13 +753,13 @@ function renderHomeStatic(){
 async function loadHome(){
   renderHomeStatic(); const my=++hpReq;
   const [pr,lr]=await Promise.all([
-    sb.from("ehs_permits").select("id,seq,type,status,area,data,start_at,end_at,created_at").in("status",["approved","closing","pending"]).order("start_at",{ascending:false}).limit(200),
+    sb.from("ehs_permits").select("id,seq,type,status,area,data,approval,start_at,end_at,created_at").in("status",["approved","closing","pending"]).order("start_at",{ascending:false}).limit(200),
     sb.from("ehs_docs").select("*").eq("cat","lesson").order("updated_at",{ascending:false}).limit(3)]);
   if(my!==hpReq) return;
   const pl=$("#hpPtwList"); pl.textContent="";
   if(pr.error){ $("#hpActive").textContent="–"; $("#hpPending").textContent="–"; pl.append(el("p","none",t("hpNoSys"))); }
   else{ const rows=pr.data||[], act=rows.filter(p=>p.status==="approved"||p.status==="closing");
-    $("#hpActive").textContent=act.length; $("#hpPending").textContent=rows.filter(p=>p.status==="pending").length;
+    $("#hpActive").textContent=act.length; $("#hpPending").textContent=rows.filter(needReview).length;
     if(!act.length) pl.append(el("p","none",t("hpNoAct")));
     act.slice(0,3).forEach(p=>{ const d=PT[p.type]||PT.daily, b=el("button"); b.type="button";
       const c=el("span","pc",d.code); c.style.setProperty("--pc",d.color);
@@ -999,6 +1030,9 @@ const PPE={earplug:["Ear plug / Ear muffs","ที่อุดหู"],gloves:["
   shoes:["Safety shoes","รองเท้านิรภัย"],glasses:["Safety glasses","แว่นตานิรภัย"],n95:["Filtering facepiece / N95","หน้ากากป้องกันสารเคมี"],frsheet:["Flame retardant sheet","ผ้ากันสะเก็ดไฟ"],
   helmet:["Safety helmet","หมวกนิรภัย"],face:["Face shield","กระบังหน้า"],vest:["Safety vest","เสื้อสะท้อนแสง"],ext:["Fire extinguisher","ถังดับเพลิง"],hood:["Flash suit hood","ที่คลุมศีรษะป้องกันไฟวาบ"]};
 const DECL_REQ="ข้าพเจ้าขอรับรองว่า ลูกทีมทุกคนภายใต้การควบคุมของข้าพเจ้า ผ่านการอบรม เข้าใจ JSEA/ใบอนุญาต และจะปฏิบัติตามกฎความปลอดภัยของ MCAM ตลอดเวลา";
+const needReview=p=>["approved","closing","closed"].includes(p.status)&&!((p.approval||{}).review);
+const DECL_AUTH="ข้าพเจ้า (ผู้ควบคุมงาน) ขอรับรองว่า ได้ตรวจสอบพื้นที่ทำงานแล้ว มีมาตรการความปลอดภัยครบถ้วน (PPE, การกั้นเขต, การแยกพลังงาน, การตรวจแก๊ส, การเฝ้าระวังไฟ/แผนกู้ภัย) และอนุญาตให้ผู้รับเหมาเข้าปฏิบัติงานตามเงื่อนไขในใบอนุญาตนี้";
+const REVIEW_RES={ok:["เรียบร้อย","Satisfactory","ok"],follow:["ต้องติดตามแก้ไข","Follow-up needed","warn"],stop:["ให้หยุดงานจนกว่าจะแก้ไข","Stop work until fixed","crit"]};
 const DECL_APPR="ข้าพเจ้าขอรับรองว่า ได้ตรวจสอบพื้นที่ทำงานแล้ว และมีมาตรการความปลอดภัยครบถ้วน (PPE, การกั้นเขต, การแยกพลังงาน, การตรวจแก๊ส, การเฝ้าระวังไฟ/แผนกู้ภัย) ก่อนเริ่มงาน";
 const i_=(id,th,en)=>({id,th,en});
 const PT={
@@ -1293,12 +1327,12 @@ function ptwFormHTML(t){
   <input type="file" id="pf-files" multiple accept="image/*,application/pdf,.pdf,.doc,.docx,.xls,.xlsx" hidden>
   <p class="msg err" id="attMsg" hidden></p>
   <div class="attlist" id="attList"></div>
-  <h4 class="sec">Authorization · การรับรองของผู้ควบคุมงาน</h4>
-  <label class="decl"><input type="checkbox" name="decl" required><span>${esc(d.reqDecl||DECL_REQ)}</span></label>
+  <h4 class="sec">Authorization · ผู้ควบคุมงานอนุมัติให้ปฏิบัติงาน <small>เมื่อส่งแล้วเริ่มงานได้ทันที · จป. จะรีวิวภายหลัง</small></h4>
+  <label class="decl"><input type="checkbox" name="decl" required><span>${esc(DECL_AUTH)}</span></label>
   <label for="pf-supervisor"><span>ผู้ควบคุมงาน <span class="req">*</span> <small>Authorized work permit approver · ตามประกาศ ${esc(APPROVERS_REF)}</small></span>
     <select id="pf-supervisor" name="supervisor" required><option value="">— เลือกชื่อ · Select —</option>${APPROVERS.map(n=>`<option>${esc(n)}</option>`).join("")}</select></label>
   <p class="msg err" id="ptwMsg" hidden></p>
-  <div class="actions"><button class="btn" type="submit" id="ptwSubmit">ส่งขออนุญาต · Submit</button><button class="btn sec" type="button" data-ptwhome>ยกเลิก</button></div></form>`;
+  <div class="actions"><button class="btn" type="submit" id="ptwSubmit">อนุมัติและออกใบอนุญาต · Issue permit</button><button class="btn sec" type="button" data-ptwhome>ยกเลิก</button></div></form>`;
   return h;
 }
 function readPtwForm(t){
@@ -1412,17 +1446,23 @@ async function submitPtw(e){
       const a=await prepAtt(attFiles[i].file), ext=(a.name.split(".").pop()||"bin").toLowerCase().replace(/[^a-z0-9]/g,"")||"bin", path="ptw/"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+"."+ext;
       const up=await sb.storage.from(BUCKET).upload(path,a.blob,{contentType:a.type||undefined}); if(up.error) throw up.error;
       att.push({name:a.name,type:a.type,size:a.blob.size,path,url:sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl}); }
-    const row={type:t,status:"pending",requester_emp:emp,area:r.v.area,start_at:new Date(r.start).toISOString(),end_at:new Date(r.end).toISOString(),
-      data:r.v,attachments:att,history:hist(null,"submit",emp,"")};
-    const {data,error}=await sb.from("ehs_permits").insert(row).select().single(); if(error) throw error;
+    const now=new Date().toISOString();
+    const row={type:t,status:"approved",requester_emp:emp,area:r.v.area,start_at:new Date(r.start).toISOString(),end_at:new Date(r.end).toISOString(),
+      data:r.v,attachments:att,approval:{approver:r.v.supervisor,by:"supervisor",at:now},history:hist(null,"issue",r.v.supervisor+" ("+emp+")","")};
+    let {data,error}=await sb.from("ehs_permits").insert(row).select().single();
+    if(error&&/row-level security|violates/i.test(error.message||"")){ // database not yet updated: insert as pending, then issue
+      const r1=await sb.from("ehs_permits").insert(Object.assign({},row,{status:"pending"})).select().single(); if(r1.error) throw r1.error;
+      const r2=await sb.from("ehs_permits").update({status:"approved"}).eq("id",r1.data.id).select().single(); if(r2.error) throw r2.error;
+      data=r2.data; error=null; }
+    if(error) throw error;
     try{ localStorage.setItem("ptwLast",JSON.stringify({requester:r.v.requester,tel:r.v.tel,company:r.v.company,supervisor:r.v.supervisor})); }catch(x){}
     log("open","ptw:"+data.id,"ขอ "+pno(data)); notifyPtw(data,"new");
-    permits.unshift(data); openPermit(data.id,"ส่งคำขอแล้ว เลขที่ "+pno(data)+" · รอ EHS อนุมัติ");
+    permits.unshift(data); openPermit(data.id,lang==="en"?"Permit issued: "+pno(data)+" · work may start · safety officer will review":"ออกใบอนุญาตแล้ว เลขที่ "+pno(data)+" · เริ่มงานได้ · จป. จะรีวิวภายหลัง");
   }catch(err){ m.className="msg err"; m.textContent="ส่งไม่สำเร็จ: "+errText(err); m.hidden=false; }
-  finally{ btn.disabled=false; btn.textContent="ส่งขออนุญาต · Submit"; }
+  finally{ btn.disabled=false; btn.textContent="อนุมัติและออกใบอนุญาต · Issue permit"; }
 }
 function renderPtw(){
-  const tabs={active:p=>p.status==="approved"||p.status==="closing",pending:p=>p.status==="pending",mine:p=>p.requester_emp===emp,all:()=>true};
+  const tabs={active:p=>p.status==="approved"||p.status==="closing",pending:needReview,mine:p=>p.requester_emp===emp,all:()=>true};
   const cnt={}; Object.keys(tabs).forEach(k=>cnt[k]=permits.filter(tabs[k]).length);
   document.querySelectorAll("#ptwTabs .chip").forEach(b=>{ b.setAttribute("aria-pressed",b.dataset.t===ptwTab); b.querySelector("i").textContent=cnt[b.dataset.t]; });
   const q=($("#ptwQ").value||"").trim().toLowerCase();
@@ -1431,7 +1471,7 @@ function renderPtw(){
   if(!list.length){ box.append(el("div","empty",t({active:"eActive",pending:"ePending",mine:"eMine",all:"eAll"}[ptwTab]))); return; }
   list.forEach(p=>{const d=PT[p.type]||PT.daily, st=PST[p.status]||PST.pending, b=el("button","prow"); b.type="button"; b.style.setProperty("--pc",d.color);
     b.innerHTML=`<span class="code">${esc(d.code)}</span><span class="pmain"><b>${esc(pno(p))} · ${esc((p.data||{}).desc||"")}</b><span>${esc(p.area||"")} ${esc((p.data||{}).loc?"· "+p.data.loc:"")} · ${esc((p.data||{}).company||"")}</span><span>${esc(dt(p.start_at))} → ${esc(dt(p.end_at))}</span></span>
-      <span class="pstw"><span class="pst ${st[2]}">${esc(lang==="en"?st[1]:st[0])}</span>${isExpired(p)?`<span class="pst crit">${esc(t("overdue"))}</span>`:""}</span>`;
+      <span class="pstw"><span class="pst ${st[2]}">${esc(lang==="en"?st[1]:st[0])}</span>${isExpired(p)?`<span class="pst crit">${esc(t("overdue"))}</span>`:""}${needReview(p)?`<span class="pst warn">${lang==="en"?"Review due":"รอ จป. รีวิว"}</span>`:""}</span>`;
     b.addEventListener("click",()=>openPermit(p.id)); box.append(b);});
 }
 const ckView=(d,v,s)=>{ if(s.group&&(v.groups||{})[s.key]!=="rel") return `<h4 class="sec">${esc(s.title)}</h4><p class="note" style="text-align:left">ไม่เกี่ยวข้อง · Not related</p>`;
@@ -1441,7 +1481,7 @@ const kv=(th,en,val)=>`<div class="kv"><span>${esc(th)} <small>${esc(en)}</small
 function permitHTML(p){
   const d=PT[p.type], v=p.data||{}, st=PST[p.status]||PST.pending, a=p.approval||{}, c=p.closure||{};
   let h=`<article class="panel permit" style="--pc:${d.color}"><div class="ptw-head"><div><div class="tag">${esc(d.form)}</div><h3>${esc(d.en)}</h3><div class="en">${esc(d.th)}</div></div>
-    <div class="pno"><span class="tag">Permit No.</span><b>${esc(pno(p))}</b><span class="pst ${st[2]}">${esc(st[0])}</span>${isExpired(p)?'<span class="pst crit">เกินเวลาที่อนุญาต</span>':""}</div></div>
+    <div class="pno"><span class="tag">Permit No.</span><b>${esc(pno(p))}</b><span class="pst ${st[2]}">${esc(lang==="en"?st[1]:st[0])}</span>${isExpired(p)?`<span class="pst crit">${lang==="en"?"Past permitted time":"เกินเวลาที่อนุญาต"}</span>`:""}</div></div>
   <h4 class="sec">Section I · ข้อมูลทั่วไป</h4><div class="kvs">
     ${kv("ผู้ขออนุญาต","Requester",v.requester)}${kv("เบอร์โทร","Tel.",v.tel)}${kv("บริษัท","Company",v.company)}
     ${p.type==="loto"?kv("เครื่องจักร/ระบบ","Machine/system",v.machine)+kv("แรงดันไฟฟ้า","Voltage",v.voltage)+kv("แผนก","Department",v.dept):""}
@@ -1463,50 +1503,61 @@ function permitHTML(p){
   h+=`<h4 class="sec">PPE · อุปกรณ์ป้องกันอันตรายส่วนบุคคล</h4>${ppeHTML(d.ppe,"",true,v.ppe||[])}${v.ppeNote?`<div class="kv wide"><span>มาตรการเพิ่มเติม</span><b>${esc(v.ppeNote)}</b></div>`:""}`;
   if((v.photos||[]).length) h+=`<h4 class="sec">รูปถ่ายหน้างานก่อนเริ่มงาน <small>Before work · ${v.photos.length} รูป · ถ่ายจากกล้อง</small></h4>${galHTML(v.photos)}`;
   if((p.attachments||[]).length) h+=`<h4 class="sec">เอกสารแนบ</h4><div class="atts">${p.attachments.map(x=>`<a href="${esc(x.url)}" target="_blank" rel="noopener">${/^image\//.test(x.type||"")?`<img src="${esc(x.url)}" alt="">`:`<i class="attext">${esc(extOf(x.name))}</i>`}<span>${esc(x.name)}</span></a>`).join("")}</div>`;
-  h+=`<h4 class="sec">Authorization · การอนุมัติ</h4><div class="signs">
-    <div class="sign"><p>${esc(d.reqDecl||DECL_REQ)}</p><b>${esc(v.supervisor)}</b><span>ผู้ควบคุมงาน · ${esc(dt(p.created_at))}</span></div>
-    ${d.ownerDecl?`<div class="sign"><p>${esc(d.ownerDecl)}</p><b>${esc(a.owner||"…………………")}</b><span>เจ้าของพื้นที่ · Area Owner${a.at?" · "+esc(dt(a.at)):""}</span></div>`:""}
-    <div class="sign"><p>${esc(DECL_APPR)}</p><b>${esc(a.approver||"…………………")}</b><span>ผู้อนุมัติ · Authorized Approver${a.at?" · "+esc(dt(a.at)):""}</span></div></div>
+  const legacy=a.approver&&a.by!=="supervisor", rv=a.review||null, rr=rv&&REVIEW_RES[rv.result];
+  h+=`<h4 class="sec">Authorization · การอนุมัติให้ปฏิบัติงาน</h4><div class="signs">
+    <div class="sign"><p>${esc(DECL_AUTH)}</p><b>${esc(v.supervisor)}</b><span>ผู้ควบคุมงาน · ผู้อนุมัติให้ปฏิบัติงาน · ${esc(dt(p.created_at))}</span></div>
+    ${legacy?`<div class="sign"><p>${esc(DECL_APPR)}</p><b>${esc(a.approver)}</b><span>ผู้อนุมัติ · Authorized Approver${a.at?" · "+esc(dt(a.at)):""}</span></div>`:""}
+    <div class="sign review"><p>ความเห็น จป. · Safety officer review${rr?` <span class="pst ${rr[2]}">${esc(rr[0])} · ${esc(rr[1])}</span>`:""}</p>${rv&&rv.note?`<p class="rvnote">${esc(rv.note)}</p>`:'<p class="rvnote blank">……………………………………………………………</p>'}<b>${esc(rv?rv.by:"…………………")}</b><span>จป. ผู้รีวิว · Safety officer${rv&&rv.at?" · "+esc(dt(rv.at)):""}</span></div></div>
     ${a.note?`<div class="kv wide"><span>หมายเหตุผู้อนุมัติ</span><b>${esc(a.note)}</b></div>`:""}`;
   if(p.status==="closing"||p.status==="closed"){
     if(d.close){ h+=`<h4 class="sec">${esc(d.close.title)}</h4><div class="cks">${d.close.items.map(it=>{const x=(c.checks||{})[it.id];return `<div class="ck view"><div class="ck-t"><b>${esc(it.th)}</b><span>${esc(it.en)}</span></div><span class="ans ${x==="y"?"y":"na"}">${x==="y"?"✓ ใช่":x==="na"?"N/A":"–"}</span></div>`;}).join("")}</div>
       <div class="kvs">${(d.close.fields||[]).map(f=>kv(f[1],f[2],(c.fields||{})[f[0]])).join("")}</div>`; }
     if((c.photos||[]).length) h+=`<h4 class="sec">รูปหลังเสร็จงาน <small>After work · ${c.photos.length} รูป · ถ่ายจากกล้อง</small></h4>${galHTML(c.photos)}`;
-    h+=`<h4 class="sec">Closure · การปิดงาน</h4><div class="signs"><div class="sign"><p>${esc(d.closeDecl)}</p><b>${esc(c.by||"")}</b><span>ผู้ขอปิดงาน${c.at?" · "+esc(dt(c.at)):""}</span></div>
-      <div class="sign"><p>ยืนยันการปิดใบอนุญาต</p><b>${esc(c.owner||"…………………")}</b><span>เจ้าของพื้นที่ · Area Owner</span></div>
-      <div class="sign"><p>ยืนยันการปิดใบอนุญาต</p><b>${esc(c.approver||"…………………")}</b><span>ผู้อนุมัติ · Authorized Approver${c.closedAt?" · "+esc(dt(c.closedAt)):""}</span></div></div>`;
+    h+=`<h4 class="sec">Closure · การปิดงาน</h4><div class="signs"><div class="sign"><p>${esc(d.closeDecl)}</p><b>${esc(c.by||"")}</b><span>ผู้ปิดงาน${c.at?" · "+esc(dt(c.at)):""}</span></div>
+      ${c.approver?`<div class="sign"><p>ยืนยันการปิดใบอนุญาต</p><b>${esc(c.approver)}</b><span>ผู้ยืนยันปิดงาน${c.closedAt?" · "+esc(dt(c.closedAt)):""}</span></div>`:""}</div>`;
   }
   if(p.status==="rejected") h+=`<p class="msg err">ไม่อนุมัติ: ${esc(a.note||"")}</p>`;
-  h+=`<details class="hist"><summary>ประวัติ · History</summary><ul>${(p.history||[]).map(x=>`<li>${esc(dt(x.at))} · ${esc({submit:"ส่งคำขอ",approve:"อนุมัติ",reject:"ไม่อนุมัติ",closereq:"ขอปิดงาน",close:"ปิดงาน",cancel:"ยกเลิก"}[x.act]||x.act)} · ${esc(x.by)}${x.note?" · "+esc(x.note):""}</li>`).join("")}</ul></details></article>`;
+  h+=`<details class="hist"><summary>ประวัติ · History</summary><ul>${(p.history||[]).map(x=>`<li>${esc(dt(x.at))} · ${esc({submit:"ส่งคำขอ",issue:"ผู้ควบคุมงานอนุมัติ/ออกใบอนุญาต",review:"จป. รีวิว",approve:"อนุมัติ",reject:"ไม่อนุมัติ",closereq:"ขอปิดงาน",close:"ปิดงาน",cancel:"ยกเลิก"}[x.act]||x.act)} · ${esc(x.by)}${x.note?" · "+esc(x.note):""}</li>`).join("")}</ul></details></article>`;
   return h;
 }
 function closeFormHTML(p,admin){
-  const d=PT[p.type]; let h=`<form class="panel noprint" id="closeForm" novalidate><h3>${admin&&p.status==="closing"?"ยืนยันปิดงาน · Confirm closure":"ขอปิดงาน · Request closure"}</h3>`;
+  const d=PT[p.type]; let h=`<form class="panel noprint" id="closeForm" novalidate><h3>${p.status==="closing"?"ยืนยันปิดงาน · Confirm closure":"ปิดงาน · Close permit"}</h3>`;
   if(p.status!=="closing"){
     if(d.close){ h+=`<h4 class="sec">${esc(d.close.title)}</h4><div class="cks">${d.close.items.map(it=>yn("x_"+it.id,it)).join("")}</div><div class="row">${(d.close.fields||[]).map(f=>fld("cf_"+f[0],f[1],f[2],1,f[3])).join("")}</div>`; }
-    h+=`${photoBoxHTML("close",false,"สภาพหน้างานหลังเสร็จงาน · After work")}<label class="decl"><input type="checkbox" name="cdecl" required><span>${esc(d.closeDecl)}</span></label>${fld("cby","ชื่อผู้ขอปิดงาน","Your name",1)}`;
+    h+=`${photoBoxHTML("close",false,"สภาพหน้างานหลังเสร็จงาน · After work")}<label class="decl"><input type="checkbox" name="cdecl" required><span>${esc(d.closeDecl)}</span></label>${fld("cby","ชื่อผู้ปิดงาน","Your name",1)}`;
   }
-  if(admin) h+=`<div class="row">${fld("cowner","เจ้าของพื้นที่","Area owner",1)}${fld("cappr","ผู้อนุมัติปิดงาน","Authorized approver",1)}</div>`;
-  h+=`<p class="msg err" id="closeMsg" hidden></p><button class="btn" type="submit">${admin?"ปิดใบอนุญาต · Close permit":"ส่งขอปิดงาน · Submit"}</button></form>`;
+  if(p.status==="closing") h+=`<div class="row">${fld("cappr","ชื่อผู้ยืนยันปิดงาน","Confirmed by",1)}</div>`;
+  h+=`<p class="msg err" id="closeMsg" hidden></p><button class="btn" type="submit">ปิดใบอนุญาต · Close permit</button></form>`;
   return h;
 }
 function openPermit(id,flash){
   const p=permits.find(x=>x.id===id); if(!p) return; ptwSel=id; ptwShow("detail");
   const box=$("#ptw-detail"), mine=p.requester_emp===emp;
-  let h=`<div class="actions noprint"><button class="back" type="button" data-ptwhome>← รายการใบอนุญาต</button><button class="back" type="button" id="ptwPrint">พิมพ์ · Print</button></div>`;
+  let h=`<div class="actions noprint"><button class="back" type="button" data-ptwhome>${lang==="en"?"← Permit list":"← รายการใบอนุญาต"}</button><button class="back" type="button" id="ptwPrint">พิมพ์ · Print</button></div>`;
   if(flash) h+=`<p class="msg ok noprint">${esc(flash)}</p>`;
   h+=permitHTML(p);
-  if(p.status==="pending"&&isAdmin) h+=`<form class="panel noprint" id="apprForm" novalidate><h3>พิจารณาอนุมัติ · Review</h3>
-    <label class="decl"><input type="checkbox" name="adecl"><span>${esc(DECL_APPR)}</span></label>
-    <div class="row">${fld("aappr","ผู้อนุมัติ","Authorized approver",1)}${PT[p.type].ownerDecl||p.type!=="cs"?fld("aowner","เจ้าของพื้นที่","Area owner",PT[p.type].ownerDecl?1:0):""}</div>
-    <label for="pf-anote"><span>หมายเหตุ / เงื่อนไขเพิ่มเติม <small>Note (required when rejecting)</small></span><textarea id="pf-anote" name="anote" style="min-height:60px"></textarea></label>
-    <p class="msg err" id="apprMsg" hidden></p><div class="actions"><button class="btn" type="submit" data-act="approve">อนุมัติ · Approve</button><button class="btn danger" type="submit" data-act="reject">ไม่อนุมัติ · Reject</button></div></form>`;
-  if(p.status==="pending"&&mine&&!isAdmin) h+=`<div class="actions noprint"><button class="btn sec" type="button" id="ptwCancel">ยกเลิกคำขอ · Cancel request</button></div>`;
+  if(p.status==="pending"&&(mine||isAdmin)) h+=`<div class="actions noprint"><button class="btn" type="button" id="ptwIssue">ผู้ควบคุมงานอนุมัติ · Issue permit</button><button class="btn sec" type="button" id="ptwCancel">ยกเลิกคำขอ · Cancel request</button></div>`;
+  if(p.status==="approved"&&(mine||isAdmin)) h+=`<div class="actions noprint"><button class="btn sec" type="button" id="ptwCancel">ยกเลิกใบอนุญาต · Cancel permit</button></div>`;
+  if(isAdmin&&["approved","closing","closed"].includes(p.status)){ const rv=(p.approval||{}).review||{};
+    h+=`<form class="panel noprint" id="reviewForm" novalidate><h3>ความเห็น จป. · Safety officer review <small style="font-weight:400;color:var(--muted)">ไม่หยุดงาน · ใช้บันทึกผลตรวจและติดตาม</small></h3>
+    <fieldset class="seg" style="border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px"><legend style="margin-bottom:6px;font-weight:600;display:block;width:100%">ผลการรีวิว · Result <span class="req">*</span></legend>${Object.entries(REVIEW_RES).map(([k,x])=>`<label class="pp" style="cursor:pointer"><input type="radio" name="rres" value="${k}"${rv.result===k?" checked":""}><span>${esc(x[0])} <small>${esc(x[1])}</small></span></label>`).join("")}</fieldset>
+    <label for="pf-rnote"><span>ความเห็น / สิ่งที่ต้องแก้ไข <small>Comments</small></span><textarea id="pf-rnote" name="rnote" style="min-height:70px">${esc(rv.note||"")}</textarea></label>
+    <div class="row">${fld("rby","ชื่อ จป.","Safety officer",1)}</div>
+    <p class="msg err" id="reviewMsg" hidden></p><div class="actions"><button class="btn" type="submit">บันทึกการรีวิว · Save review</button></div></form>`; }
   if((p.status==="approved"&&(mine||isAdmin))||(p.status==="closing"&&isAdmin)) h+=closeFormHTML(p,isAdmin);
   box.innerHTML=h;
   shots.close.forEach(x=>URL.revokeObjectURL(x.url)); shots.close=[]; renderShots("close");
   box.querySelectorAll("[data-ptwhome]").forEach(b=>b.addEventListener("click",()=>{ptwShow("home");renderPtw();}));
   $("#ptwPrint").addEventListener("click",()=>window.print());
+  const iss=$("#ptwIssue"); if(iss) iss.addEventListener("click",async()=>{ const sv=(p.data||{}).supervisor||"";
+    await savePermit(p,{status:"approved",approval:Object.assign({},p.approval||{},{approver:sv,by:"supervisor",at:new Date().toISOString()}),history:hist(p,"issue",sv+" ("+emp+")",""),updated_at:new Date().toISOString()},lang==="en"?"Permit issued · work may start":"ออกใบอนุญาตแล้ว · เริ่มงานได้"); });
+  const rf=$("#reviewForm"); if(rf){ const rb=rf.querySelector("[name=rby]"); if(rb&&!rb.value) rb.value=((p.approval||{}).review||{}).by||"";
+    rf.addEventListener("submit",async e=>{ e.preventDefault(); const fd=new FormData(rf), g=k=>(fd.get(k)||"").toString().trim(), m=$("#reviewMsg");
+      if(!g("rres")){ m.textContent="เลือกผลการรีวิว"; m.hidden=false; return; }
+      if(!g("rby")){ m.textContent="ใส่ชื่อ จป."; m.hidden=false; return; }
+      if(g("rres")!=="ok"&&!g("rnote")){ m.textContent="ใส่ความเห็น / สิ่งที่ต้องแก้ไข"; m.hidden=false; return; }
+      const review={result:g("rres"),note:g("rnote"),by:g("rby"),at:new Date().toISOString()};
+      await savePermit(p,{approval:Object.assign({},p.approval||{},{review}),history:hist(p,"review",g("rby"),REVIEW_RES[review.result][0]+(review.note?" · "+review.note:"")),updated_at:new Date().toISOString()},lang==="en"?"Review saved":"บันทึกการรีวิวแล้ว",m); }); }
   const af=$("#apprForm"); if(af){ let act="approve"; af.querySelectorAll("[data-act]").forEach(b=>b.addEventListener("click",()=>act=b.dataset.act));
     af.addEventListener("submit",async e=>{ e.preventDefault(); const fd=new FormData(af), g=k=>(fd.get(k)||"").toString().trim(), m=$("#apprMsg");
       if(!g("aappr")){ m.textContent="ใส่ชื่อผู้อนุมัติ"; m.hidden=false; return; }
@@ -1514,9 +1565,9 @@ function openPermit(id,flash){
       if(act==="approve"&&PT[p.type].ownerDecl&&!g("aowner")){ m.textContent="ใส่ชื่อเจ้าของพื้นที่"; m.hidden=false; return; }
       if(act==="reject"&&!g("anote")){ m.textContent="ใส่เหตุผลที่ไม่อนุมัติในช่องหมายเหตุ"; m.hidden=false; return; }
       const upd={status:act==="approve"?"approved":"rejected",approval:{approver:g("aappr"),owner:g("aowner"),note:g("anote"),at:new Date().toISOString()},history:hist(p,act,g("aappr"),g("anote")),updated_at:new Date().toISOString()};
-      await savePermit(p,upd,act==="approve"?"อนุมัติแล้ว":"บันทึกการไม่อนุมัติแล้ว",m); }); }
+      await savePermit(p,upd,act==="approve"?(lang==="en"?"Approved":"อนุมัติแล้ว"):(lang==="en"?"Rejection saved":"บันทึกการไม่อนุมัติแล้ว"),m); }); }
   const cb=$("#ptwCancel"); if(cb) cb.addEventListener("click",async()=>{ if(cb.dataset.arm!=="1"){cb.dataset.arm="1";cb.textContent="กดอีกครั้งเพื่อยืนยันยกเลิก";return;}
-    await savePermit(p,{status:"cancelled",history:hist(p,"cancel",emp,""),updated_at:new Date().toISOString()},"ยกเลิกคำขอแล้ว"); });
+    await savePermit(p,{status:"cancelled",history:hist(p,"cancel",emp,""),updated_at:new Date().toISOString()},(lang==="en"?"Cancelled":"ยกเลิกแล้ว")); });
   const cf=$("#closeForm"); if(cf) cf.addEventListener("submit",async e=>{ e.preventDefault(); const fd=new FormData(cf), g=k=>(fd.get(k)||"").toString().trim(), m=$("#closeMsg"), d=PT[p.type];
     const errs=[...cf.querySelectorAll("[required]")].filter(x=>x.type==="checkbox"?!x.checked:!x.value.trim());
     if(errs.length){ m.textContent="กรอกข้อมูลปิดงานให้ครบ และติ๊กรับรอง"; m.hidden=false; errs[0].focus(); return; }
@@ -1525,13 +1576,12 @@ function openPermit(id,flash){
       if(miss){ m.textContent="รายการตรวจสอบปิดงานยังตอบไม่ครบ "+miss+" ข้อ"; m.hidden=false; return; }
       const fields={}; (d.close&&d.close.fields||[]).forEach(f=>fields[f[0]]=g("cf_"+f[0]));
       const sb2=cf.querySelector('button[type=submit]'); sb2.disabled=true; sb2.textContent="กำลังบันทึก…";
-      let photos=[]; try{ photos=await uploadShots("close"); }catch(err){ sb2.disabled=false; sb2.textContent="ส่งขอปิดงาน · Submit"; m.textContent="อัปโหลดรูปไม่สำเร็จ: "+errText(err); m.hidden=false; return; }
+      let photos=[]; try{ photos=await uploadShots("close"); }catch(err){ sb2.disabled=false; sb2.textContent="ปิดใบอนุญาต · Close permit"; m.textContent="อัปโหลดรูปไม่สำเร็จ: "+errText(err); m.hidden=false; return; }
       c={checks,fields,by:g("cby"),at:new Date().toISOString(),photos}; }
-    let upd;
-    if(isAdmin){ c.owner=g("cowner"); c.approver=g("cappr"); c.closedAt=new Date().toISOString(); upd={status:"closed",closure:c,history:hist(p,"close",g("cappr"),""),updated_at:new Date().toISOString()}; }
-    else upd={status:"closing",closure:c,history:hist(p,"closereq",emp,""),updated_at:new Date().toISOString()};
-    await savePermit(p,upd,isAdmin?"ปิดใบอนุญาตแล้ว":"ส่งขอปิดงานแล้ว · รอ EHS ยืนยัน",m);
-    if(!isAdmin) notifyPtw(Object.assign({},p,upd),"close"); });
+    const wasClosing=p.status==="closing"; if(wasClosing) c.approver=g("cappr"); c.closedAt=new Date().toISOString();
+    const upd={status:"closed",closure:c,history:hist(p,"close",wasClosing?g("cappr"):(c.by+" ("+emp+")"),""),updated_at:new Date().toISOString()};
+    await savePermit(p,upd,lang==="en"?"Permit closed":"ปิดใบอนุญาตแล้ว",m);
+    if(!wasClosing) notifyPtw(Object.assign({},p,upd),"close"); });
 }
 async function savePermit(p,upd,okMsg,m){
   const {data,error}=await sb.from("ehs_permits").update(upd).eq("id",p.id).select().single();
