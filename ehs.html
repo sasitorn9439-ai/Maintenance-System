@@ -284,7 +284,7 @@ span.pp{color:var(--muted)} span.pp.on{color:var(--ink);border-color:var(--green
   .cam{display:none!important}
   .pgal{grid-template-columns:repeat(3,1fr)}
   body{background:#fff;color:#000;padding:0;font-size:11px}
-  header,.noprint,#home,#gate,#infoView,#adminView,#ptw-home,.lb,.modal,.hist{display:none!important}
+  header,.noprint,#home,#gate,#infoView,#adminView,#ptw-home,#hz-home,.lb,.modal,.hist{display:none!important}
   .wrap,.view{gap:8px} .panel{border:0;padding:0}
   .permit{--field:#f2f2f2;--line:#999;--muted:#333}
   .sec{break-after:avoid} .ck,.sign,.kv{break-inside:avoid}
@@ -351,6 +351,9 @@ input[type=search]{background:#fff;border-radius:12px;padding:12px 14px}
 @media (max-width:560px){.pstw{grid-column:2;align-items:flex-start;flex-direction:row;flex-wrap:wrap}}
 .sign.review .pst{font-size:.72rem;margin-left:4px;vertical-align:1px}.rvnote{margin:0;white-space:pre-wrap;color:var(--ink)}.rvnote.blank{color:var(--muted);letter-spacing:1px}
 .apprname{display:block;margin-top:4px;font-size:.82rem;font-weight:600}.apprname.ok{color:#1e7a4c}.apprname.bad{color:#b91c1c}.pinchg summary{cursor:pointer;font-weight:600}.pinchg form{margin-top:12px;display:grid;gap:10px}
+.hz-new{justify-self:start;display:inline-flex;align-items:center;gap:10px;font-size:1.05rem;padding:14px 22px;background:#9a6b00;border-color:#9a6b00}.hz-new svg{width:22px;height:22px}
+.hzthumb{width:46px;height:34px;object-fit:cover;border-radius:4px;display:block}
+.prow .code:has(.hzthumb){padding:0;background:none;min-width:0}
 /* ===== print: A4, nothing split across pages, nothing past the margins ===== */
 @page{size:A4;margin:10mm 11mm 12mm}
 @media print{
@@ -390,7 +393,7 @@ input[type=search]{background:#fff;border-radius:12px;padding:12px 14px}
 <header class="appbar">
   <div class="bar-in">
     <a class="brand" href="#" data-nav="home"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.6-3.4 8.3-8 9-4.6-.7-8-4.4-8-9V6z"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8"/></svg></span><span class="bt"><span class="tag">MCAM · EHS</span><h1>EHS Portal</h1></span></a>
-    <nav class="nav" id="nav" aria-label="Main menu" hidden><button class="nv n-home" type="button" data-nav="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span data-i="navHome">หน้าแรก</span></button><a class="nv n-repair" data-log="repair" data-title="แจ้งซ่อม" href="https://maintenance-system-lac.vercel.app/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.3 5.3L3 18l3 3 6.4-6.4a4 4 0 0 0 5.3-5.3l-2.6 2.6-2.4-.6-.6-2.4z"/></svg><span data-i="navRepair">แจ้งซ่อม</span><svg class="ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a><a class="nv n-hazard" data-log="hazard" data-title="แจ้งจุดเสี่ยง" href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=yh8yTLyz9k2x2qfJDD3FRmrEAOTRZOxOnYpRxH-ArPVUN0ZCRzAwRUxCVUxHV1I2NDlYVzRGUDE2Qy4u&amp;origin=QRCode" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5"/><circle cx="12" cy="18" r=".6" fill="currentColor"/></svg><span data-i="navHazard">แจ้งจุดเสี่ยง</span><svg class="ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a><button class="nv n-ehs" type="button" data-nav="ehs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/></svg><span data-i="navEhs">ข้อมูล EHS</span></button><button class="nv n-ptw" type="button" data-nav="ptw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 13l2 2 4-4"/></svg><span data-i="navPtw">ใบอนุญาตทำงาน</span></button></nav>
+    <nav class="nav" id="nav" aria-label="Main menu" hidden><button class="nv n-home" type="button" data-nav="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span data-i="navHome">หน้าแรก</span></button><a class="nv n-repair" data-log="repair" data-title="แจ้งซ่อม" href="https://maintenance-system-lac.vercel.app/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.3 5.3L3 18l3 3 6.4-6.4a4 4 0 0 0 5.3-5.3l-2.6 2.6-2.4-.6-.6-2.4z"/></svg><span data-i="navRepair">แจ้งซ่อม</span><svg class="ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a><button class="nv n-hazard" type="button" data-nav="hz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5"/><circle cx="12" cy="18" r=".6" fill="currentColor"/></svg><span data-i="navHazard">แจ้งจุดเสี่ยง</span></button><button class="nv n-ehs" type="button" data-nav="ehs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/></svg><span data-i="navEhs">ข้อมูล EHS</span></button><button class="nv n-ptw" type="button" data-nav="ptw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 13l2 2 4-4"/></svg><span data-i="navPtw">ใบอนุญาตทำงาน</span></button></nav>
     <div class="tools">
       <div class="lang" role="group" aria-label="Language / ภาษา"><button type="button" data-lang="th" aria-pressed="true">TH</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div>
       <div class="who" id="who" hidden>
@@ -401,7 +404,7 @@ input[type=search]{background:#fff;border-radius:12px;padding:12px 14px}
     </div>
   </div>
 </header>
-<nav class="tabbar" id="tabbar" aria-label="Main menu" hidden><button class="nv n-home" type="button" data-nav="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span data-i="navHome">หน้าแรก</span></button><a class="nv n-repair" data-log="repair" data-title="แจ้งซ่อม" href="https://maintenance-system-lac.vercel.app/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.3 5.3L3 18l3 3 6.4-6.4a4 4 0 0 0 5.3-5.3l-2.6 2.6-2.4-.6-.6-2.4z"/></svg><span data-i="navRepair">แจ้งซ่อม</span><svg class="ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a><a class="nv n-hazard" data-log="hazard" data-title="แจ้งจุดเสี่ยง" href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=yh8yTLyz9k2x2qfJDD3FRmrEAOTRZOxOnYpRxH-ArPVUN0ZCRzAwRUxCVUxHV1I2NDlYVzRGUDE2Qy4u&amp;origin=QRCode" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5"/><circle cx="12" cy="18" r=".6" fill="currentColor"/></svg><span data-i="navHazard">แจ้งจุดเสี่ยง</span><svg class="ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a><button class="nv n-ehs" type="button" data-nav="ehs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/></svg><span data-i="navEhs">ข้อมูล EHS</span></button><button class="nv n-ptw" type="button" data-nav="ptw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 13l2 2 4-4"/></svg><span data-i="navPtw">ใบอนุญาตทำงาน</span></button></nav>
+<nav class="tabbar" id="tabbar" aria-label="Main menu" hidden><button class="nv n-home" type="button" data-nav="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span data-i="navHome">หน้าแรก</span></button><a class="nv n-repair" data-log="repair" data-title="แจ้งซ่อม" href="https://maintenance-system-lac.vercel.app/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.3 5.3L3 18l3 3 6.4-6.4a4 4 0 0 0 5.3-5.3l-2.6 2.6-2.4-.6-.6-2.4z"/></svg><span data-i="navRepair">แจ้งซ่อม</span><svg class="ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></a><button class="nv n-hazard" type="button" data-nav="hz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5"/><circle cx="12" cy="18" r=".6" fill="currentColor"/></svg><span data-i="navHazard">แจ้งจุดเสี่ยง</span></button><button class="nv n-ehs" type="button" data-nav="ehs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/></svg><span data-i="navEhs">ข้อมูล EHS</span></button><button class="nv n-ptw" type="button" data-nav="ptw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 13l2 2 4-4"/></svg><span data-i="navPtw">ใบอนุญาตทำงาน</span></button></nav>
 
 <div class="wrap">
   <form class="gate" id="gate" novalidate hidden>
@@ -434,11 +437,11 @@ input[type=search]{background:#fff;border-radius:12px;padding:12px 14px}
         <div><h3 data-i="c1t">แจ้งซ่อม</h3><span class="sub" data-i="c1s">Maintenance Request</span><p data-i="c1p"></p></div>
         <span class="go"><span data-i="c1g"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
       </a>
-      <a class="act a-hz" data-log="hazard" data-title="แจ้งจุดเสี่ยง" href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=yh8yTLyz9k2x2qfJDD3FRmrEAOTRZOxOnYpRxH-ArPVUN0ZCRzAwRUxCVUxHV1I2NDlYVzRGUDE2Qy4u&amp;origin=QRCode" target="_blank" rel="noopener">
+      <button class="act a-hz" type="button" id="goHz">
         <span class="ai"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linejoin="round" aria-hidden="true"><path d="M24 6 43 40H5z"/><path d="M24 18v10" stroke-linecap="round"/><circle cx="24" cy="34" r="1.8" fill="currentColor"/></svg></span>
         <div><h3 data-i="c2t">แจ้งจุดเสี่ยง</h3><span class="sub" data-i="c2s">Hazard / Near Miss</span><p data-i="c2p"></p></div>
-        <span class="go"><span data-i="c2g"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
-      </a>
+        <span class="go"><span data-i="c2g"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </button>
       <button class="act a-info" type="button" id="goInfo">
         <span class="ai"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8h17l7 7v25H12z"/><path d="M29 8v7h7M18 24h12M18 30h12M18 36h7"/></svg></span>
         <div><h3 data-i="c3t">EHS Information</h3><span class="sub" data-i="c3s">ข้อมูลความปลอดภัย</span><p data-i="c3p"></p></div>
@@ -508,6 +511,26 @@ input[type=search]{background:#fff;border-radius:12px;padding:12px 14px}
     </div>
     <div class="view" id="ptw-form" hidden></div>
     <div class="view" id="ptw-detail" hidden></div>
+  </div>
+
+  <div class="view" id="hzView" hidden>
+    <div class="view" id="hz-home">
+      <div class="phead"><h2 data-i="hzTitle">แจ้งจุดเสี่ยง</h2><p data-i="hzSub">เห็นสภาพหรือการกระทำที่ไม่ปลอดภัย หรือเหตุการณ์เกือบเกิดอุบัติเหตุ แจ้ง EHS ได้ทันที</p></div>
+      <button class="btn hz-new" type="button" id="hzNew"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5"/><circle cx="12" cy="18" r=".6" fill="currentColor"/></svg><span data-i="hzNewBtn">แจ้งจุดเสี่ยงใหม่</span></button>
+      <section class="view">
+        <div class="tabs" id="hzTabs">
+          <button class="chip" type="button" data-t="open" aria-pressed="true"><span data-i="hzOpen">รอดำเนินการ</span><i></i></button>
+          <button class="chip" type="button" data-t="in_progress" aria-pressed="false"><span data-i="hzProg">กำลังแก้ไข</span><i></i></button>
+          <button class="chip" type="button" data-t="closed" aria-pressed="false"><span data-i="hzClosed">แก้ไขแล้ว</span><i></i></button>
+          <button class="chip" type="button" data-t="mine" aria-pressed="false"><span data-i="tabMine">ของฉัน</span><i></i></button>
+          <button class="chip" type="button" data-t="all" aria-pressed="false"><span data-i="tabAll">ทั้งหมด</span><i></i></button>
+        </div>
+        <input type="search" id="hzQ" data-ip="hzSearch" placeholder="ค้นหาเลขที่ / พื้นที่ / รายละเอียด">
+        <div class="board" id="hzBoard"><div class="empty" data-i="loading">กำลังโหลด…</div></div>
+      </section>
+    </div>
+    <div class="view" id="hz-form" hidden></div>
+    <div class="view" id="hz-detail" hidden></div>
   </div>
 
   <div class="view" id="adminView" hidden>
@@ -634,6 +657,7 @@ input[type=search]{background:#fff;border-radius:12px;padding:12px 14px}
 </div>
 
 <input type="file" id="camFile" accept="image/*" capture="environment" hidden>
+<input type="file" id="galFile" accept="image/*" multiple hidden>
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-labelledby="lbTitle">
   <div class="lb-top"><b id="lbTitle"></b><a class="open" id="lbOpen" target="_blank" rel="noopener">เปิดไฟล์ ↗</a><button type="button" id="lbClose">ปิด · Close</button></div>
   <div class="lb-stage" id="lbStage"><img id="lbImg" alt=""></div>
@@ -650,6 +674,7 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const $=s=>document.querySelector(s);
 const CATS=[{k:"sds",th:"SDS",en:"Safety Data Sheets"},{k:"poster",th:"EHS Poster",en:"โปสเตอร์ความปลอดภัย"},{k:"lesson",th:"Lesson Learned",en:"บทเรียนจากอุบัติเหตุ"},{k:"other",th:"อื่น ๆ",en:"Other documents"}];
+let adminKey="", hzOpenAfterLoad=null;
 let emp="",isAdmin=false,docs=[],logs=[],cat="sds",editing=null,aTab="docs";
 const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e;};
 const store={get:(k,s)=>{try{return (s?sessionStorage:localStorage).getItem(k)}catch(e){return null}},set:(k,v,s)=>{try{const st=s?sessionStorage:localStorage;v==null?st.removeItem(k):st.setItem(k,v)}catch(e){}}};
@@ -697,7 +722,7 @@ const I18N={
   gateErrFmt:"รหัสพนักงานต้องเป็นตัวเลขหรือตัวอักษร 3–16 ตัว",gateErrNF:"ไม่พบรหัสนี้ในระบบ กรุณาตรวจสอบ หรือติดต่อ EHS",
   gMorning:"อรุณสวัสดิ์",gAfternoon:"สวัสดีตอนบ่าย",gEvening:"สวัสดีตอนเย็น",homeQ:"วันนี้ต้องการทำอะไร?",homeSub:"แจ้งซ่อม แจ้งจุดเสี่ยง ดูเอกสาร EHS และขอใบอนุญาตทำงาน ได้ในที่เดียว",ruleTag:"กฎพิทักษ์ชีวิตประจำวัน",
   c1t:"แจ้งซ่อม",c1s:"Maintenance Request",c1p:"เครื่องจักร อาคาร ไฟฟ้า ประปา ชำรุด แจ้งช่างได้ทันที",c1g:"เปิดระบบแจ้งซ่อม",
-  c2t:"แจ้งจุดเสี่ยง",c2s:"Hazard / Near Miss",c2p:"เห็นสภาพหรือการกระทำที่ไม่ปลอดภัย แจ้ง EHS ก่อนเกิดเหตุ",c2g:"เปิดแบบฟอร์ม",
+  c2t:"แจ้งจุดเสี่ยง",hzTitle:"แจ้งจุดเสี่ยง",hzSub:"เห็นสภาพหรือการกระทำที่ไม่ปลอดภัย หรือเหตุการณ์เกือบเกิดอุบัติเหตุ แจ้ง EHS ได้ทันที",hzNewBtn:"แจ้งจุดเสี่ยงใหม่",hzOpen:"รอดำเนินการ",hzProg:"กำลังแก้ไข",hzClosed:"แก้ไขแล้ว",hzSearch:"ค้นหาเลขที่ / พื้นที่ / รายละเอียด",hzEmpty:"ยังไม่มีรายการ",c2s:"Hazard / Near Miss",c2p:"เห็นสภาพหรือการกระทำที่ไม่ปลอดภัย แจ้ง EHS ก่อนเกิดเหตุ",c2g:"แจ้งเลย",
   c3t:"EHS Information",c3s:"ข้อมูลความปลอดภัย",c3p:"SDS โปสเตอร์ Lesson Learned และเอกสาร EHS",c3g:"ดูเอกสาร",
   c4t:"Permit to Work",c4s:"ขอใบอนุญาตทำงาน",c4p:"Hot Work ที่สูง LOTO ที่อับอากาศ และ Daily Work",c4g:"ขอ / ติดตามใบอนุญาต",
   hpPtwT:"ใบอนุญาตทำงานวันนี้",viewAll:"ดูทั้งหมด →",stActive:"กำลังทำงาน",stPending:"รอ จป. รีวิว",hpLlT:"Lesson Learned ล่าสุด",loading:"กำลังโหลด…",
@@ -712,7 +737,7 @@ const I18N={
   gateErrFmt:"Employee ID must be 3–16 letters or digits.",gateErrNF:"This ID is not registered. Check it or contact EHS.",
   gMorning:"Good morning",gAfternoon:"Good afternoon",gEvening:"Good evening",homeQ:"What would you like to do today?",homeSub:"Maintenance requests, hazard reports, EHS documents and work permits in one place.",ruleTag:"Life-Saving Rule of the Day",
   c1t:"Maintenance Request",c1s:"แจ้งซ่อม",c1p:"Report broken machines, buildings, electrical or plumbing straight to the technicians.",c1g:"Open maintenance system",
-  c2t:"Report a Hazard",c2s:"แจ้งจุดเสี่ยง",c2p:"Saw an unsafe condition, unsafe act or near miss? Tell EHS before someone gets hurt.",c2g:"Open form",
+  c2t:"Report a Hazard",hzTitle:"Report a hazard",hzSub:"Saw an unsafe condition, unsafe act or near miss? Tell EHS right away.",hzNewBtn:"New hazard report",hzOpen:"Open",hzProg:"In progress",hzClosed:"Closed",hzSearch:"Search no., area or description",hzEmpty:"Nothing here yet",c2s:"แจ้งจุดเสี่ยง",c2p:"Saw an unsafe condition, unsafe act or near miss? Tell EHS before someone gets hurt.",c2g:"Report now",
   c3t:"EHS Information",c3s:"ข้อมูลความปลอดภัย",c3p:"Safety data sheets, posters, lessons learned and other EHS documents.",c3g:"Browse documents",
   c4t:"Permit to Work",c4s:"ขอใบอนุญาตทำงาน",c4p:"Hot work, work at height, LOTO, confined space and daily work permits.",c4g:"Request or track a permit",
   hpPtwT:"Permits today",viewAll:"View all →",stActive:"Active",stPending:"Awaiting safety review",hpLlT:"Latest lessons learned",loading:"Loading…",
@@ -735,6 +760,7 @@ function applyLang(){
   if(emp) renderHomeStatic();
   renderCats(); if(!$("#infoView").hidden) renderDocs();
   renderPtwTypes(); if(!$("#ptwView").hidden&&ptwMode==="home") renderPtw();
+  if(typeof renderHz==="function"&&!$("#hzView").hidden&&hzMode==="home") renderHz();
   if(emp&&!$("#home").hidden) loadHome();
 }
 document.querySelectorAll("[data-lang]").forEach(b=>b.addEventListener("click",()=>{ lang=b.dataset.lang; try{localStorage.setItem("ehsLang",lang);}catch(e){} applyLang(); }));
@@ -745,16 +771,20 @@ function log(act,target,title){ if(!emp) return; sb.from("ehs_access_logs").inse
 function navTo(k){
   if(k==="home"){ history.replaceState(null,"",location.pathname); route(); }
   else if(k==="ehs"){ go("ehs"); log("open","ehs","EHS Information"); }
+  else if(k==="hz"){ hzShow("home"); go("hz"); log("open","hazard","แจ้งจุดเสี่ยง"); }
   else if(k==="ptw"){ ptwMode="home"; ptwShow("home"); go("ptw"); log("open","ptw","Permit to Work"); }
 }
 document.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",e=>{ e.preventDefault(); navTo(b.dataset.nav); }));
 function route(){
   let h=location.hash.slice(1); const gated=!emp;
   if(/^p-[\w-]+$/.test(h)){ ptwOpenAfterLoad=h.slice(2); h="ptw"; history.replaceState(null,"","#ptw"); }
+  if(/^h-[\w-]+$/.test(h)){ hzOpenAfterLoad=h.slice(2); h="hz"; history.replaceState(null,"","#hz"); }
   $("#gate").hidden=!gated; $("#who").hidden=gated; $("#nav").hidden=gated; $("#tabbar").hidden=gated;
-  const cur=gated?"":(h==="ehs"?"ehs":h==="ptw"?"ptw":h==="admin"&&isAdmin?"admin":"home");
+  const cur=gated?"":(h==="ehs"?"ehs":h==="ptw"?"ptw":h==="hz"?"hz":h==="admin"&&isAdmin?"admin":"home");
   document.querySelectorAll(".nv[data-nav]").forEach(b=>{ if(b.dataset.nav===cur) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
-  $("#home").hidden=gated||h==="ehs"||h==="ptw"||(h==="admin"&&isAdmin);
+  $("#home").hidden=gated||h==="ehs"||h==="ptw"||h==="hz"||(h==="admin"&&isAdmin);
+  const hzWasHidden=$("#hzView").hidden; $("#hzView").hidden=gated||h!=="hz";
+  if(!gated&&h==="hz"){ if(hzWasHidden) hzShow("home"); loadHazards(); }
   $("#infoView").hidden=gated||h!=="ehs";
   const ptwWasHidden=$("#ptwView").hidden;
   $("#ptwView").hidden=gated||h!=="ptw";
@@ -815,6 +845,7 @@ const go=h=>{ if(location.hash.slice(1)===h) route(); else location.hash=h; };
 window.addEventListener("hashchange",route);
 document.querySelectorAll("[data-home]").forEach(b=>b.addEventListener("click",()=>{history.replaceState(null,"",location.pathname);route();}));
 $("#goInfo").addEventListener("click",()=>{go("ehs");log("open","ehs","EHS Information");});
+$("#goHz").addEventListener("click",()=>navTo("hz"));
 $("#goPtw").addEventListener("click",()=>{ptwMode="home";ptwShow("home");go("ptw");log("open","ptw","Permit to Work");});
 document.querySelectorAll("[data-log]").forEach(a=>a.addEventListener("click",()=>log("open",a.dataset.log,a.dataset.title)));
 
@@ -842,7 +873,7 @@ $("#adminLink").addEventListener("click",()=>{ if(isAdmin) go("admin"); else ope
 $("#adminCancel").addEventListener("click",()=>{$("#adminModal").hidden=true;});
 $("#adminForm").addEventListener("submit",async e=>{
   e.preventDefault();
-  if(await sha256($("#adminPass").value)===ADMIN_HASH){ isAdmin=true; store.set("adm","1",true); $("#adminModal").hidden=true; go("admin"); }
+  if(await sha256($("#adminPass").value)===ADMIN_HASH){ adminKey=$("#adminPass").value; if($("#ap-key")) $("#ap-key").value=adminKey; isAdmin=true; store.set("adm","1",true); $("#adminModal").hidden=true; go("admin"); }
   else msg("#adminMsg","รหัสผ่านไม่ถูกต้อง · Wrong password");
 });
 $("#adminOut").addEventListener("click",()=>{isAdmin=false;store.set("adm",null,true);history.replaceState(null,"",location.pathname);route();});
@@ -1206,14 +1237,14 @@ const isExpired=p=>p.status==="approved"&&p.end_at&&new Date(p.end_at)<new Date(
 let permits=[], ptwTab="active", ptwMode="home", ptwType=null, ptwSel=null;
 
 /* ---- camera-only site photos, stamped with date/time ---- */
-const shots={req:[],close:[]}; const MAX_SHOTS=6;
+const shots={req:[],close:[],hz:[],hzc:[]}; const MAX_SHOTS=6;
 let camStream=null, camFacing="environment", camKey=null, camCtx=()=>"", camTimer=null;
 const CAM_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>';
 function photoBoxHTML(key,required,hint){
-  return `<h4 class="sec">รูปถ่ายหน้างาน${required?' <span class="req">*</span>':''} <small>${esc(hint)} · ถ่ายจากกล้องเท่านั้น ระบบประทับวันเวลาลงในรูป</small></h4>
+  return `<h4 class="sec">รูปถ่ายหน้างาน${required?' <span class="req">*</span>':' <small>(ไม่บังคับ · optional)</small>'} <small>${esc(hint)} · ถ่ายใหม่หรือเลือกจากอัลบั้ม ระบบประทับวันเวลาและที่มาของรูป</small></h4>
   <div class="shots" id="shots-${key}"></div>
   <p class="msg err" id="formNativeMsg-${key}" hidden></p>
-  <button class="btn sec cam-btn" type="button" data-cam="${key}">${CAM_ICON}ถ่ายรูป · Take photo</button>`;
+  <div class="actions" style="margin:0"><button class="btn sec cam-btn" type="button" data-cam="${key}">${CAM_ICON}ถ่ายรูป · Take photo</button><button class="btn sec cam-btn" type="button" data-gal="${key}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>เลือกจากอัลบั้ม · From album</button></div>`;
 }
 const stampTime=d=>d.toLocaleString("th-TH",{timeZone:"Asia/Bangkok",day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"});
 function renderShots(key){
@@ -1222,7 +1253,7 @@ function renderShots(key){
     const rm=el("button",null,"ลบ"); rm.type="button"; rm.setAttribute("aria-label","ลบรูปที่ "+(i+1));
     rm.addEventListener("click",()=>{ URL.revokeObjectURL(sh.url); shots[key].splice(i,1); renderShots(key); });
     w.append(im,rm,el("span",null,stampTime(new Date(sh.taken_at)).split(" ")[1]||"")); box.append(w); });
-  const b=document.querySelector(`[data-cam="${key}"]`); if(b) b.disabled=shots[key].length>=MAX_SHOTS;
+  document.querySelectorAll(`[data-cam="${key}"],[data-gal="${key}"]`).forEach(b=>b.disabled=shots[key].length>=MAX_SHOTS);
 }
 function camMsg(t){ const m=$("#camErr"); m.textContent=t||""; m.hidden=!t; }
 function stopCam(){ if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; } }
@@ -1264,6 +1295,27 @@ async function addNativeShot(file){
   }catch(e){ say("อ่านรูปไม่ได้ ลองถ่ายใหม่ · Could not read the photo, try again."); }
   finally{ URL.revokeObjectURL(url); }
 }
+let galKey="req";
+async function addGalleryShots(files){
+  const key=galKey, m=$("#formNativeMsg-"+key); if(m) m.hidden=true; camCtx=ptwCtx(key);
+  for(const file of files){
+    if(shots[key].length>=MAX_SHOTS){ if(m){ m.textContent="ครบ "+MAX_SHOTS+" รูปแล้ว · Photo limit reached."; m.hidden=false; } break; }
+    if(!/^image\//.test(file.type||"image/")) continue;
+    const url=URL.createObjectURL(file);
+    try{
+      const img=await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=url; });
+      const when=new Date(file.lastModified||Date.now()), k=Math.min(1,1600/Math.max(img.naturalWidth,img.naturalHeight));
+      const W=Math.round(img.naturalWidth*k), H=Math.round(img.naturalHeight*k);
+      const c=document.createElement("canvas"); c.width=W; c.height=H; const x=c.getContext("2d"); x.drawImage(img,0,0,W,H); drawStamp(x,W,H,when,true);
+      const blob=await new Promise(r=>c.toBlob(r,"image/jpeg",0.85)); if(!blob) throw new Error("encode");
+      shots[key].push({blob,url:URL.createObjectURL(blob),taken_at:when.toISOString(),source:"album"});
+    }catch(e){ if(m){ m.textContent="อ่านรูปไม่ได้: "+file.name; m.hidden=false; } }
+    finally{ URL.revokeObjectURL(url); }
+  }
+  renderShots(key);
+}
+$("#galFile").addEventListener("change",e=>{ const f=[...(e.target.files||[])]; if(f.length) addGalleryShots(f); });
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-gal]"); if(!b) return; galKey=b.dataset.gal; const i=$("#galFile"); i.value=""; i.click(); });
 $("#camFile").addEventListener("change",e=>{ const f=e.target.files&&e.target.files[0]; if(f) addNativeShot(f); });
 $("#camNative").addEventListener("click",nativeCam);
 function camTick(){ $("#camClock").textContent=stampTime(new Date()); $("#camCount").textContent=shots[camKey].length+"/"+MAX_SHOTS; }
@@ -1281,9 +1333,9 @@ function fitCam(){ const c=$("#cam"), vv=window.visualViewport; if(c.hidden) ret
 if(window.visualViewport){ visualViewport.addEventListener("resize",fitCam); visualViewport.addEventListener("scroll",fitCam); }
 function lockZoom(on){ if(!vpMeta) return; vpMeta.content=on?"width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover":vpOrig; }
 function closeCam(){ stopCam(); clearInterval(camTimer); $("#cam").hidden=true; document.body.style.overflow=""; lockZoom(false); $("#cam").removeAttribute("style"); const b=document.querySelector(`[data-cam="${camKey}"]`); if(b) b.focus(); }
-function drawStamp(x,W,H,now){
+function drawStamp(x,W,H,now,album){
   const fs=Math.max(16,Math.round(Math.min(W,H)*0.038)), pad=Math.round(fs*0.55);
-  const l1=stampTime(now)+" น.", l2=["ID "+emp,camCtx()].filter(Boolean).join(" · ");
+  const l1=(album?"อัลบั้ม · ":"")+stampTime(now)+" น.", l2=["ID "+emp,camCtx()].filter(Boolean).join(" · ");
   const bh=Math.round(fs*1.9+pad*3);
   x.fillStyle="rgba(0,0,0,0.62)"; x.fillRect(0,H-bh,W,bh);
   x.fillStyle="#ffd23f"; x.fillRect(0,H-bh,Math.max(6,Math.round(fs*0.3)),bh);
@@ -1307,21 +1359,24 @@ async function shoot(){
 }
 async function uploadShots(key){
   const out=[];
-  for(const sh of shots[key]){ const path="ptw/photos/"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+".jpg";
+  for(const sh of shots[key]){ const path=(key.startsWith("hz")?"hazard/":"ptw/photos/")+Date.now()+"-"+Math.random().toString(36).slice(2,7)+".jpg";
     const up=await sb.storage.from(BUCKET).upload(path,sh.blob,{contentType:"image/jpeg"}); if(up.error) throw up.error;
-    out.push({path,url:sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl,taken_at:sh.taken_at,source:"camera"}); }
+    out.push({path,url:sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl,taken_at:sh.taken_at,source:sh.source||"camera"}); }
   return out;
 }
-const galHTML=list=>`<div class="pgal">${list.map(x=>`<a href="${esc(x.url)}" target="_blank" rel="noopener"><img src="${esc(x.url)}" alt="รูปหน้างาน ${esc(dt(x.taken_at))}" loading="lazy"><span>${esc(stampTime(new Date(x.taken_at)))}</span></a>`).join("")}</div>`;
+const galHTML=list=>`<div class="pgal">${list.map(x=>`<a href="${esc(x.url)}" target="_blank" rel="noopener"><img src="${esc(x.url)}" alt="รูปหน้างาน ${esc(dt(x.taken_at))}" loading="lazy"><span>${x.source==="album"?"อัลบั้ม · ":""}${esc(stampTime(new Date(x.taken_at)))}</span></a>`).join("")}</div>`;
 $("#camShoot").addEventListener("click",shoot);
 $("#camClose").addEventListener("click",closeCam);
 $("#camFlip").addEventListener("click",()=>{ camFacing=camFacing==="environment"?"user":"environment"; startCam(); });
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("#cam").hidden) closeCam(); });
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-cam]"); if(!b) return;
   const key=b.dataset.cam;
-  if(key==="req"){ const f=$("#ptwForm"); openCam("req",()=>[PT[ptwType].code, f&&f.area.value, f&&f.loc.value].filter(Boolean).join(" · ")); }
-  else { const p=permits.find(x=>x.id===ptwSel); openCam("close",()=>p?[pno(p),"ปิดงาน",p.area].filter(Boolean).join(" · "):""); }
+  openCam(key,ptwCtx(key));
 });
+function ptwCtx(key){ if(key==="hz"){ const f=$("#hzForm"); return ()=>["แจ้งจุดเสี่ยง", f&&f.area.value, f&&f.loc.value].filter(Boolean).join(" · "); }
+  if(key==="hzc"){ const z=hazards.find(x=>x.id===hzSel); return ()=>z?[hzno(z),"แก้ไขแล้ว",z.area].filter(Boolean).join(" · "):""; }
+  if(key==="req"){ const f=$("#ptwForm"); return ()=>[PT[ptwType].code, f&&f.area.value, f&&f.loc.value].filter(Boolean).join(" · "); }
+  const p=permits.find(x=>x.id===ptwSel); return ()=>p?[pno(p),"ปิดงาน",p.area].filter(Boolean).join(" · "):""; }
 
 /* ---- form builders ---- */
 const fld=(n,th,en,req,type,extra)=>`<label for="pf-${n}"><span>${esc(th)}${req?' <span class="req">*</span>':''} <small>${esc(en)}</small></span><input type="${type||"text"}" id="pf-${n}" name="${n}" ${req?"required":""} ${extra||""}></label>`;
@@ -1364,7 +1419,7 @@ function ptwFormHTML(t){
   });
   h+=`<h4 class="sec">PPE and Devices Required · อุปกรณ์ป้องกันอันตรายส่วนบุคคล</h4>${ppeHTML(d.ppe,"p_")}
   <label for="pf-ppeNote"><span>มาตรการ / อุปกรณ์เพิ่มเติม <small>Other measures (optional)</small></span><input type="text" id="pf-ppeNote" name="ppeNote"></label>
-  ${photoBoxHTML("req",true,"สภาพหน้างานก่อนเริ่มงาน · Before work")}
+  ${photoBoxHTML("req",false,"สภาพหน้างานก่อนเริ่มงาน · Before work")}
   <h4 class="sec">เอกสารแนบ · Attachments <small>JSEA รายชื่อผู้ปฏิบัติงาน ใบรับรอง ฯลฯ · ถ่ายรูป เลือกจากแกลเลอรี่ หรืออัปโหลด PDF / Word / Excel · สูงสุด 10 ไฟล์${t==="daily"?" · ต้องแนบรายชื่อผู้ปฏิบัติงาน":""}</small></h4>
   <div class="attpick">
     <button class="btn sec cam-btn" type="button" data-att="cam">${CAM_ICON}ถ่ายรูปเอกสาร · Take photo</button>
@@ -1410,7 +1465,7 @@ function readPtwForm(t){
 let approvers=[], approversErr="";
 async function loadApprovers(){
   const {data,error}=await sb.from("ehs_ptw_approvers_pub").select("emp,name,active,has_pin").order("name");
-  approversErr=error?errText(error):""; approvers=data||[]; if(!$("#ptwLogin").hidden) plHint(); if($("#apprAdmList")) renderApprAdmin();
+  approversErr=error?errText(error):""; approvers=data||[]; if(!$("#ptwLogin").hidden){ const i=$("#pl-emp"); if(!i.value&&apprOf(emp)){ i.value=emp; $("#pl-pin").focus(); } plHint(); } if($("#apprAdmList")) renderApprAdmin();
 }
 const apprOf=c=>approvers.find(a=>a.emp===String(c||"").trim()&&a.active);
 const PINERR={not_approver:["รหัสนี้ไม่อยู่ในรายชื่อผู้อนุมัติ Permit to Work","This employee code is not an authorised approver"],
@@ -1515,7 +1570,6 @@ function openPtwForm(t){
 }
 async function submitPtw(e){
   e.preventDefault(); const t=ptwType, r=readPtwForm(t), m=$("#ptwMsg");
-  if(!r.err&&!shots.req.length) r.err="ถ่ายรูปหน้างานอย่างน้อย 1 รูป (กดปุ่ม ถ่ายรูป) · Take at least one site photo.";
   if(r.err){ m.className="msg err"; m.textContent=r.err; m.hidden=false; m.scrollIntoView({block:"center",behavior:"smooth"}); return; }
   if(!ptwUser){ openPtwLogin(); return; }
   const sEmp=ptwUser.emp, sPin=ptwUser.pin;
@@ -1580,7 +1634,7 @@ function permitHTML(p){
     <div class="kv wide"><span>ผู้เข้าทำงาน <small>Entrants</small></span><b>${esc(v.entrants)}</b></div>${bad?'<p class="msg err">ผลตรวจไม่อยู่ในเกณฑ์</p>':""}`; }
   d.checks.forEach(s=>h+=ckView(d,v,s));
   h+=`<h4 class="sec">PPE · อุปกรณ์ป้องกันอันตรายส่วนบุคคล</h4>${ppeHTML(d.ppe,"",true,v.ppe||[])}${v.ppeNote?`<div class="kv wide"><span>มาตรการเพิ่มเติม</span><b>${esc(v.ppeNote)}</b></div>`:""}`;
-  if((v.photos||[]).length) h+=`<h4 class="sec">รูปถ่ายหน้างานก่อนเริ่มงาน <small>Before work · ${v.photos.length} รูป · ถ่ายจากกล้อง</small></h4>${galHTML(v.photos)}`;
+  if((v.photos||[]).length) h+=`<h4 class="sec">รูปถ่ายหน้างานก่อนเริ่มงาน <small>Before work · ${v.photos.length} รูป</small></h4>${galHTML(v.photos)}`;
   if((p.attachments||[]).length) h+=`<h4 class="sec">เอกสารแนบ</h4><div class="atts">${p.attachments.map(x=>`<a href="${esc(x.url)}" target="_blank" rel="noopener">${/^image\//.test(x.type||"")?`<img src="${esc(x.url)}" alt="">`:`<i class="attext">${esc(extOf(x.name))}</i>`}<span>${esc(x.name)}</span></a>`).join("")}</div>`;
   const legacy=a.approver&&a.by!=="supervisor", rv=a.review||null, rr=rv&&REVIEW_RES[rv.result];
   h+=`<h4 class="sec">Authorization · การอนุมัติให้ปฏิบัติงาน</h4><div class="signs">
@@ -1591,7 +1645,7 @@ function permitHTML(p){
   if(p.status==="closing"||p.status==="closed"){
     if(d.close){ h+=`<h4 class="sec">${esc(d.close.title)}</h4><div class="cks">${d.close.items.map(it=>{const x=(c.checks||{})[it.id];return `<div class="ck view"><div class="ck-t"><b>${esc(it.th)}</b><span>${esc(it.en)}</span></div><span class="ans ${x==="y"?"y":"na"}">${x==="y"?"✓ ใช่":x==="na"?"N/A":"–"}</span></div>`;}).join("")}</div>
       <div class="kvs">${(d.close.fields||[]).map(f=>kv(f[1],f[2],(c.fields||{})[f[0]])).join("")}</div>`; }
-    if((c.photos||[]).length) h+=`<h4 class="sec">รูปหลังเสร็จงาน <small>After work · ${c.photos.length} รูป · ถ่ายจากกล้อง</small></h4>${galHTML(c.photos)}`;
+    if((c.photos||[]).length) h+=`<h4 class="sec">รูปหลังเสร็จงาน <small>After work · ${c.photos.length} รูป</small></h4>${galHTML(c.photos)}`;
     h+=`<h4 class="sec">Closure · การปิดงาน</h4><div class="signs"><div class="sign"><p>${esc(d.closeDecl)}</p><b>${esc(c.by||"")}</b><span>ผู้ปิดงาน${c.at?" · "+esc(dt(c.at)):""}</span></div>
       ${c.approver?`<div class="sign"><p>ยืนยันการปิดใบอนุญาต</p><b>${esc(c.approver)}</b><span>ผู้ยืนยันปิดงาน${c.closedAt?" · "+esc(dt(c.closedAt)):""}</span></div>`:""}</div>`;
   }
@@ -1679,6 +1733,146 @@ async function savePermit(p,upd,okMsg,m){
 document.querySelectorAll("#ptwTabs .chip").forEach(b=>b.addEventListener("click",()=>{ptwTab=b.dataset.t;renderPtw();}));
 $("#ptwQ").addEventListener("input",renderPtw);
 renderPtwTypes();
+
+/* ===================== Hazard report ===================== */
+const HZ_TYPES=[["uc","สภาพไม่ปลอดภัย","Unsafe condition"],["ua","การกระทำไม่ปลอดภัย","Unsafe act"],["nm","เกือบเกิดอุบัติเหตุ","Near miss"],["env","สิ่งแวดล้อม","Environment"]];
+const HZ_CATS=["เครื่องจักร / Machine","ไฟฟ้า / Electrical","สารเคมี / Chemical","ไฟไหม้ / Fire","ทำงานบนที่สูง / Work at height","ยก-เคลื่อนย้าย / Lifting & handling","ยานพาหนะ-รถยก / Vehicle & forklift","ลื่น สะดุด หกล้ม / Slip, trip, fall","การยศาสตร์ / Ergonomics","5ส / Housekeeping","PPE","อื่น ๆ / Other"];
+const HZ_RISK={low:["ต่ำ","Low","ok","แก้ไขได้ตามแผนปกติ"],med:["ปานกลาง","Medium","warn","ควรแก้ไขภายใน 7 วัน"],high:["สูง","High","crit","อาจบาดเจ็บรุนแรง ควรหยุดงานและแก้ไขทันที"]};
+const HZST={open:["รอดำเนินการ","Open","warn"],in_progress:["กำลังแก้ไข","In progress","info"],closed:["แก้ไขแล้ว","Closed","ok"],rejected:["ไม่ใช่จุดเสี่ยง","Not a hazard","muted"]};
+let hazards=[], hzTab="open", hzSel=null, hzMode="home";
+const hzno=z=>"HZ-"+new Date(z.created_at).getFullYear()+"-"+String(z.seq||0).padStart(4,"0");
+const hzType=k=>(HZ_TYPES.find(x=>x[0]===k)||[k,k,k]);
+function hzShow(m){ hzMode=m; ["home","form","detail"].forEach(x=>$("#hz-"+x).hidden=x!==m); window.scrollTo(0,0); }
+async function loadHazards(){
+  const {data,error}=await sb.from("ehs_hazards").select("*").order("created_at",{ascending:false}).limit(1000);
+  if(error){ const b=$("#hzBoard"); b.textContent=""; b.append(el("div","empty",(/does not exist|schema cache/i.test(error.message||"")?"ยังไม่ได้ติดตั้งระบบแจ้งจุดเสี่ยง (รัน add-hazard-report.sql) · ":"โหลดไม่ได้: ")+errText(error))); return; }
+  hazards=data||[]; renderHz();
+  if(hzOpenAfterLoad){ const id=hzOpenAfterLoad; hzOpenAfterLoad=null; if(hazards.some(x=>x.id===id)) openHz(id); }
+  else if(hzMode==="detail"&&hzSel&&hazards.some(x=>x.id===hzSel)) openHz(hzSel);
+}
+function renderHz(){
+  const tabs={open:z=>z.status==="open",in_progress:z=>z.status==="in_progress",closed:z=>z.status==="closed",mine:z=>z.reporter_emp===emp,all:()=>true};
+  document.querySelectorAll("#hzTabs .chip").forEach(b=>{ b.setAttribute("aria-pressed",b.dataset.t===hzTab); b.querySelector("i").textContent=hazards.filter(tabs[b.dataset.t]).length; });
+  const q=($("#hzQ").value||"").trim().toLowerCase();
+  const list=hazards.filter(tabs[hzTab]).filter(z=>{ const d=z.data||{}; return !q||[hzno(z),z.area,d.loc,d.desc,d.cat,d.name].join(" ").toLowerCase().includes(q); });
+  const box=$("#hzBoard"); box.textContent="";
+  if(!list.length){ box.append(el("div","empty",t("hzEmpty"))); return; }
+  list.forEach(z=>{ const d=z.data||{}, st=HZST[z.status]||HZST.open, rk=HZ_RISK[d.risk]||HZ_RISK.low, ty=hzType(d.type), b=el("button","prow");
+    b.type="button"; b.style.setProperty("--pc",d.risk==="high"?"#b91c1c":d.risk==="med"?"#b45309":"#1e7a4c");
+    const ph=(d.photos||[])[0];
+    b.innerHTML=`<span class="code">${ph?`<img class="hzthumb" src="${esc(ph.url)}" alt="">`:"HZ"}</span><span class="pmain"><b>${esc(hzno(z))} · ${esc((d.desc||"").slice(0,90))}</b><span>${esc(z.area||"")}${d.loc?" · "+esc(d.loc):""} · ${esc(lang==="en"?ty[2]:ty[1])}</span><span>${esc(dt(z.created_at))}</span></span>
+      <span class="pstw"><span class="pst ${st[2]}">${esc(lang==="en"?st[1]:st[0])}</span><span class="pst ${rk[2]}">${lang==="en"?"Risk "+rk[1]:"เสี่ยง"+rk[0]}</span></span>`;
+    b.addEventListener("click",()=>openHz(z.id)); box.append(b); });
+}
+function hzFormHTML(){
+  let last={}; try{ last=JSON.parse(localStorage.getItem("hzLast")||"{}"); }catch(x){}
+  return `<div class="actions noprint"><button class="back" type="button" data-hzhome>${lang==="en"?"← Hazard list":"← รายการจุดเสี่ยง"}</button></div>
+  <form class="panel permit" id="hzForm" novalidate style="--pc:#9a6b00">
+  <div class="ptw-head"><div><div class="tag">Hazard · Near miss report</div><h3>แจ้งจุดเสี่ยง</h3><div class="en">Report a hazard</div></div></div>
+  <h4 class="sec">ประเภท <span class="req">*</span> <small>Type</small></h4>
+  <div class="ppe">${HZ_TYPES.map(x=>`<label class="pp"><input type="radio" name="type" value="${x[0]}" required><span>${esc(x[1])}<small>${esc(x[2])}</small></span></label>`).join("")}</div>
+  <div class="row">
+    <label for="hz-cat"><span>หมวดอันตราย <span class="req">*</span> <small>Hazard category</small></span><select id="hz-cat" name="cat" required><option value="">— เลือก · Select —</option>${HZ_CATS.map(c=>`<option>${esc(c)}</option>`).join("")}</select></label>
+    <label for="hz-when"><span>วันเวลาที่พบ <span class="req">*</span> <small>When found</small></span><input type="datetime-local" id="hz-when" name="when" required></label>
+  </div>
+  <div class="row">
+    <label for="hz-area"><span>พื้นที่ <span class="req">*</span> <small>Area</small></span><select id="hz-area" name="area" required><option value="">— เลือก · Select —</option>${AREAS.map(a=>`<option>${esc(a)}</option>`).join("")}</select></label>
+    <label for="hz-loc"><span>จุดที่พบ <span class="req">*</span> <small>Exact location, machine or line</small></span><input type="text" id="hz-loc" name="loc" required placeholder="เช่น หน้าเครื่อง CNC #5, ทางเดินหน้า QC"></label>
+  </div>
+  <label for="hz-desc"><span>รายละเอียด <span class="req">*</span> <small>What did you see? What could happen?</small></span><textarea id="hz-desc" name="desc" required style="min-height:96px" placeholder="เห็นอะไร และอาจเกิดอันตรายอะไรได้"></textarea></label>
+  <h4 class="sec">ระดับความเสี่ยงที่คิดว่า <span class="req">*</span> <small>Your view of the risk</small></h4>
+  <div class="ppe">${Object.entries(HZ_RISK).map(([k,x])=>`<label class="pp risk-${k}"><input type="radio" name="risk" value="${k}" required><span>${esc(x[0])} · ${esc(x[1])}<small>${esc(x[3])}</small></span></label>`).join("")}</div>
+  ${photoBoxHTML("hz",false,"จุดที่พบ · The hazard")}
+  <label for="hz-imm"><span>แก้ไขเบื้องต้นแล้วหรือยัง <small>Immediate action taken (optional)</small></span><textarea id="hz-imm" name="imm" style="min-height:60px" placeholder="เช่น กั้นพื้นที่ แจ้งหัวหน้างาน เช็ดน้ำมันแล้ว"></textarea></label>
+  <label for="hz-sug"><span>ข้อเสนอแนะ <small>Suggestion (optional)</small></span><textarea id="hz-sug" name="sug" style="min-height:60px"></textarea></label>
+  <div class="row">
+    <label for="hz-name"><span>ชื่อผู้แจ้ง <small>Your name (optional)</small></span><input type="text" id="hz-name" name="name" value="${esc(last.name||"")}"></label>
+    <label for="hz-tel"><span>เบอร์ติดต่อ <small>Phone (optional)</small></span><input type="tel" id="hz-tel" name="tel" value="${esc(last.tel||"")}"></label>
+  </div>
+  <p class="note" style="text-align:left">ผู้แจ้ง: ID ${esc(emp)} · EHS จะติดต่อกลับถ้าต้องการข้อมูลเพิ่ม · ถ้าอันตรายเร่งด่วน ให้หยุดงานและแจ้งหัวหน้างานทันที</p>
+  <p class="msg err" id="hzMsg" hidden></p>
+  <div class="actions"><button class="btn" type="submit" id="hzSubmit">ส่งแจ้งจุดเสี่ยง · Submit</button><button class="btn sec" type="button" data-hzhome>ยกเลิก</button></div></form>`;
+}
+function openHzForm(){
+  shots.hz.forEach(x=>URL.revokeObjectURL(x.url)); shots.hz=[];
+  $("#hz-form").innerHTML=hzFormHTML(); hzShow("form"); renderShots("hz");
+  const f=$("#hzForm"), n=new Date(), pad=v=>String(v).padStart(2,"0");
+  f.when.value=n.getFullYear()+"-"+pad(n.getMonth()+1)+"-"+pad(n.getDate())+"T"+pad(n.getHours())+":"+pad(n.getMinutes());
+  $("#hz-form").querySelectorAll("[data-hzhome]").forEach(b=>b.addEventListener("click",()=>{hzShow("home");renderHz();}));
+  f.addEventListener("submit",submitHz);
+}
+async function submitHz(e){
+  e.preventDefault(); const f=$("#hzForm"), fd=new FormData(f), g=k=>(fd.get(k)||"").toString().trim(), m=$("#hzMsg");
+  const miss=[...f.querySelectorAll("[required]")].filter(x=>x.type==="radio"?!fd.get(x.name):!x.value.trim());
+  if(miss.length){ m.textContent=lang==="en"?"Please fill in every field marked *":"กรอกช่องที่มี * ให้ครบ"; m.hidden=false; m.scrollIntoView({block:"center",behavior:"smooth"}); return; }
+  const btn=$("#hzSubmit"); btn.disabled=true; btn.textContent="กำลังส่ง…";
+  try{
+    const photos=await uploadShots("hz");
+    const d={type:g("type"),cat:g("cat"),when:new Date(g("when")).toISOString(),loc:g("loc"),desc:g("desc"),risk:g("risk"),imm:g("imm"),sug:g("sug"),name:g("name"),tel:g("tel"),photos};
+    const {data,error}=await sb.from("ehs_hazards").insert({status:"open",reporter_emp:emp,area:g("area"),data:d,history:[{at:new Date().toISOString(),act:"open",by:emp,note:""}]}).select().single();
+    if(error) throw error;
+    try{ localStorage.setItem("hzLast",JSON.stringify({name:d.name,tel:d.tel})); }catch(x){}
+    log("open","hazard:"+data.id,"แจ้ง "+hzno(data)); notifyHz(data);
+    hazards.unshift(data); openHz(data.id,lang==="en"?"Thank you. Report "+hzno(data)+" sent to EHS.":"ขอบคุณที่แจ้ง เลขที่ "+hzno(data)+" · ส่งถึง EHS แล้ว");
+  }catch(err){ m.textContent=(/does not exist|schema cache/i.test(err.message||"")?"ยังไม่ได้ติดตั้งระบบ (รัน add-hazard-report.sql) · ":"ส่งไม่สำเร็จ: ")+errText(err); m.hidden=false; }
+  finally{ btn.disabled=false; btn.textContent="ส่งแจ้งจุดเสี่ยง · Submit"; }
+}
+function notifyHz(z){ const d=z.data||{}, ty=hzType(d.type), rk=HZ_RISK[d.risk]||HZ_RISK.low;
+  fetch("/api/send-hazard-line",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({no:hzno(z),title:d.desc||"",type:ty[1],cat:d.cat||"",risk:d.risk||"low",riskTh:rk[0],
+    location:[z.area,d.loc].filter(Boolean).join(" · "),reporter:(d.name?d.name+" · ":"")+"ID "+z.reporter_emp,when:dtTh(d.when||z.created_at),imageUrl:((d.photos||[])[0]||{}).url||"",
+    url:location.origin+location.pathname+"#h-"+z.id})}).catch(()=>{}); }
+function hzHTML(z){
+  const d=z.data||{}, st=HZST[z.status]||HZST.open, rk=HZ_RISK[d.risk]||HZ_RISK.low, ty=hzType(d.type), a=z.action||{}, c=z.closure||{};
+  let h=`<article class="panel permit" style="--pc:${d.risk==="high"?"#b91c1c":d.risk==="med"?"#b45309":"#1e7a4c"}"><div class="ptw-head"><div><div class="tag">Hazard · Near miss report</div><h3>แจ้งจุดเสี่ยง</h3><div class="en">${esc(ty[2])} · ${esc(ty[1])}</div></div>
+    <div class="pno"><span class="tag">Report No.</span><b>${esc(hzno(z))}</b><span class="pst ${st[2]}">${esc(lang==="en"?st[1]:st[0])}</span><span class="pst ${rk[2]}">${lang==="en"?"Risk: "+rk[1]:"ความเสี่ยง: "+rk[0]}</span></div></div>
+  <h4 class="sec">ข้อมูลที่แจ้ง · Report</h4><div class="kvs">${kv("พื้นที่","Area",z.area)}${kv("จุดที่พบ","Location",d.loc)}${kv("หมวด","Category",d.cat)}${kv("วันเวลาที่พบ","Found",dt(d.when))}${kv("ผู้แจ้ง","Reported by",(d.name?d.name+" · ":"")+"ID "+z.reporter_emp)}${kv("แจ้งเมื่อ","Reported",dt(z.created_at))}</div>
+  <div class="kv wide"><span>รายละเอียด <small>Description</small></span><b style="white-space:pre-wrap">${esc(d.desc)}</b></div>
+  ${d.imm?`<div class="kv wide"><span>แก้ไขเบื้องต้น <small>Immediate action</small></span><b style="white-space:pre-wrap">${esc(d.imm)}</b></div>`:""}
+  ${d.sug?`<div class="kv wide"><span>ข้อเสนอแนะ <small>Suggestion</small></span><b style="white-space:pre-wrap">${esc(d.sug)}</b></div>`:""}`;
+  if((d.photos||[]).length) h+=`<h4 class="sec">รูปจุดเสี่ยง <small>${d.photos.length} รูป</small></h4>${galHTML(d.photos)}`;
+  if(a.owner||a.due||a.note) h+=`<h4 class="sec">การแก้ไข · Corrective action</h4><div class="kvs">${kv("ผู้รับผิดชอบ","Owner",a.owner)}${kv("กำหนดเสร็จ","Due",a.due?new Date(a.due).toLocaleDateString(t("locale"),{dateStyle:"medium"}):"")}</div>${a.note?`<div class="kv wide"><span>มาตรการแก้ไข <small>Action</small></span><b style="white-space:pre-wrap">${esc(a.note)}</b></div>`:""}`;
+  if(z.status==="closed"||z.status==="rejected"){ h+=`<h4 class="sec">${z.status==="closed"?"ปิดเรื่อง · Closed":"ไม่ใช่จุดเสี่ยง · Not a hazard"}</h4>${c.note?`<div class="kv wide"><span>ผลการแก้ไข <small>Result</small></span><b style="white-space:pre-wrap">${esc(c.note)}</b></div>`:""}${(c.photos||[]).length?galHTML(c.photos):""}<div class="kvs">${kv("โดย","By",c.by)}${kv("เมื่อ","At",dt(c.at))}</div>`; }
+  h+=`<details class="hist"><summary>ประวัติ · History</summary><ul>${(z.history||[]).map(x=>`<li>${esc(dt(x.at))} · ${esc({open:"แจ้งจุดเสี่ยง",in_progress:"กำลังแก้ไข",closed:"ปิดเรื่อง",rejected:"ไม่ใช่จุดเสี่ยง"}[x.act]||x.act)} · ${esc(x.by)}${x.note?" · "+esc(x.note):""}</li>`).join("")}</ul></details></article>`;
+  return h;
+}
+function openHz(id,flash){
+  const z=hazards.find(x=>x.id===id); if(!z) return; hzSel=id; hzShow("detail");
+  const a=z.action||{}, c=z.closure||{};
+  let h=`<div class="actions noprint"><button class="back" type="button" data-hzhome>${lang==="en"?"← Hazard list":"← รายการจุดเสี่ยง"}</button><button class="back" type="button" id="hzPrint">พิมพ์ · Print</button></div>`;
+  if(flash) h+=`<p class="msg ok noprint">${esc(flash)}</p>`;
+  h+=hzHTML(z);
+  if(isAdmin) h+=`<form class="panel noprint" id="hzAdm" novalidate><h3>EHS ดำเนินการ · EHS action</h3>
+    <div class="row"><label for="ha-st"><span>สถานะ <small>Status</small></span><select id="ha-st" name="st">${Object.entries(HZST).map(([k,x])=>`<option value="${k}"${z.status===k?" selected":""}>${esc(x[0])} · ${esc(x[1])}</option>`).join("")}</select></label>
+    <label for="ha-owner"><span>ผู้รับผิดชอบ <small>Owner</small></span><input type="text" id="ha-owner" name="owner" value="${esc(a.owner||"")}"></label>
+    <label for="ha-due"><span>กำหนดเสร็จ <small>Due date</small></span><input type="date" id="ha-due" name="due" value="${esc((a.due||"").slice(0,10))}"></label></div>
+    <label for="ha-note"><span>มาตรการแก้ไข <small>Corrective action</small></span><textarea id="ha-note" name="note" style="min-height:70px">${esc(a.note||"")}</textarea></label>
+    <div id="haClose"><label for="ha-cnote"><span>ผลการแก้ไข / เหตุผล <small>Result, or why it is not a hazard</small></span><textarea id="ha-cnote" name="cnote" style="min-height:60px">${esc(c.note||"")}</textarea></label>
+    ${photoBoxHTML("hzc",false,"หลังแก้ไข · After")}
+    <label for="ha-by"><span>ชื่อผู้ปิดเรื่อง <small>Closed by</small></span><input type="text" id="ha-by" name="by" value="${esc(c.by||"")}"></label></div>
+    ${adminKey?"":`<label for="ha-key"><span>รหัสผ่าน Admin <small>ต้องใส่อีกครั้งหลังรีเฟรชหน้า</small></span><input type="password" id="ha-key" autocomplete="current-password"></label>`}
+    <p class="msg err" id="haMsg" hidden></p><div class="actions"><button class="btn" type="submit">บันทึก · Save</button></div></form>`;
+  const box=$("#hz-detail"); box.innerHTML=h;
+  shots.hzc.forEach(x=>URL.revokeObjectURL(x.url)); shots.hzc=[]; renderShots("hzc");
+  box.querySelectorAll("[data-hzhome]").forEach(b=>b.addEventListener("click",()=>{hzShow("home");renderHz();}));
+  $("#hzPrint").addEventListener("click",()=>window.print());
+  const af=$("#hzAdm"); if(af){ const sync=()=>$("#haClose").hidden=!["closed","rejected"].includes(af.st.value); af.st.addEventListener("change",sync); sync();
+    af.addEventListener("submit",async e=>{ e.preventDefault(); const fd=new FormData(af), g=k=>(fd.get(k)||"").toString().trim(), m=$("#haMsg");
+      const key=adminKey||($("#ha-key")?$("#ha-key").value:""); const st=g("st"), closing=["closed","rejected"].includes(st);
+      if(closing&&!g("cnote")){ m.textContent="ใส่ผลการแก้ไข หรือเหตุผล"; m.hidden=false; return; }
+      const btn=af.querySelector("button[type=submit]"); btn.disabled=true;
+      try{
+        const action={owner:g("owner"),due:g("due"),note:g("note")};
+        let closure=null; if(closing){ const ph=await uploadShots("hzc"); closure={note:g("cnote"),by:g("by")||"EHS",at:new Date().toISOString(),photos:(c.photos||[]).concat(ph)}; }
+        const r=await rpc("hz_admin_update",{k:key,p_id:z.id,p_status:st,p_action:action,p_closure:closure,p_note:closing?g("cnote"):g("note")});
+        if(!r||!r.ok){ m.textContent=r&&r.error==="not_admin"?"รหัสผ่าน Admin ไม่ถูกต้อง":(r&&/function|schema/i.test(r.error||"")?"ยังไม่ได้ติดตั้งระบบ (รัน add-hazard-report.sql) · ":"")+((r&&r.error)||""); m.hidden=false; return; }
+        if(!adminKey) adminKey=key;
+        hazards=hazards.map(x=>x.id===z.id?r.hazard:x); openHz(z.id,lang==="en"?"Saved":"บันทึกแล้ว");
+      }catch(err){ m.textContent="บันทึกไม่สำเร็จ: "+errText(err); m.hidden=false; }
+      finally{ btn.disabled=false; } }); }
+}
+$("#hzNew").addEventListener("click",openHzForm);
+document.querySelectorAll("#hzTabs .chip").forEach(b=>b.addEventListener("click",()=>{hzTab=b.dataset.t;renderHz();}));
+$("#hzQ").addEventListener("input",renderHz);
 
 /* boot */
 emp=store.get("emp")||""; isAdmin=store.get("adm",true)==="1";
