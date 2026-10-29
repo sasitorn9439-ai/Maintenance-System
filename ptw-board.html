@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MCAM Permit Board</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+<style>
+/* Layout: read-only live permit board, embeddable in another system via iframe (?embed=1) */
+:root{
+  --bg:#f3f4f2; --panel:#fff; --ink:#1b1f22; --muted:#5d6670; --line:#d9ddd8; --field:#f7f8f6;
+  --ok:#1e7a4c; --ok-bg:#e3f2e8; --warn:#a15c00; --warn-bg:#fdf0d8; --info:#1f5f8b; --info-bg:#e1edf6; --crit:#c62f2f; --crit-bg:#fbe3e3;
+  --display:"Bai Jamjuree","IBM Plex Sans Thai",system-ui,sans-serif; --body:"IBM Plex Sans Thai",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#121518; --panel:#1b2024; --ink:#e7eaec; --muted:#9aa4ad; --line:#2c3338; --field:#15191c;
+  --ok:#5cc489; --ok-bg:#16301f; --warn:#f0a63a; --warn-bg:#33270f; --info:#6cb0e0; --info-bg:#132a3b; --crit:#f07070; --crit-bg:#3a1a1a; color-scheme:dark}}
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.5;
+  padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px));padding-block:16px 24px}
+[hidden]{display:none!important}
+.wrap{max-width:1100px;margin:0 auto;display:grid;gap:14px}
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 16px}
+h1{margin:0;font-family:var(--display);font-size:1.35rem}
+.tag{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.upd{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,130px),1fr));gap:8px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-family:var(--display);font-size:1.8rem;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{font-size:.76rem;color:var(--muted)}
+.stat.ok b{color:var(--ok)} .stat.warn b{color:var(--warn)} .stat.crit b{color:var(--crit)}
+.bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{font:inherit;font-size:.84rem;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px;border-radius:99px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip:focus-visible{outline:2px solid var(--info);outline-offset:2px}
+input[type=search]{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:6px 14px;flex:1 1 200px;min-width:0}
+.tbl{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--field);font-weight:600;white-space:nowrap;font-size:.8rem;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+td.no{font-family:var(--mono);white-space:nowrap}
+.code{display:inline-block;font-family:var(--mono);font-size:.72rem;color:#fff;padding:2px 7px;border-radius:4px;margin-right:6px;background:var(--pc)}
+.desc{font-weight:600} .sub{display:block;font-size:.78rem;color:var(--muted)}
+.when{white-space:nowrap;font-variant-numeric:tabular-nums}
+.pst{display:inline-block;font-size:.74rem;font-weight:600;padding:2px 9px;border-radius:99px;white-space:nowrap}
+.pst.ok{background:var(--ok-bg);color:var(--ok)} .pst.warn{background:var(--warn-bg);color:var(--warn)} .pst.info{background:var(--info-bg);color:var(--info)} .pst.crit{background:var(--crit-bg);color:var(--crit)} .pst.muted{background:var(--field);color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:26px 12px}
+a.lnk{color:var(--info);font-weight:600;text-decoration:none} a.lnk:hover{text-decoration:underline}
+.right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:99px;overflow:hidden;background:var(--panel)}
+.lang button{font:inherit;font-family:var(--mono);font-size:.78rem;font-weight:500;border:0;background:transparent;color:var(--muted);padding:5px 12px;cursor:pointer}
+.lang button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.lang button:focus-visible{outline:2px solid var(--info);outline-offset:-2px}
+body.embed{padding-block:8px}
+body.embed .top h1{font-size:1.1rem}
+@media (max-width:640px){ .hide-sm{display:none} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div><div class="tag">MCAM · EHS Portal</div><h1 data-i="title">ใบอนุญาตทำงาน</h1></div>
+    <div class="right"><div class="upd" id="upd"></div>
+      <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="th" aria-pressed="true">TH</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div></div>
+  </div>
+  <div class="stats">
+    <div class="stat ok"><b id="sActive">–</b><span data-i="sActive"></span></div>
+    <div class="stat warn"><b id="sPending">–</b><span data-i="sPending"></span></div>
+    <div class="stat crit"><b id="sExpired">–</b><span data-i="sExpired"></span></div>
+    <div class="stat"><b id="sToday">–</b><span data-i="sToday"></span></div>
+  </div>
+  <div class="bar" id="tabs">
+    <button class="chip" type="button" data-t="active" aria-pressed="true" data-i="tActive"></button>
+    <button class="chip" type="button" data-t="pending" aria-pressed="false" data-i="tPending"></button>
+    <button class="chip" type="button" data-t="closed" aria-pressed="false" data-i="tClosed"></button>
+    <button class="chip" type="button" data-t="all" aria-pressed="false" data-i="tAll"></button>
+    <input type="search" id="q">
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th data-i="hNo"></th><th data-i="hWork"></th><th class="hide-sm" data-i="hArea"></th><th data-i="hTime"></th><th data-i="hStatus"></th><th class="hide-sm" data-i="hAppr"></th></tr></thead>
+    <tbody id="rows"><tr><td colspan="6" class="empty" data-i="loading"></td></tr></tbody>
+  </table></div>
+  <div class="upd"><span data-i="foot"></span> · <a class="lnk" id="portal" href="ehs.html#ptw" target="_blank" rel="noopener" data-i="open"></a></div>
+</div>
+<script>
+const sb=supabase.createClient('https://qxokalkgvethzgehmdaz.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF4b2thbGtndmV0aHpnZWhtZGF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxOTc2NDgsImV4cCI6MjA5MDc3MzY0OH0.0bcK4J0JgQufzp38kfyo3oGupQSfsYQ7tKfaCDMlUiU');
+const $=s=>document.querySelector(s);
+const L={
+  th:{title:"ใบอนุญาตทำงาน · Permit Board",sActive:"กำลังทำงาน",sPending:"รออนุมัติ",sExpired:"เกินเวลา",sToday:"ปิดงานวันนี้",
+    tActive:"กำลังทำงาน",tPending:"รออนุมัติ",tClosed:"ปิดแล้ว",tAll:"ทั้งหมด",search:"ค้นหาเลขที่ / บริษัท / พื้นที่",
+    hNo:"เลขที่",hWork:"งาน / บริษัท",hArea:"พื้นที่",hTime:"ช่วงเวลา",hStatus:"สถานะ",hAppr:"ผู้อนุมัติ",
+    loading:"กำลังโหลด…",none:"ไม่มีรายการ",to:"ถึง",overdue:"เกินเวลา",upd:"อัปเดต",err:"โหลดข้อมูลไม่ได้: ",
+    foot:"ข้อมูลจาก EHS Portal · อัปเดตอัตโนมัติทุก 60 วินาที",open:"เปิดใน EHS Portal ↗",locale:"th-TH",
+    st:{pending:"รออนุมัติ",approved:"กำลังทำงาน",closing:"รอยืนยันปิด",closed:"ปิดแล้ว",rejected:"ไม่อนุมัติ",cancelled:"ยกเลิก"}},
+  en:{title:"Permit to Work Board",sActive:"Active",sPending:"Pending approval",sExpired:"Overdue",sToday:"Closed today",
+    tActive:"Active",tPending:"Pending",tClosed:"Closed",tAll:"All",search:"Search permit no. / company / area",
+    hNo:"Permit No.",hWork:"Work / Company",hArea:"Area",hTime:"Period",hStatus:"Status",hAppr:"Approved by",
+    loading:"Loading…",none:"No permits",to:"to",overdue:"Overdue",upd:"Updated",err:"Could not load data: ",
+    foot:"Data from MCAM EHS Portal · refreshes every 60 seconds",open:"Open in EHS Portal ↗",locale:"en-GB",
+    st:{pending:"Pending",approved:"Active",closing:"Close requested",closed:"Closed",rejected:"Rejected",cancelled:"Cancelled"}}};
+let lang="th"; const qLang=new URLSearchParams(location.search).get("lang");
+try{ lang=(qLang==="en"||qLang==="th")?qLang:(localStorage.getItem("ptwBoardLang")||((navigator.language||"").startsWith("th")?"th":"en")); }catch(e){ lang=qLang==="en"?"en":"th"; }
+if(!L[lang]) lang="th";
+const tr_=k=>L[lang][k];
+let lastUpd=null;
+function applyLang(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll("[data-i]").forEach(e=>e.textContent=tr_(e.dataset.i));
+  const q=document.getElementById("q"); q.placeholder=tr_("search"); q.setAttribute("aria-label",tr_("search"));
+  document.querySelectorAll("[data-lang]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lang===lang));
+  document.title=tr_("title");
+  if(lastUpd) document.getElementById("upd").textContent=tr_("upd")+" "+lastUpd.toLocaleTimeString(tr_("locale"),{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+}
+const T={daily:["DW","#0f766e","Daily Work"],hot:["HW","#c2410c","Hot Work"],wah:["WAH","#1d4ed8","Work at Height"],loto:["LOTO","#b91c1c","LOTO"],cs:["CS","#7c3aed","Confined Space"]};
+const S={pending:"warn",approved:"ok",closing:"info",closed:"muted",rejected:"crit",cancelled:"muted"};
+const TAB={active:p=>p.status==="approved"||p.status==="closing",pending:p=>p.status==="pending",closed:p=>p.status==="closed",all:()=>true};
+const params=new URLSearchParams(location.search);
+if(params.get("embed")==="1") document.body.classList.add("embed");
+let rows=[], tab=["active","pending","closed","all"].includes(params.get("tab"))?params.get("tab"):"active";
+const no=p=>(T[p.type]||["PTW"])[0]+"-"+new Date(p.created_at).getFullYear()+"-"+String(p.seq||0).padStart(4,"0");
+const f=v=>v?new Date(v).toLocaleString(tr_("locale"),{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit",timeZone:"Asia/Bangkok"}):"–";
+const expired=p=>p.status==="approved"&&p.end_at&&new Date(p.end_at)<new Date();
+const td=(cls,html)=>{const e=document.createElement("td"); if(cls) e.className=cls; e.append(...html); return e;};
+const sp=(cls,t)=>{const e=document.createElement("span"); if(cls) e.className=cls; e.textContent=t; return e;};
+function render(){
+  const today=new Date().toDateString();
+  $("#sActive").textContent=rows.filter(TAB.active).length;
+  $("#sPending").textContent=rows.filter(TAB.pending).length;
+  $("#sExpired").textContent=rows.filter(expired).length;
+  $("#sToday").textContent=rows.filter(p=>p.status==="closed"&&p.closure&&p.closure.closedAt&&new Date(p.closure.closedAt).toDateString()===today).length;
+  document.querySelectorAll("#tabs .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.t===tab));
+  const q=$("#q").value.trim().toLowerCase(), d=p=>p.data||{};
+  const list=rows.filter(TAB[tab]).filter(p=>!q||[no(p),p.area,d(p).desc,d(p).company,d(p).loc].join(" ").toLowerCase().includes(q));
+  const tb=$("#rows"); tb.textContent="";
+  if(!list.length){ const tr=document.createElement("tr"); tr.append(td("empty",[sp(null,tr_("none"))])); tr.firstChild.colSpan=6; tb.append(tr); return; }
+  list.forEach(p=>{ const t=T[p.type]||["PTW","#5d6670",p.type], s=[tr_("st")[p.status]||p.status,S[p.status]||"warn"], tr=document.createElement("tr");
+    const c=sp("code",t[0]); c.style.setProperty("--pc",t[1]);
+    const st=[sp("pst "+s[1],s[0])]; if(expired(p)) st.push(document.createElement("br"),sp("pst crit",tr_("overdue")));
+    tr.append(td("no",[c,document.createTextNode(no(p))]),
+      td(null,[sp("desc",d(p).desc||""),sp("sub",[d(p).company,d(p).requester].filter(Boolean).join(" · "))]),
+      td("hide-sm",[document.createTextNode(p.area||""),sp("sub",d(p).loc||"")]),
+      td("when",[document.createTextNode(f(p.start_at)),sp("sub",tr_("to")+" "+f(p.end_at))]),
+      td(null,st),
+      td("hide-sm",[document.createTextNode((p.approval&&p.approval.approver)||"–")]));
+    tb.append(tr); });
+}
+async function load(){
+  const since=new Date(Date.now()-30*864e5).toISOString();
+  const {data,error}=await sb.from("ehs_permits").select("id,seq,type,status,area,data,approval,closure,start_at,end_at,created_at")
+    .or(`status.in.(pending,approved,closing),start_at.gte.${since}`).order("start_at",{ascending:false}).limit(500);
+  if(error){ $("#upd").textContent=tr_("err")+error.message; return; }
+  rows=data||[]; lastUpd=new Date(); render(); applyLang();
+}
+document.querySelectorAll("#tabs .chip").forEach(b=>b.addEventListener("click",()=>{tab=b.dataset.t;render();}));
+$("#q").addEventListener("input",render);
+document.querySelectorAll("[data-lang]").forEach(b=>b.addEventListener("click",()=>{ lang=b.dataset.lang; try{localStorage.setItem("ptwBoardLang",lang);}catch(e){} applyLang(); render(); }));
+applyLang();
+load(); setInterval(()=>{ if(!document.hidden) load(); },60000);
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden) load(); });
+</script>
+</body>
+</html>
